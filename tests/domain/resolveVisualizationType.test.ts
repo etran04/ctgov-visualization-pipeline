@@ -16,8 +16,6 @@ describe("resolveVisualizationType", () => {
   });
 
   it("throws for unsupported intents", () => {
-    expect(() =>
-      resolveVisualizationType("relationship" as never),
-    ).toThrow(UnsupportedIntentError);
+    expect(() => resolveVisualizationType("relationship")).toThrow(UnsupportedIntentError);
   });
 });

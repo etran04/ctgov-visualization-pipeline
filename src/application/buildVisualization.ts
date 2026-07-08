@@ -126,6 +126,9 @@ export async function buildVisualization(
       });
       break;
     }
+    case "relationship": {
+      throw new Error("Relationship intent is not yet implemented");
+    }
     default: {
       const _exhaustive: never = intent;
       throw new Error(`Unsupported intent: ${String(_exhaustive)}`);

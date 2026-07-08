@@ -14,10 +14,19 @@ describe("intentFieldProfiles", () => {
     expect(getFieldsForIntent("distribution")).toEqual(["NCTId", "EnrollmentCount"]);
   });
 
+  it("maps relationship intent to enrollment and start date fields", () => {
+    expect(getFieldsForIntent("relationship")).toEqual([
+      "NCTId",
+      "EnrollmentCount",
+      "StartDate",
+    ]);
+  });
+
   it("covers every supported intent", () => {
     expect(Object.keys(INTENT_FIELD_PROFILES).sort()).toEqual([
       "comparison",
       "distribution",
+      "relationship",
       "trend_over_time",
     ]);
   });

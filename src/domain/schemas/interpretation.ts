@@ -35,11 +35,23 @@ const DistributionInterpretationSchema = z.object({
     .describe("Suggested visualization type for the interpreted distribution request."),
 });
 
+const RelationshipInterpretationSchema = z.object({
+  intent: z.literal("relationship"),
+  entities: QueryEntitiesSchema,
+  relationship_dimension: z
+    .literal("enrollment_vs_start_year")
+    .describe("Which relationship dimension should be used in downstream aggregation."),
+  suggested_viz_type: z
+    .literal("scatterplot")
+    .describe("Suggested visualization type for the interpreted relationship request."),
+});
+
 /** Structured output from query interpretation (Stage 1). */
 export const QueryInterpretationSchema = z.discriminatedUnion("intent", [
   ComparisonInterpretationSchema,
   TrendOverTimeInterpretationSchema,
   DistributionInterpretationSchema,
+  RelationshipInterpretationSchema,
 ]);
 
 /**
@@ -63,10 +75,14 @@ export const QueryInterpretationOpenAiSchema = z.object({
     .literal("enrollment_count")
     .nullable()
     .describe("Set to enrollment_count for distribution intent; null otherwise."),
+  relationship_dimension: z
+    .literal("enrollment_vs_start_year")
+    .nullable()
+    .describe("Set to enrollment_vs_start_year for relationship intent; null otherwise."),
   suggested_viz_type: z
-    .enum(["bar_chart", "line_chart", "histogram"])
+    .enum(["bar_chart", "line_chart", "histogram", "scatterplot"])
     .describe(
-      "bar_chart for comparison; line_chart for trend_over_time; histogram for distribution.",
+      "bar_chart for comparison; line_chart for trend_over_time; histogram for distribution; scatterplot for relationship.",
     ),
 });
 
@@ -76,6 +92,7 @@ export const QueryInterpretationHintsSchema = z.union([
   ComparisonInterpretationSchema.partial(),
   TrendOverTimeInterpretationSchema.partial(),
   DistributionInterpretationSchema.partial(),
+  RelationshipInterpretationSchema.partial(),
 ]);
 
 export type QueryInterpretation = z.infer<typeof QueryInterpretationSchema>;
@@ -103,6 +120,13 @@ export function parseQueryInterpretation(raw: QueryInterpretationOpenAi): QueryI
         intent: raw.intent,
         entities: raw.entities,
         distribution_dimension: raw.distribution_dimension,
+        suggested_viz_type: raw.suggested_viz_type,
+      });
+    case "relationship":
+      return RelationshipInterpretationSchema.parse({
+        intent: raw.intent,
+        entities: raw.entities,
+        relationship_dimension: raw.relationship_dimension,
         suggested_viz_type: raw.suggested_viz_type,
       });
   }
