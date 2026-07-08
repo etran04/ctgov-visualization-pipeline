@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InvalidParametersError } from "../../src/domain/errors.js";
 import { VisualizationResponseSchema } from "../../src/domain/schemas/index.js";
 import {
+  validEnrollmentMidStudy,
+  validEnrollmentSmallStudy,
   validMultiPhaseStudy,
   validSinglePhaseStudy,
   validStudyGapYearStartDate,
@@ -112,6 +114,55 @@ describe("buildVisualization", () => {
       { year: 2021, trial_count: 0 },
       { year: 2022, trial_count: 0 },
       { year: 2023, trial_count: 1 },
+    ]);
+    expect(response.meta.fetched_studies).toBe(2);
+    expect(response.meta.skipped_malformed).toBe(0);
+    expect(response.meta.studies_with_multiple_phases).toBe(0);
+    expect(response.meta.truncated).toBe(false);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+
+  it("wires distribution interpretation into a valid histogram response", async () => {
+    mockInterpretQuery.mockResolvedValue({
+      intent: "distribution",
+      entities: {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      distribution_dimension: "enrollment_count",
+      suggested_viz_type: "histogram",
+    });
+
+    mockFetchStudies.mockResolvedValue({
+      studies: [validEnrollmentSmallStudy, validEnrollmentMidStudy],
+      pages_fetched: 1,
+      skipped_malformed: 0,
+      truncated: false,
+    });
+
+    const response = await buildVisualization({
+      query: "What is the enrollment distribution for Pembrolizumab trials?",
+    });
+
+    expect(mockFetchStudies).toHaveBeenCalledWith(
+      {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      { intent: "distribution", fields: ["NCTId", "EnrollmentCount"] },
+    );
+
+    expect(response.visualization.type).toBe("histogram");
+    expect(response.visualization.title).toBe("Enrollment distribution for Pembrolizumab");
+    expect(response.visualization.data).toEqual([
+      { bin_label: "1–50", bin_start: 1, bin_end: 50, trial_count: 1 },
+      { bin_label: "51–100", bin_start: 51, bin_end: 100, trial_count: 1 },
+      { bin_label: "101–500", bin_start: 101, bin_end: 500, trial_count: 0 },
+      { bin_label: "501–1,000", bin_start: 501, bin_end: 1000, trial_count: 0 },
+      { bin_label: "1,001–5,000", bin_start: 1001, bin_end: 5000, trial_count: 0 },
+      { bin_label: "5,001+", bin_start: 5001, bin_end: null, trial_count: 0 },
     ]);
     expect(response.meta.fetched_studies).toBe(2);
     expect(response.meta.skipped_malformed).toBe(0);

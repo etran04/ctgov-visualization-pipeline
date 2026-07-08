@@ -6,13 +6,14 @@
  * Each step logs structured output; domain errors propagate to the HTTP layer.
  */
 import {
+  aggregateByEnrollment,
   aggregateByPhase,
   aggregateByStartYear,
+  type DistributionStudyRecord,
   type PhaseStudyRecord,
   type TimelineStudyRecord,
 } from "../domain/aggregations/index.js";
 import { assembleVisualizationResponse } from "../domain/assembleVisualizationResponse.js";
-import { UnsupportedIntentError } from "../domain/errors.js";
 import { getFieldsForIntent } from "../domain/intentFieldProfiles.js";
 import { resolveVisualizationType } from "../domain/resolveVisualizationType.js";
 import type { QueryInterpretation, VisualizationResponse } from "../domain/schemas/index.js";
@@ -33,7 +34,6 @@ export type BuildVisualizationInput = {
  * Run the full visualization pipeline for a natural-language query.
  *
  * @returns A schema-valid visualization response ready for HTTP serialization.
- * @throws {UnsupportedIntentError} When the interpreted intent is not supported.
  * @throws {InvalidParametersError} When no usable entity filters remain after validation.
  * @throws {NoStudiesFoundError} When CT.gov returns zero studies.
  * @throws {NoAggregatableDataError} When fetched studies contain no aggregatable data.
@@ -104,7 +104,27 @@ export async function buildVisualization(
       break;
     }
     case "distribution": {
-      throw new UnsupportedIntentError("Distribution intent is not yet implemented");
+      const aggregation = aggregateByEnrollment(
+        fetchResult.studies as DistributionStudyRecord[],
+      );
+      logger.info(
+        {
+          bins: aggregation.bins,
+          skipped_malformed: aggregation.skipped_malformed,
+        },
+        "Aggregated studies by enrollment",
+      );
+
+      response = assembleVisualizationResponse({
+        filters: validatedEntities,
+        visualizationType: "histogram",
+        aggregation: aggregation.bins,
+        fetchedStudies: fetchResult.studies.length,
+        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+        studiesWithMultiplePhases: 0,
+        truncated: fetchResult.truncated,
+      });
+      break;
     }
     default: {
       const _exhaustive: never = intent;
