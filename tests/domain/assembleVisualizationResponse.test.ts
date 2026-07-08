@@ -228,3 +228,56 @@ describe("assembleHistogramResponse", () => {
     expect(VisualizationResponseSchema.parse(response)).toEqual(response);
   });
 });
+
+describe("assembleScatterplotResponse", () => {
+  const baseRelationshipAggregation = [
+    { nct_id: "NCT00000001", enrollment_count: 120, year: 2020 },
+    { nct_id: "NCT00000002", enrollment_count: 350, year: 2021 },
+    { nct_id: "NCT00000003", enrollment_count: 80, year: 2020 },
+  ];
+
+  it("builds a drug-first title when both drug and condition are present", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: "Pembrolizumab",
+        condition: "lung cancer",
+        phase: null,
+      },
+      visualizationType: "scatterplot",
+      aggregation: baseRelationshipAggregation,
+      fetchedStudies: 12,
+      skippedMalformed: 2,
+      studiesWithMultiplePhases: 0,
+      truncated: false,
+    });
+
+    expect(response.visualization.title).toBe(
+      "Enrollment vs start year for Pembrolizumab in lung cancer",
+    );
+  });
+
+  it("uses quantitative/temporal encoding and preserves nct_id in data", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      visualizationType: "scatterplot",
+      aggregation: baseRelationshipAggregation,
+      fetchedStudies: 3,
+      skippedMalformed: 0,
+      studiesWithMultiplePhases: 0,
+      truncated: false,
+    });
+
+    expect(response.visualization.type).toBe("scatterplot");
+    expect(response.visualization.encoding).toEqual({
+      x: { field: "enrollment_count", type: "quantitative" },
+      y: { field: "year", type: "temporal" },
+    });
+
+    expect(response.visualization.data).toEqual(baseRelationshipAggregation);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+});

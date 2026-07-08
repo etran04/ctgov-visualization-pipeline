@@ -1,6 +1,7 @@
 import type {
   EnrollmentAggregationBin,
   PhaseAggregationBin,
+  RelationshipPoint,
   YearAggregationBin,
 } from "./aggregations/index.js";
 import type { QueryEntities, VisualizationResponse } from "./schemas/index.js";
@@ -30,15 +31,22 @@ type HistogramAssembleInput = BaseAssembleInput & {
   aggregation: EnrollmentAggregationBin[];
 };
 
+type ScatterplotAssembleInput = BaseAssembleInput & {
+  visualizationType: "scatterplot";
+  aggregation: RelationshipPoint[];
+};
+
 export type AssembleVisualizationResponseInput =
   | BarChartAssembleInput
   | LineChartAssembleInput
-  | HistogramAssembleInput;
+  | HistogramAssembleInput
+  | ScatterplotAssembleInput;
 
 const TITLE_PREFIX_BY_VIZ_TYPE = {
   bar_chart: "Trial phases for",
   line_chart: "Trials started per year for",
   histogram: "Enrollment distribution for",
+  scatterplot: "Enrollment vs start year for",
 } as const satisfies Record<VisualizationType, string>;
 
 function buildFilterSubject(filters: QueryEntities): string {
@@ -160,6 +168,33 @@ export function assembleHistogramResponse(
 }
 
 /**
+ * Build a scatterplot visualization response from relationship aggregation output.
+ *
+ * Preserves `nct_id` on each data point for tooltips and CT.gov links.
+ * Validates against `VisualizationResponseSchema`.
+ */
+export function assembleScatterplotResponse(
+  input: ScatterplotAssembleInput,
+): VisualizationResponse {
+  return VisualizationResponseSchema.parse({
+    visualization: {
+      type: "scatterplot",
+      title: buildTitle(input.filters, "scatterplot"),
+      encoding: {
+        x: { field: "enrollment_count", type: "quantitative" },
+        y: { field: "year", type: "temporal" },
+      },
+      data: input.aggregation.map((point) => ({
+        nct_id: point.nct_id,
+        enrollment_count: point.enrollment_count,
+        year: point.year,
+      })),
+    },
+    meta: buildMeta(input),
+  });
+}
+
+/**
  * Build the final HTTP visualization response from aggregation output.
  *
  * Dispatches to the intent-specific assembler based on `visualizationType`.
@@ -174,6 +209,8 @@ export function assembleVisualizationResponse(
       return assembleLineChartResponse(input);
     case "histogram":
       return assembleHistogramResponse(input);
+    case "scatterplot":
+      return assembleScatterplotResponse(input);
     default: {
       const _exhaustive: never = input;
       throw new Error(

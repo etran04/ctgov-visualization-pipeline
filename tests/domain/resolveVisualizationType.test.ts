@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { UnsupportedIntentError } from "../../src/domain/errors.js";
 import { resolveVisualizationType } from "../../src/domain/resolveVisualizationType.js";
 
 describe("resolveVisualizationType", () => {
@@ -15,7 +14,7 @@ describe("resolveVisualizationType", () => {
     expect(resolveVisualizationType("distribution")).toBe("histogram");
   });
 
-  it("throws for unsupported intents", () => {
-    expect(() => resolveVisualizationType("relationship")).toThrow(UnsupportedIntentError);
+  it("maps relationship intent to a scatterplot", () => {
+    expect(resolveVisualizationType("relationship")).toBe("scatterplot");
   });
 });
