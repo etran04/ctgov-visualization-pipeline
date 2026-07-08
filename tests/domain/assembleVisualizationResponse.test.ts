@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { VisualizationResponseSchema } from "../../src/domain/schemas/index.js";
 import { assembleVisualizationResponse } from "../../src/domain/assembleVisualizationResponse.js";
-import { PHASE_BIN_ORDER } from "../../src/domain/mapPhaseValues.js";
+import { PHASE_BIN_ORDER } from "../../src/domain/utils/mapPhaseValues.js";
 
 const baseAggregation = PHASE_BIN_ORDER.map((phase) => ({
   phase,

@@ -1,4 +1,4 @@
-import type { Intent } from "./schemas/intents.js";
+import type { Intent } from "../schemas/intents.js";
 
 /**
  * Shape expected from CT.gov before runtime validation.
@@ -8,7 +8,10 @@ import type { Intent } from "./schemas/intents.js";
 export type CtgovRawStudy = {
   protocolSection?: {
     identificationModule?: { nctId?: unknown };
-    designModule?: { phases?: unknown };
+    designModule?: {
+      phases?: unknown;
+      enrollmentInfo?: { count?: unknown };
+    };
     statusModule?: { startDateStruct?: { date?: unknown } };
   };
 };
@@ -41,8 +44,19 @@ export type TimelineStudyRecord = StudyIdentification & {
   };
 };
 
+/** Validated study with enrollment count — output of distribution fetch. */
+export type DistributionStudyRecord = StudyIdentification & {
+  protocolSection: StudyIdentification["protocolSection"] & {
+    designModule: {
+      enrollmentInfo: {
+        count: number;
+      };
+    };
+  };
+};
+
 /** Any successfully normalized study record from `fetchStudies`. */
-export type CtgovStudyRecord = PhaseStudyRecord | TimelineStudyRecord;
+export type CtgovStudyRecord = PhaseStudyRecord | TimelineStudyRecord | DistributionStudyRecord;
 
 /** Map intent to the strict record shape produced by fetch for that intent. */
 export type StudyRecordForIntent<I extends Intent> = I extends "comparison"

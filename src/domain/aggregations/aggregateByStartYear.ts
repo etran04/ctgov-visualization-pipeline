@@ -1,6 +1,6 @@
-import type { TimelineStudyRecord, YearAggregationBin } from "./types.js";
+import type { TimelineStudyRecord, YearAggregationBin } from "../types/aggregations.js";
 import { NoAggregatableDataError } from "../errors.js";
-import { parseStudyStartYear } from "../parseStudyDate.js";
+import { parseStudyStartYear } from "../utils/parseStudyDate.js";
 
 /** Output of deterministic start-year aggregation. */
 export type YearAggregationResult = {

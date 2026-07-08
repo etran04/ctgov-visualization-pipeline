@@ -1,4 +1,8 @@
-import type { PhaseStudyRecord, TimelineStudyRecord } from "../../src/domain/ctgovStudyTypes.js";
+import type {
+  DistributionStudyRecord,
+  PhaseStudyRecord,
+  TimelineStudyRecord,
+} from "../../src/domain/types/ctgovStudyTypes.js";
 
 export const validSinglePhaseStudy = {
   protocolSection: {
@@ -196,4 +200,174 @@ export function asPhaseStudy(study: unknown): PhaseStudyRecord {
 /** Cast intentionally malformed fixtures for defensive aggregator tests. */
 export function asTimelineStudy(study: unknown): TimelineStudyRecord {
   return study as TimelineStudyRecord;
+}
+
+export const validEnrollmentSmallStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000201",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 25,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const validEnrollmentMidStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000202",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 75,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const validEnrollmentBoundary50Study = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000203",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 50,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const validEnrollmentBoundary51Study = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000204",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 51,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const validEnrollmentLargeStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000205",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 6000,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const validEnrollmentBoundary5000Study = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000206",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 5000,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const validEnrollmentBoundary5001Study = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000207",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 5001,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const validEnrollmentSameBinStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000208",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 30,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const malformedStudyMissingEnrollment = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000209",
+    },
+    designModule: {},
+  },
+};
+
+export const malformedStudyZeroEnrollment = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000210",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 0,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const malformedStudyNegativeEnrollment = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000211",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: -10,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const malformedStudyNonIntegerEnrollment = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000212",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 100.5,
+      },
+    },
+  },
+} satisfies DistributionStudyRecord;
+
+export const malformedStudyInvalidEnrollmentType = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000213",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: "500",
+      },
+    },
+  },
+};
+
+/** Cast intentionally malformed fixtures for defensive aggregator tests. */
+export function asDistributionStudy(study: unknown): DistributionStudyRecord {
+  return study as DistributionStudyRecord;
 }

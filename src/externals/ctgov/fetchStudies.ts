@@ -4,10 +4,10 @@ import type {
   PhaseStudyRecord,
   StudyRecordForIntent,
   TimelineStudyRecord,
-} from "../../domain/ctgovStudyTypes.js";
+} from "../../domain/types/ctgovStudyTypes.js";
 import { HTTP_STATUS, NoStudiesFoundError, UpstreamApiError } from "../../domain/errors.js";
 import type { Intent } from "../../domain/schemas/intents.js";
-import { parseStudyStartYear } from "../../domain/parseStudyDate.js";
+import { parseStudyStartYear } from "../../domain/utils/parseStudyDate.js";
 import type { ValidatedEntities } from "../../domain/validateEntities.js";
 import { logger } from "../../lib/logger.js";
 import { mapQueryParams } from "./mapQueryParams.js";

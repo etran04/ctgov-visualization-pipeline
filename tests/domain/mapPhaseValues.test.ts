@@ -3,7 +3,7 @@ import {
   mapCtgovPhaseToDomain,
   mapDomainPhaseToCtgov,
   PHASE_BIN_ORDER,
-} from "../../src/domain/mapPhaseValues.js";
+} from "../../src/domain/utils/mapPhaseValues.js";
 
 describe("mapCtgovPhaseToDomain", () => {
   it("maps known CT.gov phase constants to domain labels", () => {

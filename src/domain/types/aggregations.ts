@@ -1,5 +1,10 @@
-import type { PhaseStudyRecord, TimelineStudyRecord } from "../ctgovStudyTypes.js";
-import type { PhaseLabel } from "../mapPhaseValues.js";
+import type {
+  DistributionStudyRecord,
+  PhaseStudyRecord,
+  TimelineStudyRecord,
+} from "./ctgovStudyTypes.js";
+import type { EnrollmentBinLabel } from "../utils/enrollmentBins.js";
+import type { PhaseLabel } from "../utils/mapPhaseValues.js";
 
 /**
  * Permissive study shape for tests and defensive aggregator fallbacks.
@@ -22,7 +27,7 @@ export type CtgovStudyLike = {
   };
 };
 
-export type { PhaseStudyRecord, TimelineStudyRecord };
+export type { DistributionStudyRecord, PhaseStudyRecord, TimelineStudyRecord };
 
 /**
  * Internal aggregation bin produced by `aggregateByPhase`.
@@ -44,6 +49,20 @@ export type PhaseAggregationBin = {
  */
 export type YearAggregationBin = {
   year: number;
+  trial_count: number;
+  source_nct_ids: string[];
+};
+
+/**
+ * Internal aggregation bin produced by `aggregateByEnrollment`.
+ *
+ * `source_nct_ids` is not exposed in the HTTP response; it exists as a
+ * hook for future per-bin citation lookup.
+ */
+export type EnrollmentAggregationBin = {
+  bin_label: EnrollmentBinLabel;
+  bin_start: number;
+  bin_end: number | null;
   trial_count: number;
   source_nct_ids: string[];
 };

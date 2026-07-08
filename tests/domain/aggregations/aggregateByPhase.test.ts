@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { aggregateByPhase } from "../../../src/domain/aggregations/index.js";
 import { NoAggregatableDataError } from "../../../src/domain/errors.js";
-import { PHASE_BIN_ORDER } from "../../../src/domain/mapPhaseValues.js";
+import { PHASE_BIN_ORDER } from "../../../src/domain/utils/mapPhaseValues.js";
 import {
   asPhaseStudy,
   malformedStudyEmptyPhases,
