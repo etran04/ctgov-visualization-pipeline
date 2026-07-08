@@ -10,6 +10,12 @@ export async function registerSwaggerDocs(app: FastifyInstance): Promise<void> {
         version: "1.0.0",
         description: "API for building visualizations from ClinicalTrials.gov data.",
       },
+      tags: [
+        {
+          name: "Visualization",
+          description: "Endpoints for building trial visualizations from natural-language queries.",
+        },
+      ],
     },
   });
 

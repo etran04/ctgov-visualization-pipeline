@@ -10,6 +10,10 @@
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
     "demo:comparison": "tsx scripts/runComparisonDemo.ts",
+    "smoke": "tsx scripts/smokeTest.ts",
+    "smoke:live": "tsx scripts/smokeTest.ts --live",
+    "smoke:running": "tsx scripts/smokeTest.ts --running",
+    "smoke:live:running": "tsx scripts/smokeTest.ts --live --running",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
