@@ -1,6 +1,7 @@
 import type {
   DistributionStudyRecord,
   PhaseStudyRecord,
+  RelationshipStudyRecord,
   TimelineStudyRecord,
 } from "./ctgovStudyTypes.js";
 import type { EnrollmentBinLabel } from "../utils/enrollmentBins.js";
@@ -27,7 +28,12 @@ export type CtgovStudyLike = {
   };
 };
 
-export type { DistributionStudyRecord, PhaseStudyRecord, TimelineStudyRecord };
+export type {
+  DistributionStudyRecord,
+  PhaseStudyRecord,
+  RelationshipStudyRecord,
+  TimelineStudyRecord,
+};
 
 /**
  * Internal aggregation bin produced by `aggregateByPhase`.
@@ -65,4 +71,16 @@ export type EnrollmentAggregationBin = {
   bin_end: number | null;
   trial_count: number;
   source_nct_ids: string[];
+};
+
+/**
+ * Per-study point produced by `aggregateByRelationship`.
+ *
+ * Unlike binned aggregations, each valid study becomes one scatterplot point
+ * with `nct_id` preserved for tooltips and CT.gov links.
+ */
+export type RelationshipPoint = {
+  nct_id: string;
+  enrollment_count: number;
+  year: number;
 };

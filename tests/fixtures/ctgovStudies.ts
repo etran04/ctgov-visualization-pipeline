@@ -1,6 +1,7 @@
 import type {
   DistributionStudyRecord,
   PhaseStudyRecord,
+  RelationshipStudyRecord,
   TimelineStudyRecord,
 } from "../../src/domain/types/ctgovStudyTypes.js";
 
@@ -370,4 +371,163 @@ export const malformedStudyInvalidEnrollmentType = {
 /** Cast intentionally malformed fixtures for defensive aggregator tests. */
 export function asDistributionStudy(study: unknown): DistributionStudyRecord {
   return study as DistributionStudyRecord;
+}
+
+export const validRelationshipStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000301",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 120,
+      },
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2020-06-15",
+      },
+    },
+  },
+} satisfies RelationshipStudyRecord;
+
+export const validRelationshipStudySecondYear = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000302",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 75,
+      },
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2021-03-01",
+      },
+    },
+  },
+} satisfies RelationshipStudyRecord;
+
+export const validRelationshipStudySameYearLowerEnrollment = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000303",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 50,
+      },
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2020-11-01",
+      },
+    },
+  },
+} satisfies RelationshipStudyRecord;
+
+export const validRelationshipStudySameYearHigherEnrollment = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000304",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 200,
+      },
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2020-01-01",
+      },
+    },
+  },
+} satisfies RelationshipStudyRecord;
+
+export const validRelationshipStudyMonthYearDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000305",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 300,
+      },
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "January 2023",
+      },
+    },
+  },
+} satisfies RelationshipStudyRecord;
+
+export const malformedRelationshipStudyMissingEnrollment = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000306",
+    },
+    designModule: {},
+    statusModule: {
+      startDateStruct: {
+        date: "2022-01-01",
+      },
+    },
+  },
+};
+
+export const malformedRelationshipStudyZeroEnrollment = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000307",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 0,
+      },
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2022-01-01",
+      },
+    },
+  },
+} satisfies RelationshipStudyRecord;
+
+export const malformedRelationshipStudyMissingStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000308",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 100,
+      },
+    },
+    statusModule: {},
+  },
+};
+
+export const malformedRelationshipStudyUnparseableStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000309",
+    },
+    designModule: {
+      enrollmentInfo: {
+        count: 100,
+      },
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "TBD",
+      },
+    },
+  },
+} satisfies RelationshipStudyRecord;
+
+/** Cast intentionally malformed fixtures for defensive aggregator tests. */
+export function asRelationshipStudy(study: unknown): RelationshipStudyRecord {
+  return study as RelationshipStudyRecord;
 }

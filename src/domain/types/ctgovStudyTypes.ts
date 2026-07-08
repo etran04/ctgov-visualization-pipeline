@@ -55,8 +55,28 @@ export type DistributionStudyRecord = StudyIdentification & {
   };
 };
 
+/** Validated study with enrollment and start date — output of relationship fetch. */
+export type RelationshipStudyRecord = StudyIdentification & {
+  protocolSection: StudyIdentification["protocolSection"] & {
+    designModule: {
+      enrollmentInfo: {
+        count: number;
+      };
+    };
+    statusModule: {
+      startDateStruct: {
+        date: string;
+      };
+    };
+  };
+};
+
 /** Any successfully normalized study record from `fetchStudies`. */
-export type CtgovStudyRecord = PhaseStudyRecord | TimelineStudyRecord | DistributionStudyRecord;
+export type CtgovStudyRecord =
+  | PhaseStudyRecord
+  | TimelineStudyRecord
+  | DistributionStudyRecord
+  | RelationshipStudyRecord;
 
 /** Map intent to the strict record shape produced by fetch for that intent. */
 export type StudyRecordForIntent<I extends Intent> = I extends "comparison"
@@ -65,4 +85,6 @@ export type StudyRecordForIntent<I extends Intent> = I extends "comparison"
     ? TimelineStudyRecord
     : I extends "distribution"
       ? DistributionStudyRecord
-      : never;
+      : I extends "relationship"
+        ? RelationshipStudyRecord
+        : never;
