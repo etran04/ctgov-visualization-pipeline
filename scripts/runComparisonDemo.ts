@@ -22,7 +22,7 @@ async function main(): Promise<void> {
   const { interpretQuery } = await import("../src/externals/openai/interpretQuery.js");
   const { validateEntities } = await import("../src/domain/validateEntities.js");
   const { fetchStudies } = await import("../src/externals/ctgov/fetchStudies.js");
-  const { aggregateByPhase } = await import("../src/domain/aggregateByPhase.js");
+  const { aggregateByPhase } = await import("../src/domain/aggregations/index.js");
   const { resolveVisualizationType } = await import("../src/domain/resolveVisualizationType.js");
   const { assembleVisualizationResponse } = await import(
     "../src/domain/assembleVisualizationResponse.js"

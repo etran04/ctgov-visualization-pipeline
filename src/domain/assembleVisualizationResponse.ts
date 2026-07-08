@@ -1,4 +1,4 @@
-import type { PhaseAggregationBin } from "./aggregationTypes.js";
+import type { PhaseAggregationBin } from "./aggregations/index.js";
 import type { QueryEntities, VisualizationResponse } from "./schemas/index.js";
 import { VisualizationResponseSchema } from "./schemas/index.js";
 

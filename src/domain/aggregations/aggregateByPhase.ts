@@ -1,17 +1,6 @@
-import type { PhaseAggregationBin } from "./aggregationTypes.js";
-import { NoAggregatableDataError } from "./errors.js";
-import { mapCtgovPhaseToDomain, PHASE_BIN_ORDER, type PhaseLabel } from "./mapPhaseValues.js";
-
-type CtgovStudyLike = {
-  protocolSection?: {
-    identificationModule?: {
-      nctId?: unknown;
-    };
-    designModule?: {
-      phases?: unknown;
-    };
-  };
-};
+import type { CtgovStudyLike, PhaseAggregationBin } from "./types.js";
+import { NoAggregatableDataError } from "../errors.js";
+import { mapCtgovPhaseToDomain, PHASE_BIN_ORDER, type PhaseLabel } from "../mapPhaseValues.js";
 
 /** Output of deterministic phase-bin aggregation. */
 export type PhaseAggregationResult = {

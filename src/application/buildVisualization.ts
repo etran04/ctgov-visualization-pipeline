@@ -5,7 +5,7 @@
  * domain steps (validation, aggregation, viz resolution, response assembly).
  * Each step logs structured output; domain errors propagate to the HTTP layer.
  */
-import { aggregateByPhase } from "../domain/aggregateByPhase.js";
+import { aggregateByPhase } from "../domain/aggregations/index.js";
 import { assembleVisualizationResponse } from "../domain/assembleVisualizationResponse.js";
 import { resolveVisualizationType } from "../domain/resolveVisualizationType.js";
 import type { QueryInterpretation, VisualizationResponse } from "../domain/schemas/index.js";

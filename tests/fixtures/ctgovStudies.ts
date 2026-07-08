@@ -72,3 +72,116 @@ export const malformedStudyEmptyPhases = {
     },
   },
 };
+
+export const validStudyIsoStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000101",
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2020-06-15",
+      },
+    },
+  },
+};
+
+export const validStudyMonthYearStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000102",
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "January 2023",
+      },
+    },
+  },
+};
+
+export const validStudyYearOnlyStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000103",
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2023",
+      },
+    },
+  },
+};
+
+export const validStudySameYearAsIso = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000104",
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2020-11-01",
+      },
+    },
+  },
+};
+
+export const validStudyGapYearStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000105",
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "2023-03-01",
+      },
+    },
+  },
+};
+
+export const malformedStudyMissingStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000106",
+    },
+    statusModule: {},
+  },
+};
+
+export const malformedStudyInvalidStartDateType = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000107",
+    },
+    statusModule: {
+      startDateStruct: {
+        date: 2023,
+      },
+    },
+  },
+};
+
+export const malformedStudyUnparseableStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000108",
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "TBD",
+      },
+    },
+  },
+};
+
+export const malformedStudyEmptyStartDate = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000109",
+    },
+    statusModule: {
+      startDateStruct: {
+        date: "",
+      },
+    },
+  },
+};

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { NoAggregatableDataError } from "../../src/domain/errors.js";
-import { aggregateByPhase } from "../../src/domain/aggregateByPhase.js";
-import { PHASE_BIN_ORDER } from "../../src/domain/mapPhaseValues.js";
+import { aggregateByPhase } from "../../../src/domain/aggregations/index.js";
+import { NoAggregatableDataError } from "../../../src/domain/errors.js";
+import { PHASE_BIN_ORDER } from "../../../src/domain/mapPhaseValues.js";
 import {
   malformedStudyEmptyPhases,
   malformedStudyInvalidPhasesType,
@@ -10,7 +10,7 @@ import {
   validDuplicatePhaseStudy,
   validMultiPhaseStudy,
   validSinglePhaseStudy,
-} from "../fixtures/ctgovStudies.js";
+} from "../../fixtures/ctgovStudies.js";
 
 describe("aggregateByPhase", () => {
   it("returns zero-filled bins in deterministic order for single-phase studies", () => {
