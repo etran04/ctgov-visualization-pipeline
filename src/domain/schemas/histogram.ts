@@ -8,8 +8,8 @@ import {
 
 const HistogramDataPointSchema = z.object({
   bin_label: z.string(),
-  bin_start: z.number().int().positive(),
-  bin_end: z.number().int().positive().nullable(),
+  bin_start: z.number().int().min(1),
+  bin_end: z.number().int().min(1).nullable(),
   trial_count: TrialCountSchema,
   citations: OptionalCitationsSchema,
 });
