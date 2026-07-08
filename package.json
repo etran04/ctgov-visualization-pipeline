@@ -12,6 +12,7 @@
     "demo": "tsx scripts/runDemo.ts",
     "demo:comparison": "tsx scripts/runDemo.ts comparison",
     "demo:timeline": "tsx scripts/runDemo.ts timeline",
+    "demo:distribution": "tsx scripts/runDemo.ts distribution",
     "smoke": "tsx scripts/smokeTest.ts",
     "smoke:live": "tsx scripts/smokeTest.ts --live",
     "smoke:running": "tsx scripts/smokeTest.ts --running",

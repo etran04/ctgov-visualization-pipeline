@@ -7,6 +7,7 @@
  *   npm run demo                    # default comparison preset
  *   npm run demo:comparison
  *   npm run demo:timeline
+ *   npm run demo:distribution
  *   npm run demo -- timeline
  *   npm run demo -- --query "Compare trial phases for Pembrolizumab"
  *   npm run demo -- --list
@@ -25,6 +26,10 @@ const PRESETS = {
   timeline: {
     label: "timeline → line chart",
     query: "How have Pembrolizumab trials changed over time?",
+  },
+  distribution: {
+    label: "distribution → histogram",
+    query: "What is the enrollment distribution for Pembrolizumab trials?",
   },
 } as const;
 
@@ -103,6 +108,12 @@ function printSummary(response: VisualizationResponse): void {
     console.log(
       `years: ${years[0]}–${years[years.length - 1]} (${viz.data.length} bins, ${zeroFilled} zero-filled)`,
     );
+  } else if (viz.type === "histogram") {
+    const zeroFilled = viz.data.filter((point) => point.trial_count === 0).length;
+    console.log(`bins: ${viz.data.length} (${zeroFilled} zero-filled)`);
+    for (const point of viz.data) {
+      console.log(`${point.bin_label.padEnd(16)} ${point.trial_count}`);
+    }
   }
 
   console.log(
