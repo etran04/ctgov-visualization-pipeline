@@ -44,7 +44,9 @@ export const visualizeRouteSchema = {
     },
     400: errorResponse("Invalid request body or unsupported intent"),
     404: errorResponse("No matching studies found on ClinicalTrials.gov"),
-    422: errorResponse("Invalid parameters or no aggregatable phase data in fetched studies"),
+    422: errorResponse(
+      "Invalid parameters or no aggregatable phase, start-date, or enrollment data in fetched studies",
+    ),
     500: errorResponse("Unexpected server error"),
     502: errorResponse("OpenAI interpretation or upstream ClinicalTrials.gov API failure"),
   },
