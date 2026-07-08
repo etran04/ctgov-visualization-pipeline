@@ -11,12 +11,19 @@
  * Full pipeline (OpenAI + CT.gov):
  *   npm run smoke:live
  *   npm run smoke:live:running
+ *
+ * Live cases print a compact validation summary (no internal source_nct_ids).
+ * Pipeline logs are suppressed; pass --verbose to see full pipeline output.
  */
 import "dotenv/config";
+
+// Keep smoke output readable; pipeline info logs include internal source_nct_ids.
+if (!process.argv.includes("--verbose")) {
+  process.env.LOG_LEVEL = "error";
+}
+
 import type { FastifyInstance } from "fastify";
-import { config } from "../src/config.js";
-import { VisualizationResponseSchema } from "../src/domain/schemas/index.js";
-import { buildServer } from "../src/server.js";
+import type { VisualizationResponse } from "../src/domain/schemas/index.js";
 
 type HttpClient = {
   get(path: string): Promise<{ statusCode: number; body: unknown }>;
@@ -25,22 +32,25 @@ type HttpClient = {
 
 type SmokeCase = {
   name: string;
-  run: (client: HttpClient) => Promise<void>;
+  run: (client: HttpClient) => Promise<VisualizationResponse | void>;
   liveOnly?: boolean;
+  /** Runs without HTTP; uses fixture data instead of live OpenAI / CT.gov. */
+  mocked?: boolean;
 };
 
-function parseArgs(argv: string[]) {
+function parseArgs(argv: string[], defaultPort: number) {
   const live = argv.includes("--live");
   const running = argv.includes("--running");
+  const verbose = argv.includes("--verbose");
   const urlIndex = argv.indexOf("--url");
   const baseUrl =
-    urlIndex >= 0 ? argv[urlIndex + 1] : `http://127.0.0.1:${config.PORT}`;
+    urlIndex >= 0 ? argv[urlIndex + 1] : `http://127.0.0.1:${defaultPort}`;
 
   if (urlIndex >= 0 && !argv[urlIndex + 1]) {
     throw new Error("--url requires a value, e.g. --url http://127.0.0.1:3001");
   }
 
-  return { live, running, baseUrl };
+  return { live, running, verbose, baseUrl };
 }
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -61,8 +71,44 @@ function getErrorCode(body: unknown): string | undefined {
   return typeof body.error.code === "string" ? body.error.code : undefined;
 }
 
-async function createInjectClient(): Promise<HttpClient> {
-  const app: FastifyInstance = await buildServer({ logger: false });
+/** Human-readable snapshot of a live visualization response for manual validation. */
+function printLiveValidationSummary(response: VisualizationResponse): void {
+  const { visualization: viz, meta } = response;
+
+  console.log("");
+  console.log(`      type:  ${viz.type}`);
+  console.log(`      title: ${viz.title}`);
+
+  if (viz.type === "bar_chart") {
+    for (const point of viz.data) {
+      console.log(`      ${point.phase.padEnd(16)} ${point.trial_count}`);
+    }
+  } else {
+    const years = viz.data.map((point) => point.year);
+    const zeroFilled = viz.data.filter((point) => point.trial_count === 0).length;
+    console.log(
+      `      years: ${years[0]}–${years[years.length - 1]} (${viz.data.length} bins, ${zeroFilled} zero-filled)`,
+    );
+
+    const recent = viz.data.slice(-8);
+    for (const point of recent) {
+      console.log(`      ${String(point.year).padEnd(6)} ${point.trial_count}`);
+    }
+    if (viz.data.length > recent.length) {
+      console.log(`      … ${viz.data.length - recent.length} earlier year(s) omitted`);
+    }
+  }
+
+  console.log(
+    `      meta:  fetched=${meta.fetched_studies}, skipped=${meta.skipped_malformed}, ` +
+      `multi_phase=${meta.studies_with_multiple_phases}, truncated=${meta.truncated}`,
+  );
+}
+
+async function createInjectClient(
+  buildServer: (options?: { logger?: boolean }) => Promise<FastifyInstance>,
+): Promise<HttpClient> {
+  const app = await buildServer({ logger: false });
 
   return {
     async get(path) {
@@ -117,72 +163,192 @@ function createFetchClient(baseUrl: string): HttpClient {
   };
 }
 
-const smokeCases: SmokeCase[] = [
-  {
-    name: "GET /health returns 200",
-    async run(client) {
-      const response = await client.get("/health");
-      assert(response.statusCode === 200, `expected 200, got ${response.statusCode}`);
-      assert(
-        isRecord(response.body) && response.body.status === "ok",
-        `unexpected body: ${JSON.stringify(response.body)}`,
-      );
-    },
-  },
-  {
-    name: "POST /visualize rejects missing query with 400",
-    async run(client) {
-      const response = await client.post("/visualize", {});
-      assert(response.statusCode === 400, `expected 400, got ${response.statusCode}`);
-      assert(
-        getErrorCode(response.body) === "INVALID_REQUEST",
-        `expected INVALID_REQUEST, got ${JSON.stringify(response.body)}`,
-      );
-    },
-  },
-  {
-    name: "POST /visualize rejects blank query with 400",
-    async run(client) {
-      const response = await client.post("/visualize", { query: "   " });
-      assert(response.statusCode === 400, `expected 400, got ${response.statusCode}`);
-      assert(
-        getErrorCode(response.body) === "INVALID_REQUEST",
-        `expected INVALID_REQUEST, got ${JSON.stringify(response.body)}`,
-      );
-    },
-  },
-  {
-    name: "POST /visualize returns bar chart for Pembrolizumab query",
-    liveOnly: true,
-    async run(client) {
-      const response = await client.post("/visualize", {
-        query: "Compare trial phases for Pembrolizumab",
-      });
+function createSmokeCases(deps: {
+  aggregateByStartYear: typeof import("../src/domain/aggregations/index.js").aggregateByStartYear;
+  assembleVisualizationResponse: typeof import("../src/domain/assembleVisualizationResponse.js").assembleVisualizationResponse;
+  VisualizationResponseSchema: typeof import("../src/domain/schemas/index.js").VisualizationResponseSchema;
+  validStudyGapYearStartDate: typeof import("../tests/fixtures/ctgovStudies.js").validStudyGapYearStartDate;
+  validStudyIsoStartDate: typeof import("../tests/fixtures/ctgovStudies.js").validStudyIsoStartDate;
+}): SmokeCase[] {
+  const {
+    aggregateByStartYear,
+    assembleVisualizationResponse,
+    VisualizationResponseSchema,
+    validStudyGapYearStartDate,
+    validStudyIsoStartDate,
+  } = deps;
 
-      assert(response.statusCode === 200, `expected 200, got ${response.statusCode}: ${JSON.stringify(response.body)}`);
-
-      const parsed = VisualizationResponseSchema.safeParse(response.body);
-      assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
-
-      assert(parsed.data.visualization.type === "bar_chart", "expected bar_chart visualization");
-      assert(
-        parsed.data.visualization.title.includes("Pembrolizumab"),
-        `unexpected title: ${parsed.data.visualization.title}`,
-      );
-      assert(parsed.data.visualization.data.length === 6, "expected six phase bins");
-      assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
-      assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+  return [
+    {
+      name: "GET /health returns 200",
+      async run(client) {
+        const response = await client.get("/health");
+        assert(response.statusCode === 200, `expected 200, got ${response.statusCode}`);
+        assert(
+          isRecord(response.body) && response.body.status === "ok",
+          `unexpected body: ${JSON.stringify(response.body)}`,
+        );
+      },
     },
-  },
-];
+    {
+      name: "POST /visualize rejects missing query with 400",
+      async run(client) {
+        const response = await client.post("/visualize", {});
+        assert(response.statusCode === 400, `expected 400, got ${response.statusCode}`);
+        assert(
+          getErrorCode(response.body) === "INVALID_REQUEST",
+          `expected INVALID_REQUEST, got ${JSON.stringify(response.body)}`,
+        );
+      },
+    },
+    {
+      name: "POST /visualize rejects blank query with 400",
+      async run(client) {
+        const response = await client.post("/visualize", { query: "   " });
+        assert(response.statusCode === 400, `expected 400, got ${response.statusCode}`);
+        assert(
+          getErrorCode(response.body) === "INVALID_REQUEST",
+          `expected INVALID_REQUEST, got ${JSON.stringify(response.body)}`,
+        );
+      },
+    },
+    {
+      name: "POST /visualize returns bar chart for Pembrolizumab query",
+      liveOnly: true,
+      async run(client) {
+        const response = await client.post("/visualize", {
+          query: "Compare trial phases for Pembrolizumab",
+        });
+
+        assert(
+          response.statusCode === 200,
+          `expected 200, got ${response.statusCode}: ${JSON.stringify(response.body)}`,
+        );
+
+        const parsed = VisualizationResponseSchema.safeParse(response.body);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(parsed.data.visualization.type === "bar_chart", "expected bar_chart visualization");
+        assert(
+          parsed.data.visualization.title.includes("Pembrolizumab"),
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(parsed.data.visualization.data.length === 6, "expected six phase bins");
+        assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
+        assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+
+        return parsed.data;
+      },
+    },
+    {
+      name: "POST /visualize returns line chart for Pembrolizumab timeline query",
+      liveOnly: true,
+      async run(client) {
+        const response = await client.post("/visualize", {
+          query: "How have Pembrolizumab trials changed over time?",
+        });
+
+        assert(
+          response.statusCode === 200,
+          `expected 200, got ${response.statusCode}: ${JSON.stringify(response.body)}`,
+        );
+
+        const parsed = VisualizationResponseSchema.safeParse(response.body);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(parsed.data.visualization.type === "line_chart", "expected line_chart visualization");
+        assert(
+          parsed.data.visualization.title.includes("Pembrolizumab"),
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(parsed.data.visualization.data.length > 0, "expected at least one year bin");
+        assert(
+          parsed.data.visualization.data.every(
+            (point) => Number.isInteger(point.year) && point.trial_count >= 0,
+          ),
+          "expected year bins with non-negative trial counts",
+        );
+        assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
+        assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+
+        return parsed.data;
+      },
+    },
+    {
+      name: "[MOCK] Timeline pipeline returns line chart with zero-filled gap years",
+      mocked: true,
+      async run() {
+        const aggregation = aggregateByStartYear([
+          validStudyIsoStartDate,
+          validStudyGapYearStartDate,
+        ]);
+
+        const response = assembleVisualizationResponse({
+          filters: {
+            drug_name: "Pembrolizumab",
+            condition: null,
+            phase: null,
+          },
+          visualizationType: "line_chart",
+          aggregation: aggregation.bins,
+          fetchedStudies: 2,
+          skippedMalformed: 0,
+          studiesWithMultiplePhases: 0,
+          truncated: false,
+        });
+
+        const parsed = VisualizationResponseSchema.safeParse(response);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(parsed.data.visualization.type === "line_chart", "expected line_chart visualization");
+        assert(
+          parsed.data.visualization.title === "Trials started per year for Pembrolizumab",
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(
+          parsed.data.visualization.data.some(
+            (point) => point.year === 2021 && point.trial_count === 0,
+          ),
+          "expected zero-filled gap year 2021",
+        );
+        assert(
+          parsed.data.visualization.data.some(
+            (point) => point.year === 2022 && point.trial_count === 0,
+          ),
+          "expected zero-filled gap year 2022",
+        );
+      },
+    },
+  ];
+}
 
 async function main(): Promise<void> {
-  const { live, running, baseUrl } = parseArgs(process.argv.slice(2));
-  const client = running ? createFetchClient(baseUrl) : await createInjectClient();
+  const { config } = await import("../src/config.js");
+  const { aggregateByStartYear } = await import("../src/domain/aggregations/index.js");
+  const { assembleVisualizationResponse } = await import(
+    "../src/domain/assembleVisualizationResponse.js"
+  );
+  const { VisualizationResponseSchema } = await import("../src/domain/schemas/index.js");
+  const { buildServer } = await import("../src/server.js");
+  const { validStudyGapYearStartDate, validStudyIsoStartDate } = await import(
+    "../tests/fixtures/ctgovStudies.js"
+  );
+
+  const { live, running, verbose, baseUrl } = parseArgs(process.argv.slice(2), config.PORT);
+  const client = running
+    ? createFetchClient(baseUrl)
+    : await createInjectClient(buildServer);
+  const smokeCases = createSmokeCases({
+    aggregateByStartYear,
+    assembleVisualizationResponse,
+    VisualizationResponseSchema,
+    validStudyGapYearStartDate,
+    validStudyIsoStartDate,
+  });
   const mode = running ? `running server (${baseUrl})` : "in-process";
   const cases = smokeCases.filter((testCase) => !testCase.liveOnly || live);
 
-  console.log(`Smoke test mode: ${mode}${live ? " + live pipeline" : ""}`);
+  console.log(`Smoke test mode: ${mode}${live ? " + live pipeline" : ""}${verbose ? " + verbose logs" : ""}`);
   console.log("");
 
   const failures: string[] = [];
@@ -191,8 +357,11 @@ async function main(): Promise<void> {
     process.stdout.write(`  ${testCase.name} ... `);
 
     try {
-      await testCase.run(client);
+      const summary = await testCase.run(client);
       console.log("ok");
+      if (testCase.liveOnly && summary !== undefined) {
+        printLiveValidationSummary(summary);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.log("FAIL");

@@ -1,6 +1,15 @@
 # ClinicalTrials.gov Visualization Pipeline
 
-Turn natural-language clinical trial queries into visualization-ready JSON. V1 supports **comparison** queries (trial counts by phase) and returns a **bar chart** specification backed by live ClinicalTrials.gov data.
+Turn natural-language clinical trial queries into visualization-ready JSON. The pipeline supports **comparison** queries (trial counts by phase → bar chart) and **timeline** queries (trial counts by start year → line chart), backed by live ClinicalTrials.gov data.
+
+## Supported flows
+
+| Intent | Viz type | Default measure | Example query |
+|--------|----------|-----------------|---------------|
+| `comparison` | `bar_chart` | trial count per **phase** | "Compare trial phases for Pembrolizumab" |
+| `trend_over_time` | `line_chart` | trial count per **start year** | "How have Pembrolizumab trials changed over time?" |
+
+**Deferred (V2b):** `distribution` → `histogram` (enrollment bins), `relationship` → `scatterplot` (enrollment vs start year).
 
 ## Setup
 
@@ -32,10 +41,14 @@ Start the HTTP server (default port `3000`, or `PORT` from `.env`):
 npm run dev
 ```
 
-Run the end-to-end comparison demo (OpenAI + ClinicalTrials.gov; prints each pipeline step):
+Run end-to-end demos (OpenAI + ClinicalTrials.gov; prints summary + response JSON):
 
 ```bash
-npm run demo:comparison
+npm run demo                # default: comparison preset
+npm run demo:comparison     # phase comparison → bar chart
+npm run demo:timeline       # start-year trend → line chart
+npm run demo -- --query "Compare trial phases for Pembrolizumab"
+npm run demo -- --list      # show available presets
 ```
 
 Run unit tests:
@@ -47,8 +60,8 @@ npm test
 Other useful scripts:
 
 - `npm run typecheck` — TypeScript compile check
-- `npm run smoke` — in-process HTTP smoke tests (no live APIs)
-- `npm run smoke:live` — smoke tests including a live Pembrolizumab query
+- `npm run smoke` — in-process HTTP smoke tests plus a mocked timeline case (no live APIs)
+- `npm run smoke:live` — smoke tests including live Pembrolizumab comparison and timeline queries
 
 With the server running, interactive API docs are available at `http://localhost:3000/docs` (or your configured `PORT`).
 
@@ -56,7 +69,7 @@ With the server running, interactive API docs are available at `http://localhost
 
 ### `POST /visualize`
 
-Interpret a natural-language query and return a bar chart of trial counts by phase.
+Interpret a natural-language query and return a visualization specification (`bar_chart` or `line_chart`).
 
 **Request**
 
@@ -74,7 +87,7 @@ Interpret a natural-language query and return a bar chart of trial counts by pha
 - `query` (required): non-empty natural-language query.
 - `hints` (optional): partial structured context passed to the LLM as advisory input. Hints never bypass interpretation.
 
-**Success response (`200`)**
+**Success response — bar chart (`200`)**
 
 ```json
 {
@@ -105,7 +118,42 @@ Interpret a natural-language query and return a bar chart of trial counts by pha
 }
 ```
 
-Phase bins always include all six V1 categories (`Phase 1`–`Phase 4`, `Early Phase 1`, `Not Applicable`), zero-filled when no trials match. Trial counts reflect studies that may appear in multiple phase bins.
+Phase bins always include all six categories (`Phase 1`–`Phase 4`, `Early Phase 1`, `Not Applicable`), zero-filled when no trials match. Trial counts reflect studies that may appear in multiple phase bins.
+
+**Success response — line chart (`200`)**
+
+```json
+{
+  "visualization": {
+    "type": "line_chart",
+    "title": "Trials started per year for Pembrolizumab",
+    "encoding": {
+      "x": { "field": "year", "type": "temporal" },
+      "y": { "field": "trial_count", "type": "quantitative" }
+    },
+    "data": [
+      { "year": 2020, "trial_count": 12 },
+      { "year": 2021, "trial_count": 0 },
+      { "year": 2022, "trial_count": 0 },
+      { "year": 2023, "trial_count": 8 }
+    ]
+  },
+  "meta": {
+    "filters": {
+      "drug_name": "Pembrolizumab",
+      "condition": null,
+      "phase": null
+    },
+    "source": "clinicaltrials.gov",
+    "fetched_studies": 20,
+    "skipped_malformed": 0,
+    "studies_with_multiple_phases": 0,
+    "truncated": false
+  }
+}
+```
+
+Year bins span from the minimum to maximum start year in the fetched studies (inclusive). Years with no trials appear explicitly as `trial_count: 0`. This prevents frontends from drawing a continuous line across unknown gap years — a line from 2020 to 2023 would otherwise imply steady change through 2021–2022 when no data exists.
 
 **Error response**
 
@@ -121,14 +169,16 @@ Phase bins always include all six V1 categories (`Phase 1`–`Phase 4`, `Early P
 | HTTP | Code | When |
 |------|------|------|
 | 400 | `INVALID_REQUEST` | Malformed or empty request body |
-| 400 | `UNSUPPORTED_INTENT` | Intent other than `comparison` |
+| 400 | `UNSUPPORTED_INTENT` | Intent outside supported set (`comparison`, `trend_over_time`) |
 | 404 | `NO_STUDIES_FOUND` | CT.gov returned zero studies |
 | 422 | `INVALID_PARAMETERS` | No usable entity filters after validation |
-| 422 | `NO_AGGREGATABLE_DATA` | Studies fetched but none had mappable phase data |
+| 422 | `NO_AGGREGATABLE_DATA` | Studies fetched but none had mappable phase or start-date data |
 | 502 | `UPSTREAM_API_FAILURE` | CT.gov request failed after retries |
 | 502 | `INTERPRETATION_FAILURE` | OpenAI interpretation failed after retries |
 
-### Example
+### Examples
+
+Comparison (bar chart):
 
 ```bash
 curl -X POST http://localhost:3000/visualize \
@@ -136,7 +186,13 @@ curl -X POST http://localhost:3000/visualize \
   -d '{"query": "Compare trial phases for Pembrolizumab"}'
 ```
 
-Supported V1 example query: **"Compare trial phases for Pembrolizumab"**
+Timeline (line chart):
+
+```bash
+curl -X POST http://localhost:3000/visualize \
+  -H "Content-Type: application/json" \
+  -d '{"query": "How have Pembrolizumab trials changed over time?"}'
+```
 
 ## Architecture
 
@@ -144,13 +200,19 @@ Layered pipeline with a thin orchestrator (`buildVisualization`):
 
 1. **Interpret** — OpenAI structured output extracts entities and intent
 2. **Validate** — trim and require at least one filter (`drug_name`, `condition`, or `phase`)
-3. **Fetch** — paginated ClinicalTrials.gov `/studies` with retries
-4. **Aggregate** — deterministic phase bin counts (multi-phase studies counted in each bin)
-5. **Resolve** — map `comparison` intent → `bar_chart`
+3. **Fetch** — paginated ClinicalTrials.gov `/studies` with intent-specific fields
+4. **Aggregate** — deterministic bin counts (phase bins or start-year bins with zero-fill)
+5. **Resolve** — map intent → visualization type (`comparison` → `bar_chart`, `trend_over_time` → `line_chart`)
 6. **Assemble** — build title, encoding, data, and meta; validate against Zod schema
 
 LLM calls live in `src/externals/`; aggregation and response shaping are deterministic in `src/domain/`.
 
+## Design notes
+
+- **Phase zero-fill (V1):** All six phase categories appear in every bar chart response, even when empty. Stable axes and honest gaps.
+- **Year zero-fill (V2):** All years from min to max start year appear in line chart responses. Gap years use `trial_count: 0` so clients do not interpolate across missing data.
+- **Deferred V2b:** Enrollment distribution (`histogram`) and enrollment-vs-year relationship (`scatterplot`) will reuse the same intent-dispatch pattern and date parsing added for timeline.
+
 ## Testing
 
-Unit tests cover deterministic domain logic (`npm test`). The demo script (`npm run demo:comparison`) is for manual end-to-end inspection and is not a substitute for tests.
+Unit tests cover deterministic domain logic (`npm test`). `npm run demo` runs the full pipeline for a preset or custom query. `npm run smoke` includes HTTP validation plus a mocked timeline case that does not call live APIs.
