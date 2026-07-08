@@ -3,6 +3,9 @@ import { NoStudiesFoundError } from "../../../src/domain/errors.js";
 import { getFieldsForIntent } from "../../../src/domain/intentFieldProfiles.js";
 import { fetchStudies } from "../../../src/externals/ctgov/fetchStudies.js";
 import {
+  malformedRelationshipStudyMissingEnrollment,
+  malformedRelationshipStudyMissingStartDate,
+  malformedRelationshipStudyZeroEnrollment,
   malformedStudyEmptyPhases,
   malformedStudyInvalidEnrollmentType,
   malformedStudyMissingEnrollment,
@@ -10,6 +13,7 @@ import {
   malformedStudyNonIntegerEnrollment,
   malformedStudyZeroEnrollment,
   validEnrollmentSmallStudy,
+  validRelationshipStudy,
   validSinglePhaseStudy,
   validStudyIsoStartDate,
 } from "../../fixtures/ctgovStudies.js";
@@ -126,6 +130,68 @@ describe("fetchStudies", () => {
       fetchStudies(entities, {
         intent: "trend_over_time",
         fields: getFieldsForIntent("trend_over_time"),
+      }),
+    ).rejects.toThrow(NoStudiesFoundError);
+  });
+
+  it("normalizes enrollment and start date fields for relationship fetches", async () => {
+    mockCtgovPage([
+      validRelationshipStudy,
+      malformedRelationshipStudyMissingEnrollment,
+      malformedRelationshipStudyMissingStartDate,
+      malformedRelationshipStudyZeroEnrollment,
+    ]);
+
+    const result = await fetchStudies(entities, {
+      intent: "relationship",
+      fields: getFieldsForIntent("relationship"),
+    });
+
+    expect(result.studies).toHaveLength(1);
+    expect(result.studies[0]).toEqual(validRelationshipStudy);
+    expect(result.skipped_malformed).toBe(3);
+  });
+
+  it("requests enrollment and start date fields in the CT.gov query for relationship fetches", async () => {
+    mockCtgovPage([validRelationshipStudy]);
+
+    await fetchStudies(entities, {
+      intent: "relationship",
+      fields: getFieldsForIntent("relationship"),
+    });
+
+    const calledUrl = new URL(mockFetch.mock.calls[0][0] as string);
+    expect(calledUrl.searchParams.get("fields")).toBe("NCTId,EnrollmentCount,StartDate");
+  });
+
+  it("uses relationship normalization even when all three field types are requested", async () => {
+    mockCtgovPage([
+      validRelationshipStudy,
+      validStudyIsoStartDate,
+      validEnrollmentSmallStudy,
+    ]);
+
+    const result = await fetchStudies(entities, {
+      intent: "relationship",
+      fields: getFieldsForIntent("relationship"),
+    });
+
+    expect(result.studies).toHaveLength(1);
+    expect(result.studies[0]).toEqual(validRelationshipStudy);
+    expect(result.skipped_malformed).toBe(2);
+  });
+
+  it("throws NoStudiesFoundError when every relationship study is malformed", async () => {
+    mockCtgovPage([
+      malformedRelationshipStudyMissingEnrollment,
+      malformedRelationshipStudyMissingStartDate,
+      malformedRelationshipStudyZeroEnrollment,
+    ]);
+
+    await expect(
+      fetchStudies(entities, {
+        intent: "relationship",
+        fields: getFieldsForIntent("relationship"),
       }),
     ).rejects.toThrow(NoStudiesFoundError);
   });

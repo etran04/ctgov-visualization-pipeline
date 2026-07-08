@@ -3,21 +3,27 @@ import type {
   CtgovStudyRecord,
   DistributionStudyRecord,
   PhaseStudyRecord,
+  RelationshipStudyRecord,
   StudyRecordForIntent,
   TimelineStudyRecord,
 } from "../../domain/types/ctgovStudyTypes.js";
 import { HTTP_STATUS, NoStudiesFoundError, UpstreamApiError } from "../../domain/errors.js";
 import type { Intent } from "../../domain/schemas/intents.js";
-import { parseStudyStartYear } from "../../domain/utils/parseStudyDate.js";
-import { parseEnrollmentCount } from "../../domain/utils/parseEnrollmentCount.js";
 import type { ValidatedEntities } from "../../domain/validateEntities.js";
 import { logger } from "../../lib/logger.js";
 import { mapQueryParams } from "./mapQueryParams.js";
+import { normalizeStudy } from "./normalizeStudy.js";
 
 /** Minimal CT.gov field set for phase aggregation (V1 default). */
 export const DEFAULT_CTGOV_FIELDS = ["NCTId", "Phase"] as const;
 
-export type { CtgovStudyRecord, DistributionStudyRecord, PhaseStudyRecord, TimelineStudyRecord };
+export type {
+  CtgovStudyRecord,
+  DistributionStudyRecord,
+  PhaseStudyRecord,
+  RelationshipStudyRecord,
+  TimelineStudyRecord,
+};
 
 export type FetchStudiesOptions<I extends Intent = "comparison"> = {
   intent?: I;
@@ -49,170 +55,6 @@ function backoffDelayMs(attempt: number): number {
 
 async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function extractNctId(study: Record<string, unknown>): string | null {
-  const protocolSection = study.protocolSection;
-  if (typeof protocolSection !== "object" || protocolSection === null) {
-    return null;
-  }
-
-  const identificationModule = (protocolSection as Record<string, unknown>).identificationModule;
-  if (typeof identificationModule !== "object" || identificationModule === null) {
-    return null;
-  }
-
-  const nctId = (identificationModule as Record<string, unknown>).nctId;
-  return typeof nctId === "string" ? nctId : null;
-}
-
-function normalizePhases(designModule: unknown): string[] | null {
-  if (typeof designModule !== "object" || designModule === null) {
-    return null;
-  }
-
-  const phases = (designModule as Record<string, unknown>).phases;
-  if (!Array.isArray(phases)) {
-    return null;
-  }
-
-  const normalizedPhases = phases.filter((phase): phase is string => typeof phase === "string");
-  if (normalizedPhases.length === 0) {
-    return null;
-  }
-
-  return normalizedPhases;
-}
-
-function normalizeStartDate(statusModule: unknown): string | null {
-  if (typeof statusModule !== "object" || statusModule === null) {
-    return null;
-  }
-
-  const startDateStruct = (statusModule as Record<string, unknown>).startDateStruct;
-  if (typeof startDateStruct !== "object" || startDateStruct === null) {
-    return null;
-  }
-
-  const date = (startDateStruct as Record<string, unknown>).date;
-  if (typeof date !== "string" || parseStudyStartYear(date) === null) {
-    return null;
-  }
-
-  return date;
-}
-
-function normalizePhaseStudy(study: unknown): PhaseStudyRecord | null {
-  if (typeof study !== "object" || study === null) {
-    return null;
-  }
-
-  const rawStudy = study as Record<string, unknown>;
-  const nctId = extractNctId(rawStudy);
-  if (nctId === null) {
-    return null;
-  }
-
-  const protocolSection = rawStudy.protocolSection as Record<string, unknown>;
-  const phases = normalizePhases(protocolSection.designModule);
-  if (phases === null) {
-    return null;
-  }
-
-  return {
-    protocolSection: {
-      identificationModule: { nctId },
-      designModule: { phases },
-    },
-  };
-}
-
-function normalizeTimelineStudy(study: unknown): TimelineStudyRecord | null {
-  if (typeof study !== "object" || study === null) {
-    return null;
-  }
-
-  const rawStudy = study as Record<string, unknown>;
-  const nctId = extractNctId(rawStudy);
-  if (nctId === null) {
-    return null;
-  }
-
-  const protocolSection = rawStudy.protocolSection as Record<string, unknown>;
-  const date = normalizeStartDate(protocolSection.statusModule);
-  if (date === null) {
-    return null;
-  }
-
-  return {
-    protocolSection: {
-      identificationModule: { nctId },
-      statusModule: {
-        startDateStruct: { date },
-      },
-    },
-  };
-}
-
-function normalizeEnrollmentCount(designModule: unknown): number | null {
-  if (typeof designModule !== "object" || designModule === null) {
-    return null;
-  }
-
-  const enrollmentInfo = (designModule as Record<string, unknown>).enrollmentInfo;
-  if (typeof enrollmentInfo !== "object" || enrollmentInfo === null) {
-    return null;
-  }
-
-  return parseEnrollmentCount((enrollmentInfo as Record<string, unknown>).count);
-}
-
-function normalizeDistributionStudy(study: unknown): DistributionStudyRecord | null {
-  if (typeof study !== "object" || study === null) {
-    return null;
-  }
-
-  const rawStudy = study as Record<string, unknown>;
-  const nctId = extractNctId(rawStudy);
-  if (nctId === null) {
-    return null;
-  }
-
-  const protocolSection = rawStudy.protocolSection as Record<string, unknown>;
-  const count = normalizeEnrollmentCount(protocolSection.designModule);
-  if (count === null) {
-    return null;
-  }
-
-  return {
-    protocolSection: {
-      identificationModule: { nctId },
-      designModule: {
-        enrollmentInfo: { count },
-      },
-    },
-  };
-}
-
-function normalizeStudy(
-  study: unknown,
-  requestedFields: readonly string[],
-): CtgovStudyRecord | null {
-  const fieldSet = new Set(requestedFields);
-
-  if (fieldSet.has("Phase")) {
-    return normalizePhaseStudy(study);
-  }
-
-  if (fieldSet.has("StartDate")) {
-    return normalizeTimelineStudy(study);
-  }
-
-  if (fieldSet.has("EnrollmentCount")) {
-    return normalizeDistributionStudy(study);
-  }
-
-  return null;
 }
 
 async function requestStudies(url: URL): Promise<CtgovStudiesResponse> {
@@ -271,6 +113,7 @@ export async function fetchStudies<I extends Intent = "comparison">(
 ): Promise<FetchStudiesResult<StudyRecordForIntent<I>>> {
   const queryParams = mapQueryParams(entities);
   const requestedFields = options.fields ?? DEFAULT_CTGOV_FIELDS;
+  const intent = options.intent;
   const fields = requestedFields.join(",");
 
   const studies: CtgovStudyRecord[] = [];
@@ -295,7 +138,7 @@ export async function fetchStudies<I extends Intent = "comparison">(
 
     const pageStudies = Array.isArray(payload.studies) ? payload.studies : [];
     for (const study of pageStudies) {
-      const normalized = normalizeStudy(study, requestedFields);
+      const normalized = normalizeStudy(study, requestedFields, intent);
       if (normalized === null) {
         skippedMalformed += 1;
         continue;
