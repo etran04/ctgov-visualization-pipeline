@@ -1,3 +1,5 @@
+import type { PhaseStudyRecord, TimelineStudyRecord } from "../../src/domain/ctgovStudyTypes.js";
+
 export const validSinglePhaseStudy = {
   protocolSection: {
     identificationModule: {
@@ -7,7 +9,7 @@ export const validSinglePhaseStudy = {
       phases: ["PHASE2"],
     },
   },
-};
+} satisfies PhaseStudyRecord;
 
 export const validMultiPhaseStudy = {
   protocolSection: {
@@ -18,7 +20,7 @@ export const validMultiPhaseStudy = {
       phases: ["PHASE1", "PHASE3"],
     },
   },
-};
+} satisfies PhaseStudyRecord;
 
 export const validDuplicatePhaseStudy = {
   protocolSection: {
@@ -29,7 +31,7 @@ export const validDuplicatePhaseStudy = {
       phases: ["PHASE1", "PHASE1"],
     },
   },
-};
+} satisfies PhaseStudyRecord;
 
 export const malformedStudyMissingPhases = {
   protocolSection: {
@@ -60,7 +62,7 @@ export const malformedStudyUnknownPhase = {
       phases: ["PHASE5"],
     },
   },
-};
+} satisfies PhaseStudyRecord;
 
 export const malformedStudyEmptyPhases = {
   protocolSection: {
@@ -71,7 +73,7 @@ export const malformedStudyEmptyPhases = {
       phases: [],
     },
   },
-};
+} satisfies PhaseStudyRecord;
 
 export const validStudyIsoStartDate = {
   protocolSection: {
@@ -84,7 +86,7 @@ export const validStudyIsoStartDate = {
       },
     },
   },
-};
+} satisfies TimelineStudyRecord;
 
 export const validStudyMonthYearStartDate = {
   protocolSection: {
@@ -97,7 +99,7 @@ export const validStudyMonthYearStartDate = {
       },
     },
   },
-};
+} satisfies TimelineStudyRecord;
 
 export const validStudyYearOnlyStartDate = {
   protocolSection: {
@@ -110,7 +112,7 @@ export const validStudyYearOnlyStartDate = {
       },
     },
   },
-};
+} satisfies TimelineStudyRecord;
 
 export const validStudySameYearAsIso = {
   protocolSection: {
@@ -123,7 +125,7 @@ export const validStudySameYearAsIso = {
       },
     },
   },
-};
+} satisfies TimelineStudyRecord;
 
 export const validStudyGapYearStartDate = {
   protocolSection: {
@@ -136,7 +138,7 @@ export const validStudyGapYearStartDate = {
       },
     },
   },
-};
+} satisfies TimelineStudyRecord;
 
 export const malformedStudyMissingStartDate = {
   protocolSection: {
@@ -171,7 +173,7 @@ export const malformedStudyUnparseableStartDate = {
       },
     },
   },
-};
+} satisfies TimelineStudyRecord;
 
 export const malformedStudyEmptyStartDate = {
   protocolSection: {
@@ -184,4 +186,14 @@ export const malformedStudyEmptyStartDate = {
       },
     },
   },
-};
+} satisfies TimelineStudyRecord;
+
+/** Cast intentionally malformed fixtures for defensive aggregator tests. */
+export function asPhaseStudy(study: unknown): PhaseStudyRecord {
+  return study as PhaseStudyRecord;
+}
+
+/** Cast intentionally malformed fixtures for defensive aggregator tests. */
+export function asTimelineStudy(study: unknown): TimelineStudyRecord {
+  return study as TimelineStudyRecord;
+}

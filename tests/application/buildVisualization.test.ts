@@ -50,11 +50,14 @@ describe("buildVisualization", () => {
       "Compare trial phases for Pembrolizumab",
       undefined,
     );
-    expect(mockFetchStudies).toHaveBeenCalledWith({
-      drug_name: "Pembrolizumab",
-      condition: null,
-      phase: null,
-    });
+    expect(mockFetchStudies).toHaveBeenCalledWith(
+      {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      { intent: "comparison" },
+    );
 
     expect(response.visualization.type).toBe("bar_chart");
     expect(response.visualization.title).toBe("Trial phases for Pembrolizumab");

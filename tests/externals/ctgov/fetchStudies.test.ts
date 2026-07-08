@@ -37,6 +37,7 @@ describe("fetchStudies", () => {
     mockCtgovPage([validSinglePhaseStudy, malformedStudyEmptyPhases]);
 
     const result = await fetchStudies(entities, {
+      intent: "comparison",
       fields: getFieldsForIntent("comparison"),
     });
 
@@ -50,6 +51,7 @@ describe("fetchStudies", () => {
     mockCtgovPage([validStudyIsoStartDate, malformedStudyMissingStartDate]);
 
     const result = await fetchStudies(entities, {
+      intent: "trend_over_time",
       fields: getFieldsForIntent("trend_over_time"),
     });
 
@@ -61,7 +63,10 @@ describe("fetchStudies", () => {
   it("requests the provided fields in the CT.gov query", async () => {
     mockCtgovPage([validStudyIsoStartDate]);
 
-    await fetchStudies(entities, { fields: getFieldsForIntent("trend_over_time") });
+    await fetchStudies(entities, {
+      intent: "trend_over_time",
+      fields: getFieldsForIntent("trend_over_time"),
+    });
 
     const calledUrl = new URL(mockFetch.mock.calls[0][0] as string);
     expect(calledUrl.searchParams.get("fields")).toBe("NCTId,StartDate");
@@ -71,7 +76,10 @@ describe("fetchStudies", () => {
     mockCtgovPage([malformedStudyMissingStartDate]);
 
     await expect(
-      fetchStudies(entities, { fields: getFieldsForIntent("trend_over_time") }),
+      fetchStudies(entities, {
+        intent: "trend_over_time",
+        fields: getFieldsForIntent("trend_over_time"),
+      }),
     ).rejects.toThrow(NoStudiesFoundError);
   });
 });

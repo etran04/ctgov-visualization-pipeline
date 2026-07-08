@@ -1,25 +1,28 @@
+import type { PhaseStudyRecord, TimelineStudyRecord } from "../ctgovStudyTypes.js";
 import type { PhaseLabel } from "../mapPhaseValues.js";
 
 /**
- * Minimal CT.gov study record shape used as aggregation input.
+ * Permissive study shape for tests and defensive aggregator fallbacks.
  *
- * Fields are optional because each aggregator reads only the subset it needs.
+ * Production paths should pass intent-specific strict records from fetch.
  */
 export type CtgovStudyLike = {
   protocolSection?: {
     identificationModule?: {
-      nctId?: unknown;
+      nctId?: string;
     };
     designModule?: {
-      phases?: unknown;
+      phases?: string[] | unknown;
     };
     statusModule?: {
       startDateStruct?: {
-        date?: unknown;
+        date?: string;
       };
     };
   };
 };
+
+export type { PhaseStudyRecord, TimelineStudyRecord };
 
 /**
  * Internal aggregation bin produced by `aggregateByPhase`.

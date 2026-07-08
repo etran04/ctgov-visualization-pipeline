@@ -1,4 +1,4 @@
-import type { CtgovStudyLike, PhaseAggregationBin } from "./types.js";
+import type { PhaseStudyRecord, PhaseAggregationBin } from "./types.js";
 import { NoAggregatableDataError } from "../errors.js";
 import { mapCtgovPhaseToDomain, PHASE_BIN_ORDER, type PhaseLabel } from "../mapPhaseValues.js";
 
@@ -12,8 +12,8 @@ export type PhaseAggregationResult = {
   studies_with_multiple_phases: number;
 };
 
-function extractMappedPhases(study: CtgovStudyLike): PhaseLabel[] | null {
-  const rawPhases = study.protocolSection?.designModule?.phases;
+function extractMappedPhases(study: PhaseStudyRecord): PhaseLabel[] | null {
+  const rawPhases = study.protocolSection.designModule?.phases;
   if (!Array.isArray(rawPhases)) {
     return null;
   }
@@ -39,7 +39,7 @@ function extractMappedPhases(study: CtgovStudyLike): PhaseLabel[] | null {
  *
  * @throws {NoAggregatableDataError} When input is empty or every study is skipped.
  */
-export function aggregateByPhase(studies: CtgovStudyLike[]): PhaseAggregationResult {
+export function aggregateByPhase(studies: PhaseStudyRecord[]): PhaseAggregationResult {
   if (studies.length === 0) {
     throw new NoAggregatableDataError("No studies were provided for aggregation");
   }
@@ -67,14 +67,15 @@ export function aggregateByPhase(studies: CtgovStudyLike[]): PhaseAggregationRes
       studiesWithMultiplePhases += 1;
     }
 
-    const nctId = study.protocolSection?.identificationModule?.nctId;
-    const sourceId = typeof nctId === "string" ? nctId : null;
+    const nctId = study.protocolSection.identificationModule?.nctId;
+    if (typeof nctId !== "string") {
+      skippedMalformed += 1;
+      continue;
+    }
 
     for (const phase of mappedPhases) {
       counts.set(phase, (counts.get(phase) ?? 0) + 1);
-      if (sourceId !== null) {
-        sourceNctIds.get(phase)?.push(sourceId);
-      }
+      sourceNctIds.get(phase)?.push(nctId);
     }
   }
 

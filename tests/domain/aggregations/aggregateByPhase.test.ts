@@ -3,6 +3,7 @@ import { aggregateByPhase } from "../../../src/domain/aggregations/index.js";
 import { NoAggregatableDataError } from "../../../src/domain/errors.js";
 import { PHASE_BIN_ORDER } from "../../../src/domain/mapPhaseValues.js";
 import {
+  asPhaseStudy,
   malformedStudyEmptyPhases,
   malformedStudyInvalidPhasesType,
   malformedStudyMissingPhases,
@@ -46,8 +47,8 @@ describe("aggregateByPhase", () => {
   it("skips malformed studies and reports how many were skipped", () => {
     const result = aggregateByPhase([
       validSinglePhaseStudy,
-      malformedStudyMissingPhases,
-      malformedStudyInvalidPhasesType,
+      asPhaseStudy(malformedStudyMissingPhases),
+      asPhaseStudy(malformedStudyInvalidPhasesType),
       malformedStudyUnknownPhase,
       malformedStudyEmptyPhases,
     ]);
@@ -70,8 +71,8 @@ describe("aggregateByPhase", () => {
   it("throws when every study is malformed or unmappable", () => {
     expect(() =>
       aggregateByPhase([
-        malformedStudyMissingPhases,
-        malformedStudyInvalidPhasesType,
+        asPhaseStudy(malformedStudyMissingPhases),
+        asPhaseStudy(malformedStudyInvalidPhasesType),
         malformedStudyUnknownPhase,
         malformedStudyEmptyPhases,
       ]),

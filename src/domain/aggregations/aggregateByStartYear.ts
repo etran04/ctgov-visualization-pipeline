@@ -1,4 +1,4 @@
-import type { CtgovStudyLike, YearAggregationBin } from "./types.js";
+import type { TimelineStudyRecord, YearAggregationBin } from "./types.js";
 import { NoAggregatableDataError } from "../errors.js";
 import { parseStudyStartYear } from "../parseStudyDate.js";
 
@@ -10,8 +10,8 @@ export type YearAggregationResult = {
   skipped_malformed: number;
 };
 
-function extractStartYear(study: CtgovStudyLike): number | null {
-  const date = study.protocolSection?.statusModule?.startDateStruct?.date;
+function extractStartYear(study: TimelineStudyRecord): number | null {
+  const date = study.protocolSection.statusModule?.startDateStruct?.date;
   return parseStudyStartYear(date);
 }
 
@@ -26,7 +26,7 @@ function extractStartYear(study: CtgovStudyLike): number | null {
  *
  * @throws {NoAggregatableDataError} When input is empty or every study is skipped.
  */
-export function aggregateByStartYear(studies: CtgovStudyLike[]): YearAggregationResult {
+export function aggregateByStartYear(studies: TimelineStudyRecord[]): YearAggregationResult {
   if (studies.length === 0) {
     throw new NoAggregatableDataError("No studies were provided for aggregation");
   }
@@ -47,11 +47,10 @@ export function aggregateByStartYear(studies: CtgovStudyLike[]): YearAggregation
     aggregatableStudies += 1;
     counts.set(year, (counts.get(year) ?? 0) + 1);
 
-    const nctId = study.protocolSection?.identificationModule?.nctId;
-    const sourceId = typeof nctId === "string" ? nctId : null;
-    if (sourceId !== null) {
+    const nctId = study.protocolSection.identificationModule?.nctId;
+    if (typeof nctId === "string") {
       const existing = sourceNctIds.get(year) ?? [];
-      existing.push(sourceId);
+      existing.push(nctId);
       sourceNctIds.set(year, existing);
     }
   }

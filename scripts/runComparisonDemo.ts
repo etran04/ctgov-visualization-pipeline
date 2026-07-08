@@ -37,7 +37,7 @@ async function main(): Promise<void> {
   const validatedEntities = validateEntities(interpretation.entities);
   printStep(2, "Validated params", validatedEntities);
 
-  const fetchResult = await fetchStudies(validatedEntities);
+  const fetchResult = await fetchStudies(validatedEntities, { intent: "comparison" });
   printStep(3, "Fetch summary", {
     pages_fetched: fetchResult.pages_fetched,
     studies_fetched: fetchResult.studies.length,

@@ -41,7 +41,7 @@ export async function buildVisualization(
   const validatedEntities = validateEntities(interpretation.entities);
   logger.info({ validated_entities: validatedEntities }, "Validated entities");
 
-  const fetchResult = await fetchStudies(validatedEntities);
+  const fetchResult = await fetchStudies(validatedEntities, { intent: "comparison" });
 
   const aggregation = aggregateByPhase(fetchResult.studies);
   logger.info(

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { aggregateByStartYear } from "../../../src/domain/aggregations/index.js";
 import { NoAggregatableDataError } from "../../../src/domain/errors.js";
 import {
+  asTimelineStudy,
   malformedStudyEmptyStartDate,
   malformedStudyInvalidStartDateType,
   malformedStudyMissingStartDate,
@@ -71,8 +72,8 @@ describe("aggregateByStartYear", () => {
   it("skips malformed studies and reports how many were skipped", () => {
     const result = aggregateByStartYear([
       validStudyIsoStartDate,
-      malformedStudyMissingStartDate,
-      malformedStudyInvalidStartDateType,
+      asTimelineStudy(malformedStudyMissingStartDate),
+      asTimelineStudy(malformedStudyInvalidStartDateType),
       malformedStudyUnparseableStartDate,
       malformedStudyEmptyStartDate,
     ]);
@@ -90,8 +91,8 @@ describe("aggregateByStartYear", () => {
   it("throws when every study lacks a parseable start date", () => {
     expect(() =>
       aggregateByStartYear([
-        malformedStudyMissingStartDate,
-        malformedStudyInvalidStartDateType,
+        asTimelineStudy(malformedStudyMissingStartDate),
+        asTimelineStudy(malformedStudyInvalidStartDateType),
         malformedStudyUnparseableStartDate,
         malformedStudyEmptyStartDate,
       ]),
