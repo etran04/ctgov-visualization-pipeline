@@ -3,7 +3,7 @@ import { ChartTitleSchema, OptionalCitationsSchema } from "./shared.js";
 
 const ScatterplotDataPointSchema = z.object({
   nct_id: z.string(),
-  enrollment_count: z.number().int().positive(),
+  enrollment_count: z.number().int().min(1),
   year: z.number().int(),
   citations: OptionalCitationsSchema,
 });
