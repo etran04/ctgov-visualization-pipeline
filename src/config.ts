@@ -38,6 +38,7 @@ export const config = {
     3,
     "OPENAI_RETRY_ATTEMPTS",
   ),
+  OPENAI_TIMEOUT_MS: parsePositiveInt(process.env.OPENAI_TIMEOUT_MS, 30_000, "OPENAI_TIMEOUT_MS"),
   PORT: parsePositiveInt(process.env.PORT, 3000, "PORT"),
 } as const;
 

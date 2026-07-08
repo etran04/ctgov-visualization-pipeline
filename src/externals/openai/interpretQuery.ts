@@ -1,0 +1,177 @@
+import OpenAI, {
+  APIConnectionError,
+  APIConnectionTimeoutError,
+  APIError,
+} from "openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import type { ParsedChatCompletion } from "openai/resources/chat/completions";
+import { z } from "zod";
+import { config } from "../../config.js";
+import { HTTP_STATUS, InterpretationError, UnsupportedIntentError } from "../../domain/errors.js";
+import {
+  QueryInterpretationSchema,
+  type QueryInterpretation,
+} from "../../domain/schemas.js";
+import { logger } from "../../lib/logger.js";
+
+const openai = new OpenAI({
+  apiKey: config.OPENAI_API_KEY,
+  timeout: config.OPENAI_TIMEOUT_MS,
+});
+
+const SYSTEM_PROMPT = `You extract structured entities from natural-language queries about clinical trials for comparison visualizations.
+
+For V1, always set:
+- intent to "comparison"
+- comparison_dimension to "phase"
+- suggested_viz_type to "bar_chart"
+
+Extract entities from the user query:
+- drug_name: intervention or drug name (null if not mentioned)
+- condition: disease, condition, or indication (null if not mentioned)
+- phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases)
+
+Use null for fields that are not mentioned. Do not use empty strings.
+Optional hints from the caller are advisory context only; prefer the user query when they conflict.`;
+
+const RESPONSE_FORMAT = zodResponseFormat(QueryInterpretationSchema, "query_interpretation");
+
+function backoffDelayMs(attempt: number): number {
+  return Math.min(250 * 2 ** (attempt - 1), 4000);
+}
+
+async function sleep(ms: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "Unknown error";
+}
+
+function isRetriableOpenAiError(error: unknown): boolean {
+  if (error instanceof APIConnectionError || error instanceof APIConnectionTimeoutError) {
+    return true;
+  }
+
+  if (error instanceof APIError) {
+    const status = error.status;
+    return status === HTTP_STATUS.TOO_MANY_REQUESTS || status >= HTTP_STATUS.INTERNAL_SERVER_ERROR;
+  }
+
+  return false;
+}
+
+function isBlockedOrTruncatedOutput(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "LengthFinishReasonError" || error.name === "ContentFilterFinishReasonError")
+  );
+}
+
+function buildUserMessage(query: string, hints?: Partial<QueryInterpretation>): string {
+  if (hints === undefined || Object.keys(hints).length === 0) {
+    return query;
+  }
+
+  return `${query}\n\nAdvisory hints (optional context only):\n${JSON.stringify(hints, null, 2)}`;
+}
+
+function extractInterpretation(
+  completion: ParsedChatCompletion<QueryInterpretation>,
+): QueryInterpretation {
+  const choice = completion.choices[0];
+  if (choice === undefined) {
+    throw new InterpretationError("OpenAI returned no completion choices");
+  }
+
+  if (choice.finish_reason === "length" || choice.finish_reason === "content_filter") {
+    throw new InterpretationError("OpenAI interpretation was blocked or truncated");
+  }
+
+  const parsed = choice.message.parsed;
+  if (parsed === null) {
+    throw new InterpretationError("OpenAI returned an unparseable interpretation");
+  }
+
+  const validated = QueryInterpretationSchema.safeParse(parsed);
+  if (!validated.success) {
+    throw new InterpretationError("OpenAI interpretation failed schema validation");
+  }
+
+  if (validated.data.intent !== "comparison") {
+    throw new UnsupportedIntentError(`Unsupported intent: ${validated.data.intent}`);
+  }
+
+  return validated.data;
+}
+
+async function requestInterpretation(
+  query: string,
+  hints?: Partial<QueryInterpretation>,
+): Promise<QueryInterpretation> {
+  const messages = [
+    { role: "system" as const, content: SYSTEM_PROMPT },
+    { role: "user" as const, content: buildUserMessage(query, hints) },
+  ];
+
+  let attempt = 0;
+  let lastError: unknown = null;
+
+  while (attempt < config.OPENAI_RETRY_ATTEMPTS) {
+    attempt += 1;
+
+    try {
+      const completion = await openai.chat.completions.parse({
+        model: config.OPENAI_MODEL,
+        messages,
+        response_format: RESPONSE_FORMAT,
+      });
+
+      return extractInterpretation(completion);
+    } catch (error) {
+      if (error instanceof UnsupportedIntentError || error instanceof InterpretationError) {
+        throw error;
+      }
+
+      if (error instanceof z.ZodError || isBlockedOrTruncatedOutput(error)) {
+        logger.error({ err: errorMessage(error) }, "OpenAI interpretation produced invalid output");
+        throw new InterpretationError("OpenAI interpretation produced invalid output");
+      }
+
+      lastError = error;
+
+      if (error instanceof APIError && !isRetriableOpenAiError(error)) {
+        logger.error({ err: errorMessage(error) }, "OpenAI interpretation request failed");
+        throw new InterpretationError(`OpenAI interpretation request failed: ${errorMessage(error)}`);
+      }
+
+      if (attempt < config.OPENAI_RETRY_ATTEMPTS) {
+        await sleep(backoffDelayMs(attempt));
+        continue;
+      }
+    }
+  }
+
+  logger.error(
+    { err: errorMessage(lastError) },
+    "OpenAI interpretation failed after retries",
+  );
+  throw new InterpretationError(
+    `OpenAI interpretation failed after retries: ${errorMessage(lastError)}`,
+  );
+}
+
+export async function interpretQuery(
+  query: string,
+  hints?: Partial<QueryInterpretation>,
+): Promise<QueryInterpretation> {
+  const interpretation = await requestInterpretation(query, hints);
+
+  logger.info({ interpretation }, "Interpreted query");
+
+  return interpretation;
+}
