@@ -58,7 +58,7 @@ export async function buildVisualization(
 
   const response = assembleVisualizationResponse({
     filters: validatedEntities,
-    visualizationType,
+    visualizationType: "bar_chart",
     aggregation: aggregation.bins,
     fetchedStudies: fetchResult.studies.length,
     skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,

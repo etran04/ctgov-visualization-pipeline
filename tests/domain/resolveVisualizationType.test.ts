@@ -7,6 +7,10 @@ describe("resolveVisualizationType", () => {
     expect(resolveVisualizationType("comparison")).toBe("bar_chart");
   });
 
+  it("maps trend_over_time intent to a line chart", () => {
+    expect(resolveVisualizationType("trend_over_time")).toBe("line_chart");
+  });
+
   it("throws for unsupported intents", () => {
     expect(() =>
       resolveVisualizationType("distribution" as never),

@@ -9,7 +9,7 @@ const baseAggregation = PHASE_BIN_ORDER.map((phase) => ({
   source_nct_ids: phase === "Phase 2" ? ["NCT00000001", "NCT00000002", "NCT00000003"] : [],
 }));
 
-describe("assembleVisualizationResponse", () => {
+describe("assembleBarChartResponse", () => {
   it("builds a drug-first title when both drug and condition are present", () => {
     const response = assembleVisualizationResponse({
       filters: {
@@ -94,6 +94,69 @@ describe("assembleVisualizationResponse", () => {
 
     expect(response.visualization.data).toEqual([]);
     expect(response.meta.truncated).toBe(true);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+});
+
+describe("assembleLineChartResponse", () => {
+  const baseYearAggregation = [
+    { year: 2020, trial_count: 2, source_nct_ids: ["NCT00000001", "NCT00000002"] },
+    { year: 2021, trial_count: 0, source_nct_ids: [] },
+    { year: 2022, trial_count: 0, source_nct_ids: [] },
+    { year: 2023, trial_count: 1, source_nct_ids: ["NCT00000003"] },
+  ];
+
+  it("builds a drug-first title when both drug and condition are present", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: "Pembrolizumab",
+        condition: "lung cancer",
+        phase: null,
+      },
+      visualizationType: "line_chart",
+      aggregation: baseYearAggregation,
+      fetchedStudies: 12,
+      skippedMalformed: 2,
+      studiesWithMultiplePhases: 0,
+      truncated: false,
+    });
+
+    expect(response.visualization.title).toBe(
+      "Trials started per year for Pembrolizumab in lung cancer",
+    );
+  });
+
+  it("uses temporal year encoding and strips source_nct_ids", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      visualizationType: "line_chart",
+      aggregation: baseYearAggregation,
+      fetchedStudies: 3,
+      skippedMalformed: 0,
+      studiesWithMultiplePhases: 0,
+      truncated: false,
+    });
+
+    expect(response.visualization.type).toBe("line_chart");
+    expect(response.visualization.encoding).toEqual({
+      x: { field: "year", type: "temporal" },
+      y: { field: "trial_count", type: "quantitative" },
+    });
+
+    for (const point of response.visualization.data) {
+      expect(point).not.toHaveProperty("source_nct_ids");
+    }
+
+    expect(response.visualization.data).toEqual([
+      { year: 2020, trial_count: 2 },
+      { year: 2021, trial_count: 0 },
+      { year: 2022, trial_count: 0 },
+      { year: 2023, trial_count: 1 },
+    ]);
     expect(VisualizationResponseSchema.parse(response)).toEqual(response);
   });
 });
