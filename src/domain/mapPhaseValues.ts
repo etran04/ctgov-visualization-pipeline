@@ -1,3 +1,4 @@
+/** Canonical display order for phase bins in charts and aggregation output. */
 export const PHASE_BIN_ORDER = [
   "Phase 1",
   "Phase 2",
@@ -27,10 +28,12 @@ const DOMAIN_TO_API_PHASE_MAP: Record<PhaseLabel, string> = {
   "Not Applicable": "NA",
 };
 
+/** Map a CT.gov API phase enum (e.g. `PHASE2`) to a display label. Returns null for unknown values. */
 export function mapCtgovPhaseToDomain(phase: string): PhaseLabel | null {
   return API_TO_DOMAIN_PHASE_MAP[phase] ?? null;
 }
 
+/** Map a domain phase label to a CT.gov API filter value. Returns null for unknown values. */
 export function mapDomainPhaseToCtgov(phase: string): string | null {
   return (DOMAIN_TO_API_PHASE_MAP as Record<string, string>)[phase] ?? null;
 }

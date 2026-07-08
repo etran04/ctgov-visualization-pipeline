@@ -32,6 +32,13 @@ function buildTitle(filters: QueryEntities): string {
   return "Trial phases for matching studies";
 }
 
+/**
+ * Build the final HTTP visualization response from aggregation output.
+ *
+ * Generates a deterministic chart title (drug-first when both drug and
+ * condition are present), strips internal `source_nct_ids` from data points,
+ * and validates the payload against `VisualizationResponseSchema`.
+ */
 export function assembleVisualizationResponse(
   input: AssembleVisualizationResponseInput,
 ): VisualizationResponse {

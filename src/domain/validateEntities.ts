@@ -16,6 +16,14 @@ function normalizeNullableString(value: string | null, fieldName: string): strin
   return trimmed;
 }
 
+/**
+ * Normalize and validate LLM-extracted entities before downstream fetch.
+ *
+ * Trims string fields, rejects empty strings after trim, and requires at
+ * least one of `drug_name`, `condition`, or `phase` to be non-null.
+ *
+ * @throws {InvalidParametersError} When a string field is empty or all filters are null.
+ */
 export function validateEntities(entities: QueryEntities): ValidatedEntities {
   const validated: ValidatedEntities = {
     drug_name: normalizeNullableString(entities.drug_name, "drug_name"),

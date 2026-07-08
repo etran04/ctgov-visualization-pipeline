@@ -4,6 +4,7 @@ import type { ValidatedEntities } from "../../domain/validateEntities.js";
 import { logger } from "../../lib/logger.js";
 import { mapQueryParams } from "./mapQueryParams.js";
 
+/** Minimal CT.gov field set for phase aggregation (V1 default). */
 export const DEFAULT_CTGOV_FIELDS = ["NCTId", "Phase"] as const;
 
 export type FetchStudiesOptions = {
@@ -26,10 +27,13 @@ type CtgovStudiesResponse = {
   nextPageToken?: unknown;
 };
 
+/** Result of a paginated CT.gov studies fetch. */
 export type FetchStudiesResult = {
   studies: CtgovStudy[];
   pages_fetched: number;
+  /** Studies dropped during response normalization (missing NCT ID or phases). */
   skipped_malformed: number;
+  /** True when `CTGOV_MAX_PAGES` was reached before pagination completed. */
   truncated: boolean;
 };
 
@@ -126,6 +130,18 @@ async function requestStudies(url: URL): Promise<CtgovStudiesResponse> {
   throw new UpstreamApiError(message);
 }
 
+/**
+ * Fetch clinical trial studies from ClinicalTrials.gov matching validated entities.
+ *
+ * Paginates through `/studies` until no `nextPageToken` or `CTGOV_MAX_PAGES` is
+ * reached. Malformed records are skipped rather than failing the request.
+ * No implicit study-type or status filters are applied.
+ *
+ * @param entities - Validated query filters mapped to CT.gov params.
+ * @param options.fields - Override requested fields (defaults to `DEFAULT_CTGOV_FIELDS`).
+ * @throws {NoStudiesFoundError} When zero valid studies are returned.
+ * @throws {UpstreamApiError} When requests fail after retries.
+ */
 export async function fetchStudies(
   entities: ValidatedEntities,
   options: FetchStudiesOptions = {},

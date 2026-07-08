@@ -1,3 +1,11 @@
+/**
+ * Schemas and inferred types for the visualization pipeline.
+ *
+ * Shared across layers:
+ * - `QueryInterpretationSchema` — LLM structured output (OpenAI + domain validation)
+ * - `VisualizeRequestSchema` — `POST /visualize` request body
+ * - `VisualizationResponseSchema` — successful HTTP response contract
+ */
 import { z } from "zod";
 import { PHASE_BIN_ORDER } from "./mapPhaseValues.js";
 
@@ -29,6 +37,7 @@ export const QueryEntitiesSchema = z.object({
   phase: EntityPhaseSchema,
 });
 
+/** Structured output from query interpretation (Stage 1). */
 export const QueryInterpretationSchema = z.object({
   intent: IntentSchema,
   entities: QueryEntitiesSchema,
@@ -43,6 +52,7 @@ export const QueryInterpretationSchema = z.object({
 export type QueryInterpretation = z.infer<typeof QueryInterpretationSchema>;
 export type QueryEntities = z.infer<typeof QueryEntitiesSchema>;
 
+/** `POST /visualize` request body. `hints` are advisory and do not bypass the LLM. */
 export const VisualizeRequestSchema = z.object({
   query: z.string().trim().min(1, "query is required"),
   hints: QueryInterpretationSchema.partial().optional(),
@@ -61,6 +71,7 @@ const VisualizationDataPointSchema = z.object({
   citations: z.array(CitationSchema).nullable().optional(),
 });
 
+/** Successful `POST /visualize` response. Validated before serialization. */
 export const VisualizationResponseSchema = z.object({
   visualization: z.object({
     type: z.literal("bar_chart"),

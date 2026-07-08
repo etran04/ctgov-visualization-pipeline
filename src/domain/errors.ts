@@ -1,3 +1,18 @@
+/**
+ * Typed domain errors for the visualization pipeline.
+ *
+ * Each error carries a stable `code` and `statusCode` for HTTP mapping.
+ * The route layer serializes these as `{ error: { code, message } }`.
+ *
+ * | Error                    | HTTP | Code                    |
+ * |--------------------------|------|-------------------------|
+ * | UnsupportedIntentError   | 400  | UNSUPPORTED_INTENT      |
+ * | InvalidParametersError   | 422  | INVALID_PARAMETERS      |
+ * | NoStudiesFoundError      | 404  | NO_STUDIES_FOUND        |
+ * | NoAggregatableDataError  | 422  | NO_AGGREGATABLE_DATA    |
+ * | UpstreamApiError         | 502  | UPSTREAM_API_FAILURE    |
+ * | InterpretationError      | 502  | INTERPRETATION_FAILURE  |
+ */
 type ErrorCode =
   | "UNSUPPORTED_INTENT"
   | "INVALID_PARAMETERS"
@@ -65,6 +80,7 @@ export class InterpretationError extends DomainError {
   }
 }
 
+/** Type guard for catching pipeline errors in the HTTP layer. */
 export function isDomainError(error: unknown): error is DomainError {
   return error instanceof DomainError;
 }

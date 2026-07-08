@@ -13,9 +13,13 @@ type CtgovStudyLike = {
   };
 };
 
+/** Output of deterministic phase-bin aggregation. */
 export type PhaseAggregationResult = {
+  /** All phase bins in stable order, zero-filled where count is 0. */
   bins: PhaseAggregationBin[];
+  /** Studies skipped due to missing or unmappable phase data. */
   skipped_malformed: number;
+  /** Studies counted in more than one phase bin. */
   studies_with_multiple_phases: number;
 };
 
@@ -37,6 +41,15 @@ function extractMappedPhases(study: CtgovStudyLike): PhaseLabel[] | null {
   return [...new Set(mapped)];
 }
 
+/**
+ * Count trials per phase bin from CT.gov study records.
+ *
+ * Reads phases from `designModule.phases` only. Multi-phase studies are
+ * counted in every applicable bin. `source_nct_ids` is kept internal for
+ * future citation work and is stripped at HTTP assembly.
+ *
+ * @throws {NoAggregatableDataError} When input is empty or every study is skipped.
+ */
 export function aggregateByPhase(studies: CtgovStudyLike[]): PhaseAggregationResult {
   if (studies.length === 0) {
     throw new NoAggregatableDataError("No studies were provided for aggregation");

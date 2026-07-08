@@ -1,3 +1,10 @@
+/**
+ * Application-layer orchestrator for the visualization pipeline.
+ *
+ * Wires externals (OpenAI interpretation, CT.gov fetch) with deterministic
+ * domain steps (validation, aggregation, viz resolution, response assembly).
+ * Each step logs structured output; domain errors propagate to the HTTP layer.
+ */
 import { aggregateByPhase } from "../domain/aggregateByPhase.js";
 import { assembleVisualizationResponse } from "../domain/assembleVisualizationResponse.js";
 import { resolveVisualizationType } from "../domain/resolveVisualizationType.js";
@@ -7,11 +14,25 @@ import { fetchStudies } from "../externals/ctgov/fetchStudies.js";
 import { interpretQuery } from "../externals/openai/interpretQuery.js";
 import { logger } from "../lib/logger.js";
 
+/** Input to the visualization pipeline. */
 export type BuildVisualizationInput = {
+  /** Natural-language query from the user. */
   query: string;
+  /** Advisory context passed to the LLM; never bypasses interpretation. */
   hints?: Partial<QueryInterpretation>;
 };
 
+/**
+ * Run the full visualization pipeline for a natural-language query.
+ *
+ * @returns A schema-valid visualization response ready for HTTP serialization.
+ * @throws {UnsupportedIntentError} When the interpreted intent is not supported in V1.
+ * @throws {InvalidParametersError} When no usable entity filters remain after validation.
+ * @throws {NoStudiesFoundError} When CT.gov returns zero studies.
+ * @throws {NoAggregatableDataError} When fetched studies contain no mappable phase data.
+ * @throws {UpstreamApiError} When CT.gov requests fail after retries.
+ * @throws {InterpretationError} When OpenAI interpretation fails after retries.
+ */
 export async function buildVisualization(
   input: BuildVisualizationInput,
 ): Promise<VisualizationResponse> {

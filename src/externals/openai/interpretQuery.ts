@@ -165,6 +165,20 @@ async function requestInterpretation(
   );
 }
 
+/**
+ * Interpret a natural-language query into structured entities via OpenAI.
+ *
+ * Always calls the LLM — `hints` are advisory context only and do not bypass
+ * interpretation. Retries transient failures (429, 5xx, network) with
+ * exponential backoff up to `OPENAI_RETRY_ATTEMPTS`.
+ *
+ * @param query - User's natural-language request.
+ * @param hints - Optional partial interpretation passed as advisory context.
+ * @returns Validated `QueryInterpretation` with V1 `comparison` intent.
+ * @throws {UnsupportedIntentError} When the model returns a non-comparison intent.
+ * @throws {InterpretationError} On timeout, exhausted retries, blocked/truncated
+ *   output, or unparseable structured response.
+ */
 export async function interpretQuery(
   query: string,
   hints?: Partial<QueryInterpretation>,
