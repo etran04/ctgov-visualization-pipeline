@@ -1,13 +1,11 @@
+import type { PhaseAggregationBin } from "./aggregationTypes.js";
 import type { QueryEntities, VisualizationResponse } from "./schemas.js";
 import { VisualizationResponseSchema } from "./schemas.js";
 
 type AssembleVisualizationResponseInput = {
   filters: QueryEntities;
   visualizationType: "bar_chart";
-  aggregation: Array<{
-    phase: string;
-    trial_count: number;
-  }>;
+  aggregation: PhaseAggregationBin[];
   fetchedStudies: number;
   skippedMalformed: number;
   studiesWithMultiplePhases: number;

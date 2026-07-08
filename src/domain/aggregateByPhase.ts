@@ -1,8 +1,12 @@
+import type { PhaseAggregationBin } from "./aggregationTypes.js";
 import { NoAggregatableDataError } from "./errors.js";
 import { mapCtgovPhaseToDomain, PHASE_BIN_ORDER, type PhaseLabel } from "./mapPhaseValues.js";
 
 type CtgovStudyLike = {
   protocolSection?: {
+    identificationModule?: {
+      nctId?: unknown;
+    };
     designModule?: {
       phases?: unknown;
     };
@@ -10,10 +14,7 @@ type CtgovStudyLike = {
 };
 
 export type PhaseAggregationResult = {
-  bins: Array<{
-    phase: PhaseLabel;
-    trial_count: number;
-  }>;
+  bins: PhaseAggregationBin[];
   skipped_malformed: number;
   studies_with_multiple_phases: number;
 };
@@ -44,6 +45,9 @@ export function aggregateByPhase(studies: CtgovStudyLike[]): PhaseAggregationRes
   const counts = new Map<PhaseLabel, number>(
     PHASE_BIN_ORDER.map((phase) => [phase, 0] satisfies [PhaseLabel, number]),
   );
+  const sourceNctIds = new Map<PhaseLabel, string[]>(
+    PHASE_BIN_ORDER.map((phase) => [phase, []] satisfies [PhaseLabel, string[]]),
+  );
 
   let skippedMalformed = 0;
   let studiesWithMultiplePhases = 0;
@@ -61,8 +65,14 @@ export function aggregateByPhase(studies: CtgovStudyLike[]): PhaseAggregationRes
       studiesWithMultiplePhases += 1;
     }
 
+    const nctId = study.protocolSection?.identificationModule?.nctId;
+    const sourceId = typeof nctId === "string" ? nctId : null;
+
     for (const phase of mappedPhases) {
       counts.set(phase, (counts.get(phase) ?? 0) + 1);
+      if (sourceId !== null) {
+        sourceNctIds.get(phase)?.push(sourceId);
+      }
     }
   }
 
@@ -74,6 +84,7 @@ export function aggregateByPhase(studies: CtgovStudyLike[]): PhaseAggregationRes
     bins: PHASE_BIN_ORDER.map((phase) => ({
       phase,
       trial_count: counts.get(phase) ?? 0,
+      source_nct_ids: sourceNctIds.get(phase) ?? [],
     })),
     skipped_malformed: skippedMalformed,
     studies_with_multiple_phases: studiesWithMultiplePhases,

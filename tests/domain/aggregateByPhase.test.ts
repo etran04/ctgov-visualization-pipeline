@@ -18,12 +18,12 @@ describe("aggregateByPhase", () => {
 
     expect(result.bins.map((bin) => bin.phase)).toEqual(PHASE_BIN_ORDER);
     expect(result.bins).toEqual([
-      { phase: "Phase 1", trial_count: 0 },
-      { phase: "Phase 2", trial_count: 1 },
-      { phase: "Phase 3", trial_count: 0 },
-      { phase: "Phase 4", trial_count: 0 },
-      { phase: "Early Phase 1", trial_count: 0 },
-      { phase: "Not Applicable", trial_count: 0 },
+      { phase: "Phase 1", trial_count: 0, source_nct_ids: [] },
+      { phase: "Phase 2", trial_count: 1, source_nct_ids: ["NCT00000001"] },
+      { phase: "Phase 3", trial_count: 0, source_nct_ids: [] },
+      { phase: "Phase 4", trial_count: 0, source_nct_ids: [] },
+      { phase: "Early Phase 1", trial_count: 0, source_nct_ids: [] },
+      { phase: "Not Applicable", trial_count: 0, source_nct_ids: [] },
     ]);
     expect(result.skipped_malformed).toBe(0);
     expect(result.studies_with_multiple_phases).toBe(0);
@@ -33,12 +33,12 @@ describe("aggregateByPhase", () => {
     const result = aggregateByPhase([validMultiPhaseStudy, validDuplicatePhaseStudy]);
 
     expect(result.bins).toEqual([
-      { phase: "Phase 1", trial_count: 2 },
-      { phase: "Phase 2", trial_count: 0 },
-      { phase: "Phase 3", trial_count: 1 },
-      { phase: "Phase 4", trial_count: 0 },
-      { phase: "Early Phase 1", trial_count: 0 },
-      { phase: "Not Applicable", trial_count: 0 },
+      { phase: "Phase 1", trial_count: 2, source_nct_ids: ["NCT00000002", "NCT00000003"] },
+      { phase: "Phase 2", trial_count: 0, source_nct_ids: [] },
+      { phase: "Phase 3", trial_count: 1, source_nct_ids: ["NCT00000002"] },
+      { phase: "Phase 4", trial_count: 0, source_nct_ids: [] },
+      { phase: "Early Phase 1", trial_count: 0, source_nct_ids: [] },
+      { phase: "Not Applicable", trial_count: 0, source_nct_ids: [] },
     ]);
     expect(result.studies_with_multiple_phases).toBe(1);
   });
@@ -53,12 +53,12 @@ describe("aggregateByPhase", () => {
     ]);
 
     expect(result.bins).toEqual([
-      { phase: "Phase 1", trial_count: 0 },
-      { phase: "Phase 2", trial_count: 1 },
-      { phase: "Phase 3", trial_count: 0 },
-      { phase: "Phase 4", trial_count: 0 },
-      { phase: "Early Phase 1", trial_count: 0 },
-      { phase: "Not Applicable", trial_count: 0 },
+      { phase: "Phase 1", trial_count: 0, source_nct_ids: [] },
+      { phase: "Phase 2", trial_count: 1, source_nct_ids: ["NCT00000001"] },
+      { phase: "Phase 3", trial_count: 0, source_nct_ids: [] },
+      { phase: "Phase 4", trial_count: 0, source_nct_ids: [] },
+      { phase: "Early Phase 1", trial_count: 0, source_nct_ids: [] },
+      { phase: "Not Applicable", trial_count: 0, source_nct_ids: [] },
     ]);
     expect(result.skipped_malformed).toBe(4);
   });

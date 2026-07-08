@@ -4,7 +4,11 @@ import type { ValidatedEntities } from "../../domain/validateEntities.js";
 import { logger } from "../../lib/logger.js";
 import { mapQueryParams } from "./mapQueryParams.js";
 
-const DEFAULT_FIELDS = ["NCTId", "Phase"] as const;
+export const DEFAULT_CTGOV_FIELDS = ["NCTId", "Phase"] as const;
+
+export type FetchStudiesOptions = {
+  fields?: readonly string[];
+};
 
 type CtgovStudy = {
   protocolSection: {
@@ -122,9 +126,12 @@ async function requestStudies(url: URL): Promise<CtgovStudiesResponse> {
   throw new UpstreamApiError(message);
 }
 
-export async function fetchStudies(entities: ValidatedEntities): Promise<FetchStudiesResult> {
+export async function fetchStudies(
+  entities: ValidatedEntities,
+  options: FetchStudiesOptions = {},
+): Promise<FetchStudiesResult> {
   const queryParams = mapQueryParams(entities);
-  const fields = DEFAULT_FIELDS.join(",");
+  const fields = (options.fields ?? DEFAULT_CTGOV_FIELDS).join(",");
 
   const studies: CtgovStudy[] = [];
   let pagesFetched = 0;
