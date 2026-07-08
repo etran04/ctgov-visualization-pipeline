@@ -5,8 +5,14 @@
  * domain steps (validation, aggregation, viz resolution, response assembly).
  * Each step logs structured output; domain errors propagate to the HTTP layer.
  */
-import { aggregateByPhase } from "../domain/aggregations/index.js";
+import {
+  aggregateByPhase,
+  aggregateByStartYear,
+  type PhaseStudyRecord,
+  type TimelineStudyRecord,
+} from "../domain/aggregations/index.js";
 import { assembleVisualizationResponse } from "../domain/assembleVisualizationResponse.js";
+import { getFieldsForIntent } from "../domain/intentFieldProfiles.js";
 import { resolveVisualizationType } from "../domain/resolveVisualizationType.js";
 import type { QueryInterpretation, VisualizationResponse } from "../domain/schemas/index.js";
 import { validateEntities } from "../domain/validateEntities.js";
@@ -26,10 +32,10 @@ export type BuildVisualizationInput = {
  * Run the full visualization pipeline for a natural-language query.
  *
  * @returns A schema-valid visualization response ready for HTTP serialization.
- * @throws {UnsupportedIntentError} When the interpreted intent is not supported in V1.
+ * @throws {UnsupportedIntentError} When the interpreted intent is not supported.
  * @throws {InvalidParametersError} When no usable entity filters remain after validation.
  * @throws {NoStudiesFoundError} When CT.gov returns zero studies.
- * @throws {NoAggregatableDataError} When fetched studies contain no mappable phase data.
+ * @throws {NoAggregatableDataError} When fetched studies contain no aggregatable data.
  * @throws {UpstreamApiError} When CT.gov requests fail after retries.
  * @throws {InterpretationError} When OpenAI interpretation fails after retries.
  */
@@ -41,30 +47,66 @@ export async function buildVisualization(
   const validatedEntities = validateEntities(interpretation.entities);
   logger.info({ validated_entities: validatedEntities }, "Validated entities");
 
-  const fetchResult = await fetchStudies(validatedEntities, { intent: "comparison" });
+  const intent = interpretation.intent;
+  const fetchResult = await fetchStudies(validatedEntities, {
+    intent,
+    fields: getFieldsForIntent(intent),
+  });
 
-  const aggregation = aggregateByPhase(fetchResult.studies);
-  logger.info(
-    {
-      bins: aggregation.bins,
-      skipped_malformed: aggregation.skipped_malformed,
-      studies_with_multiple_phases: aggregation.studies_with_multiple_phases,
-    },
-    "Aggregated studies by phase",
-  );
-
-  const visualizationType = resolveVisualizationType(interpretation.intent);
+  const visualizationType = resolveVisualizationType(intent);
   logger.info({ visualization_type: visualizationType }, "Resolved visualization type");
 
-  const response = assembleVisualizationResponse({
-    filters: validatedEntities,
-    visualizationType: "bar_chart",
-    aggregation: aggregation.bins,
-    fetchedStudies: fetchResult.studies.length,
-    skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
-    studiesWithMultiplePhases: aggregation.studies_with_multiple_phases,
-    truncated: fetchResult.truncated,
-  });
+  let response: VisualizationResponse;
+
+  switch (intent) {
+    case "comparison": {
+      const aggregation = aggregateByPhase(fetchResult.studies as PhaseStudyRecord[]);
+      logger.info(
+        {
+          bins: aggregation.bins,
+          skipped_malformed: aggregation.skipped_malformed,
+          studies_with_multiple_phases: aggregation.studies_with_multiple_phases,
+        },
+        "Aggregated studies by phase",
+      );
+
+      response = assembleVisualizationResponse({
+        filters: validatedEntities,
+        visualizationType: "bar_chart",
+        aggregation: aggregation.bins,
+        fetchedStudies: fetchResult.studies.length,
+        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+        studiesWithMultiplePhases: aggregation.studies_with_multiple_phases,
+        truncated: fetchResult.truncated,
+      });
+      break;
+    }
+    case "trend_over_time": {
+      const aggregation = aggregateByStartYear(fetchResult.studies as TimelineStudyRecord[]);
+      logger.info(
+        {
+          bins: aggregation.bins,
+          skipped_malformed: aggregation.skipped_malformed,
+        },
+        "Aggregated studies by start year",
+      );
+
+      response = assembleVisualizationResponse({
+        filters: validatedEntities,
+        visualizationType: "line_chart",
+        aggregation: aggregation.bins,
+        fetchedStudies: fetchResult.studies.length,
+        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+        studiesWithMultiplePhases: 0,
+        truncated: fetchResult.truncated,
+      });
+      break;
+    }
+    default: {
+      const _exhaustive: never = intent;
+      throw new Error(`Unsupported intent: ${String(_exhaustive)}`);
+    }
+  }
 
   logger.info(
     {
