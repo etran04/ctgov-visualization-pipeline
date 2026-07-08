@@ -1,0 +1,13 @@
+import { UnsupportedIntentError } from "./errors.js";
+import type { Intent } from "./schemas.js";
+
+export function resolveVisualizationType(intent: Intent): "bar_chart" {
+  switch (intent) {
+    // NB: Building V1 first, so only supporting comparison for now.
+    case "comparison":
+      return "bar_chart";
+    default:
+      // TODO: add viz mappings for trend_over_time, distribution, relationship, etc.
+      throw new UnsupportedIntentError(`Unsupported intent: ${String(intent)}`);
+  }
+}
