@@ -8,6 +8,7 @@ describe("interpretQuery interpretation shape", () => {
       entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
       comparison_dimension: "phase",
       time_dimension: null,
+      distribution_dimension: null,
       suggested_viz_type: "bar_chart",
     });
 
@@ -25,6 +26,7 @@ describe("interpretQuery interpretation shape", () => {
       entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
       comparison_dimension: null,
       time_dimension: "start_year",
+      distribution_dimension: null,
       suggested_viz_type: "line_chart",
     });
 
@@ -33,6 +35,24 @@ describe("interpretQuery interpretation shape", () => {
       entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
       time_dimension: "start_year",
       suggested_viz_type: "line_chart",
+    });
+  });
+
+  it("accepts distribution intent from OpenAI flat output", () => {
+    const interpretation = parseQueryInterpretation({
+      intent: "distribution",
+      entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
+      comparison_dimension: null,
+      time_dimension: null,
+      distribution_dimension: "enrollment_count",
+      suggested_viz_type: "histogram",
+    });
+
+    expect(interpretation).toEqual({
+      intent: "distribution",
+      entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
+      distribution_dimension: "enrollment_count",
+      suggested_viz_type: "histogram",
     });
   });
 });

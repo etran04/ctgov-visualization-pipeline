@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const SUPPORTED_INTENTS = ["comparison", "trend_over_time"] as const;
+export const SUPPORTED_INTENTS = ["comparison", "trend_over_time", "distribution"] as const;
 
 export type Intent = (typeof SUPPORTED_INTENTS)[number];
 

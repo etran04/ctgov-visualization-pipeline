@@ -83,7 +83,7 @@ function printLiveValidationSummary(response: VisualizationResponse): void {
     for (const point of viz.data) {
       console.log(`      ${point.phase.padEnd(16)} ${point.trial_count}`);
     }
-  } else {
+  } else if (viz.type === "line_chart") {
     const years = viz.data.map((point) => point.year);
     const zeroFilled = viz.data.filter((point) => point.trial_count === 0).length;
     console.log(

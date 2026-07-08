@@ -24,10 +24,22 @@ const TrendOverTimeInterpretationSchema = z.object({
     .describe("Suggested visualization type for the interpreted timeline request."),
 });
 
+const DistributionInterpretationSchema = z.object({
+  intent: z.literal("distribution"),
+  entities: QueryEntitiesSchema,
+  distribution_dimension: z
+    .literal("enrollment_count")
+    .describe("Which distribution dimension should be used in downstream aggregation."),
+  suggested_viz_type: z
+    .literal("histogram")
+    .describe("Suggested visualization type for the interpreted distribution request."),
+});
+
 /** Structured output from query interpretation (Stage 1). */
 export const QueryInterpretationSchema = z.discriminatedUnion("intent", [
   ComparisonInterpretationSchema,
   TrendOverTimeInterpretationSchema,
+  DistributionInterpretationSchema,
 ]);
 
 /**
@@ -47,9 +59,15 @@ export const QueryInterpretationOpenAiSchema = z.object({
     .literal("start_year")
     .nullable()
     .describe("Set to start_year for trend_over_time intent; null otherwise."),
+  distribution_dimension: z
+    .literal("enrollment_count")
+    .nullable()
+    .describe("Set to enrollment_count for distribution intent; null otherwise."),
   suggested_viz_type: z
-    .enum(["bar_chart", "line_chart"])
-    .describe("bar_chart for comparison; line_chart for trend_over_time."),
+    .enum(["bar_chart", "line_chart", "histogram"])
+    .describe(
+      "bar_chart for comparison; line_chart for trend_over_time; histogram for distribution.",
+    ),
 });
 
 export type QueryInterpretationOpenAi = z.infer<typeof QueryInterpretationOpenAiSchema>;
@@ -57,6 +75,7 @@ export type QueryInterpretationOpenAi = z.infer<typeof QueryInterpretationOpenAi
 export const QueryInterpretationHintsSchema = z.union([
   ComparisonInterpretationSchema.partial(),
   TrendOverTimeInterpretationSchema.partial(),
+  DistributionInterpretationSchema.partial(),
 ]);
 
 export type QueryInterpretation = z.infer<typeof QueryInterpretationSchema>;
@@ -77,6 +96,13 @@ export function parseQueryInterpretation(raw: QueryInterpretationOpenAi): QueryI
         intent: raw.intent,
         entities: raw.entities,
         time_dimension: raw.time_dimension,
+        suggested_viz_type: raw.suggested_viz_type,
+      });
+    case "distribution":
+      return DistributionInterpretationSchema.parse({
+        intent: raw.intent,
+        entities: raw.entities,
+        distribution_dimension: raw.distribution_dimension,
         suggested_viz_type: raw.suggested_viz_type,
       });
   }

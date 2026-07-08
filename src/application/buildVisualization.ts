@@ -12,6 +12,7 @@ import {
   type TimelineStudyRecord,
 } from "../domain/aggregations/index.js";
 import { assembleVisualizationResponse } from "../domain/assembleVisualizationResponse.js";
+import { UnsupportedIntentError } from "../domain/errors.js";
 import { getFieldsForIntent } from "../domain/intentFieldProfiles.js";
 import { resolveVisualizationType } from "../domain/resolveVisualizationType.js";
 import type { QueryInterpretation, VisualizationResponse } from "../domain/schemas/index.js";
@@ -101,6 +102,9 @@ export async function buildVisualization(
         truncated: fetchResult.truncated,
       });
       break;
+    }
+    case "distribution": {
+      throw new UnsupportedIntentError("Distribution intent is not yet implemented");
     }
     default: {
       const _exhaustive: never = intent;
