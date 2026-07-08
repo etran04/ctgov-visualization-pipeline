@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 function parsePositiveInt(value: string | undefined, fallback: number, key: string): number {
   if (value === undefined || value.trim() === "") {
     return fallback;
