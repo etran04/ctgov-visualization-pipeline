@@ -10,7 +10,15 @@ describe("intentFieldProfiles", () => {
     expect(getFieldsForIntent("trend_over_time")).toEqual(["NCTId", "StartDate"]);
   });
 
+  it("maps distribution intent to enrollment fields", () => {
+    expect(getFieldsForIntent("distribution")).toEqual(["NCTId", "EnrollmentCount"]);
+  });
+
   it("covers every supported intent", () => {
-    expect(Object.keys(INTENT_FIELD_PROFILES).sort()).toEqual(["comparison", "trend_over_time"]);
+    expect(Object.keys(INTENT_FIELD_PROFILES).sort()).toEqual([
+      "comparison",
+      "distribution",
+      "trend_over_time",
+    ]);
   });
 });

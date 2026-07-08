@@ -30,18 +30,27 @@ Supported intents:
    - Set comparison_dimension to "phase"
    - Set suggested_viz_type to "bar_chart"
    - Set time_dimension to null
+   - Set distribution_dimension to null
    - Examples: "compare phases", "breakdown by phase", "trial phases for X"
 
 2. "trend_over_time" — user wants to see how trials change over time
    - Set time_dimension to "start_year"
    - Set suggested_viz_type to "line_chart"
    - Set comparison_dimension to null
+   - Set distribution_dimension to null
    - Examples: "over time", "timeline", "trend", "per year", "how have X trials changed"
+
+3. "distribution" — user wants to see enrollment sizes or how trials are distributed by enrollment
+   - Set distribution_dimension to "enrollment_count"
+   - Set suggested_viz_type to "histogram"
+   - Set comparison_dimension to null
+   - Set time_dimension to null
+   - Examples: "enrollment distribution", "enrollment sizes", "how big are trials", "trial sizes for X"
 
 Extract entities from the user query:
 - drug_name: intervention or drug name (null if not mentioned)
 - condition: disease, condition, or indication (null if not mentioned)
-- phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases or showing trends over time)
+- phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases, showing trends over time, or showing enrollment distribution)
 
 Use null for fields that are not mentioned. Do not use empty strings.
 Optional hints from the caller are advisory context only; prefer the user query when they conflict.`;

@@ -1,6 +1,7 @@
 import { config } from "../../config.js";
 import type {
   CtgovStudyRecord,
+  DistributionStudyRecord,
   PhaseStudyRecord,
   StudyRecordForIntent,
   TimelineStudyRecord,
@@ -8,6 +9,7 @@ import type {
 import { HTTP_STATUS, NoStudiesFoundError, UpstreamApiError } from "../../domain/errors.js";
 import type { Intent } from "../../domain/schemas/intents.js";
 import { parseStudyStartYear } from "../../domain/utils/parseStudyDate.js";
+import { parseEnrollmentCount } from "../../domain/utils/parseEnrollmentCount.js";
 import type { ValidatedEntities } from "../../domain/validateEntities.js";
 import { logger } from "../../lib/logger.js";
 import { mapQueryParams } from "./mapQueryParams.js";
@@ -15,7 +17,7 @@ import { mapQueryParams } from "./mapQueryParams.js";
 /** Minimal CT.gov field set for phase aggregation (V1 default). */
 export const DEFAULT_CTGOV_FIELDS = ["NCTId", "Phase"] as const;
 
-export type { CtgovStudyRecord, PhaseStudyRecord, TimelineStudyRecord };
+export type { CtgovStudyRecord, DistributionStudyRecord, PhaseStudyRecord, TimelineStudyRecord };
 
 export type FetchStudiesOptions<I extends Intent = "comparison"> = {
   intent?: I;
@@ -152,6 +154,46 @@ function normalizeTimelineStudy(study: unknown): TimelineStudyRecord | null {
   };
 }
 
+function normalizeEnrollmentCount(designModule: unknown): number | null {
+  if (typeof designModule !== "object" || designModule === null) {
+    return null;
+  }
+
+  const enrollmentInfo = (designModule as Record<string, unknown>).enrollmentInfo;
+  if (typeof enrollmentInfo !== "object" || enrollmentInfo === null) {
+    return null;
+  }
+
+  return parseEnrollmentCount((enrollmentInfo as Record<string, unknown>).count);
+}
+
+function normalizeDistributionStudy(study: unknown): DistributionStudyRecord | null {
+  if (typeof study !== "object" || study === null) {
+    return null;
+  }
+
+  const rawStudy = study as Record<string, unknown>;
+  const nctId = extractNctId(rawStudy);
+  if (nctId === null) {
+    return null;
+  }
+
+  const protocolSection = rawStudy.protocolSection as Record<string, unknown>;
+  const count = normalizeEnrollmentCount(protocolSection.designModule);
+  if (count === null) {
+    return null;
+  }
+
+  return {
+    protocolSection: {
+      identificationModule: { nctId },
+      designModule: {
+        enrollmentInfo: { count },
+      },
+    },
+  };
+}
+
 function normalizeStudy(
   study: unknown,
   requestedFields: readonly string[],
@@ -164,6 +206,10 @@ function normalizeStudy(
 
   if (fieldSet.has("StartDate")) {
     return normalizeTimelineStudy(study);
+  }
+
+  if (fieldSet.has("EnrollmentCount")) {
+    return normalizeDistributionStudy(study);
   }
 
   return null;

@@ -4,7 +4,12 @@ import { getFieldsForIntent } from "../../../src/domain/intentFieldProfiles.js";
 import { fetchStudies } from "../../../src/externals/ctgov/fetchStudies.js";
 import {
   malformedStudyEmptyPhases,
+  malformedStudyInvalidEnrollmentType,
+  malformedStudyMissingEnrollment,
   malformedStudyMissingStartDate,
+  malformedStudyNonIntegerEnrollment,
+  malformedStudyZeroEnrollment,
+  validEnrollmentSmallStudy,
   validSinglePhaseStudy,
   validStudyIsoStartDate,
 } from "../../fixtures/ctgovStudies.js";
@@ -58,6 +63,48 @@ describe("fetchStudies", () => {
     expect(result.studies).toHaveLength(1);
     expect(result.studies[0]).toEqual(validStudyIsoStartDate);
     expect(result.skipped_malformed).toBe(1);
+  });
+
+  it("normalizes enrollment fields for distribution fetches", async () => {
+    mockCtgovPage([
+      validEnrollmentSmallStudy,
+      malformedStudyMissingEnrollment,
+      malformedStudyZeroEnrollment,
+      malformedStudyNonIntegerEnrollment,
+      malformedStudyInvalidEnrollmentType,
+    ]);
+
+    const result = await fetchStudies(entities, {
+      intent: "distribution",
+      fields: getFieldsForIntent("distribution"),
+    });
+
+    expect(result.studies).toHaveLength(1);
+    expect(result.studies[0]).toEqual(validEnrollmentSmallStudy);
+    expect(result.skipped_malformed).toBe(4);
+  });
+
+  it("requests enrollment fields in the CT.gov query for distribution fetches", async () => {
+    mockCtgovPage([validEnrollmentSmallStudy]);
+
+    await fetchStudies(entities, {
+      intent: "distribution",
+      fields: getFieldsForIntent("distribution"),
+    });
+
+    const calledUrl = new URL(mockFetch.mock.calls[0][0] as string);
+    expect(calledUrl.searchParams.get("fields")).toBe("NCTId,EnrollmentCount");
+  });
+
+  it("throws NoStudiesFoundError when every distribution study is malformed", async () => {
+    mockCtgovPage([malformedStudyMissingEnrollment, malformedStudyZeroEnrollment]);
+
+    await expect(
+      fetchStudies(entities, {
+        intent: "distribution",
+        fields: getFieldsForIntent("distribution"),
+      }),
+    ).rejects.toThrow(NoStudiesFoundError);
   });
 
   it("requests the provided fields in the CT.gov query", async () => {

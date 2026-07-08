@@ -63,4 +63,6 @@ export type StudyRecordForIntent<I extends Intent> = I extends "comparison"
   ? PhaseStudyRecord
   : I extends "trend_over_time"
     ? TimelineStudyRecord
-    : never;
+    : I extends "distribution"
+      ? DistributionStudyRecord
+      : never;
