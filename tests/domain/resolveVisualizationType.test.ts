@@ -11,9 +11,13 @@ describe("resolveVisualizationType", () => {
     expect(resolveVisualizationType("trend_over_time")).toBe("line_chart");
   });
 
+  it("maps distribution intent to a histogram", () => {
+    expect(resolveVisualizationType("distribution")).toBe("histogram");
+  });
+
   it("throws for unsupported intents", () => {
     expect(() =>
-      resolveVisualizationType("distribution" as never),
+      resolveVisualizationType("relationship" as never),
     ).toThrow(UnsupportedIntentError);
   });
 });

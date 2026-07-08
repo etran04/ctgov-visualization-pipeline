@@ -1,7 +1,7 @@
 import { UnsupportedIntentError } from "./errors.js";
 import type { Intent } from "./schemas/index.js";
 
-export type VisualizationType = "bar_chart" | "line_chart";
+export type VisualizationType = "bar_chart" | "line_chart" | "histogram";
 
 /**
  * Map an interpreted intent to a concrete visualization type.
@@ -14,6 +14,8 @@ export function resolveVisualizationType(intent: Intent): VisualizationType {
       return "bar_chart";
     case "trend_over_time":
       return "line_chart";
+    case "distribution":
+      return "histogram";
     default:
       throw new UnsupportedIntentError(`Unsupported intent: ${String(intent)}`);
   }

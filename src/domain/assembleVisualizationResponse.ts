@@ -1,4 +1,5 @@
 import type {
+  EnrollmentAggregationBin,
   PhaseAggregationBin,
   YearAggregationBin,
 } from "./aggregations/index.js";
@@ -24,13 +25,20 @@ type LineChartAssembleInput = BaseAssembleInput & {
   aggregation: YearAggregationBin[];
 };
 
+type HistogramAssembleInput = BaseAssembleInput & {
+  visualizationType: "histogram";
+  aggregation: EnrollmentAggregationBin[];
+};
+
 export type AssembleVisualizationResponseInput =
   | BarChartAssembleInput
-  | LineChartAssembleInput;
+  | LineChartAssembleInput
+  | HistogramAssembleInput;
 
 const TITLE_PREFIX_BY_VIZ_TYPE = {
   bar_chart: "Trial phases for",
   line_chart: "Trials started per year for",
+  histogram: "Enrollment distribution for",
 } as const satisfies Record<VisualizationType, string>;
 
 function buildFilterSubject(filters: QueryEntities): string {
@@ -124,6 +132,34 @@ export function assembleLineChartResponse(
 }
 
 /**
+ * Build a histogram visualization response from enrollment aggregation output.
+ *
+ * Strips internal `source_nct_ids` from data points and validates against
+ * `VisualizationResponseSchema`.
+ */
+export function assembleHistogramResponse(
+  input: HistogramAssembleInput,
+): VisualizationResponse {
+  return VisualizationResponseSchema.parse({
+    visualization: {
+      type: "histogram",
+      title: buildTitle(input.filters, "histogram"),
+      encoding: {
+        x: { field: "bin_label", type: "ordinal" },
+        y: { field: "trial_count", type: "quantitative" },
+      },
+      data: input.aggregation.map((bin) => ({
+        bin_label: bin.bin_label,
+        bin_start: bin.bin_start,
+        bin_end: bin.bin_end,
+        trial_count: bin.trial_count,
+      })),
+    },
+    meta: buildMeta(input),
+  });
+}
+
+/**
  * Build the final HTTP visualization response from aggregation output.
  *
  * Dispatches to the intent-specific assembler based on `visualizationType`.
@@ -136,6 +172,8 @@ export function assembleVisualizationResponse(
       return assembleBarChartResponse(input);
     case "line_chart":
       return assembleLineChartResponse(input);
+    case "histogram":
+      return assembleHistogramResponse(input);
     default: {
       const _exhaustive: never = input;
       throw new Error(

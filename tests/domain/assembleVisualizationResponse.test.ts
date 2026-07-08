@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { VisualizationResponseSchema } from "../../src/domain/schemas/index.js";
 import { assembleVisualizationResponse } from "../../src/domain/assembleVisualizationResponse.js";
+import { ENROLLMENT_BIN_ORDER } from "../../src/domain/utils/enrollmentBins.js";
 import { PHASE_BIN_ORDER } from "../../src/domain/utils/mapPhaseValues.js";
 
 const baseAggregation = PHASE_BIN_ORDER.map((phase) => ({
@@ -157,6 +158,73 @@ describe("assembleLineChartResponse", () => {
       { year: 2022, trial_count: 0 },
       { year: 2023, trial_count: 1 },
     ]);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+});
+
+describe("assembleHistogramResponse", () => {
+  const baseEnrollmentAggregation = ENROLLMENT_BIN_ORDER.map((bin) => ({
+    bin_label: bin.bin_label,
+    bin_start: bin.bin_start,
+    bin_end: bin.bin_end,
+    trial_count: bin.bin_label === "101–500" ? 2 : 0,
+    source_nct_ids:
+      bin.bin_label === "101–500" ? ["NCT00000001", "NCT00000002"] : [],
+  }));
+
+  it("builds a drug-first title when both drug and condition are present", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: "Pembrolizumab",
+        condition: "lung cancer",
+        phase: null,
+      },
+      visualizationType: "histogram",
+      aggregation: baseEnrollmentAggregation,
+      fetchedStudies: 12,
+      skippedMalformed: 2,
+      studiesWithMultiplePhases: 0,
+      truncated: false,
+    });
+
+    expect(response.visualization.title).toBe(
+      "Enrollment distribution for Pembrolizumab in lung cancer",
+    );
+  });
+
+  it("uses ordinal bin_label encoding and strips source_nct_ids", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      visualizationType: "histogram",
+      aggregation: baseEnrollmentAggregation,
+      fetchedStudies: 2,
+      skippedMalformed: 0,
+      studiesWithMultiplePhases: 0,
+      truncated: false,
+    });
+
+    expect(response.visualization.type).toBe("histogram");
+    expect(response.visualization.encoding).toEqual({
+      x: { field: "bin_label", type: "ordinal" },
+      y: { field: "trial_count", type: "quantitative" },
+    });
+
+    for (const point of response.visualization.data) {
+      expect(point).not.toHaveProperty("source_nct_ids");
+    }
+
+    expect(response.visualization.data).toEqual(
+      ENROLLMENT_BIN_ORDER.map((bin) => ({
+        bin_label: bin.bin_label,
+        bin_start: bin.bin_start,
+        bin_end: bin.bin_end,
+        trial_count: bin.bin_label === "101–500" ? 2 : 0,
+      })),
+    );
     expect(VisualizationResponseSchema.parse(response)).toEqual(response);
   });
 });
