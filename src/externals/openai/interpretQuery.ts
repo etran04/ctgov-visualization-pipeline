@@ -9,9 +9,11 @@ import { z } from "zod";
 import { config } from "../../config.js";
 import { HTTP_STATUS, InterpretationError, UnsupportedIntentError } from "../../domain/errors.js";
 import {
-  QueryInterpretationSchema,
+  parseQueryInterpretation,
+  QueryInterpretationOpenAiSchema,
   type QueryInterpretation,
-} from "../../domain/schemas.js";
+  type QueryInterpretationOpenAi,
+} from "../../domain/schemas/index.js";
 import { logger } from "../../lib/logger.js";
 
 const openai = new OpenAI({
@@ -34,7 +36,10 @@ Extract entities from the user query:
 Use null for fields that are not mentioned. Do not use empty strings.
 Optional hints from the caller are advisory context only; prefer the user query when they conflict.`;
 
-const RESPONSE_FORMAT = zodResponseFormat(QueryInterpretationSchema, "query_interpretation");
+const RESPONSE_FORMAT = zodResponseFormat(
+  QueryInterpretationOpenAiSchema,
+  "query_interpretation",
+);
 
 function backoffDelayMs(attempt: number): number {
   return Math.min(250 * 2 ** (attempt - 1), 4000);
@@ -81,7 +86,7 @@ function buildUserMessage(query: string, hints?: Partial<QueryInterpretation>): 
 }
 
 function extractInterpretation(
-  completion: ParsedChatCompletion<QueryInterpretation>,
+  completion: ParsedChatCompletion<QueryInterpretationOpenAi>,
 ): QueryInterpretation {
   const choice = completion.choices[0];
   if (choice === undefined) {
@@ -97,16 +102,18 @@ function extractInterpretation(
     throw new InterpretationError("OpenAI returned an unparseable interpretation");
   }
 
-  const validated = QueryInterpretationSchema.safeParse(parsed);
-  if (!validated.success) {
+  let interpretation: QueryInterpretation;
+  try {
+    interpretation = parseQueryInterpretation(parsed);
+  } catch {
     throw new InterpretationError("OpenAI interpretation failed schema validation");
   }
 
-  if (validated.data.intent !== "comparison") {
-    throw new UnsupportedIntentError(`Unsupported intent: ${validated.data.intent}`);
+  if (interpretation.intent !== "comparison") {
+    throw new UnsupportedIntentError(`Unsupported intent: ${interpretation.intent}`);
   }
 
-  return validated.data;
+  return interpretation;
 }
 
 async function requestInterpretation(

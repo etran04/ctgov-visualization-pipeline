@@ -1,4 +1,4 @@
-import type { QueryEntities } from "./schemas.js";
+import type { QueryEntities } from "./schemas/index.js";
 import { InvalidParametersError } from "./errors.js";
 
 export type ValidatedEntities = QueryEntities;

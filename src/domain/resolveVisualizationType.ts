@@ -1,5 +1,5 @@
 import { UnsupportedIntentError } from "./errors.js";
-import type { Intent } from "./schemas.js";
+import type { Intent } from "./schemas/index.js";
 
 /**
  * Map an interpreted intent to a concrete visualization type.

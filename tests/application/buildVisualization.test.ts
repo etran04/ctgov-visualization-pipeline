@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InvalidParametersError } from "../../src/domain/errors.js";
-import { VisualizationResponseSchema } from "../../src/domain/schemas.js";
+import { VisualizationResponseSchema } from "../../src/domain/schemas/index.js";
 import { validMultiPhaseStudy, validSinglePhaseStudy } from "../fixtures/ctgovStudies.js";
 
 vi.mock("../../src/externals/openai/interpretQuery.js", () => ({

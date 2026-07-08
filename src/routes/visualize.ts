@@ -8,7 +8,7 @@ import type { FastifyInstance } from "fastify";
 import type { ZodError } from "zod";
 import { buildVisualization } from "../application/buildVisualization.js";
 import { HTTP_STATUS, isDomainError } from "../domain/errors.js";
-import { VisualizeRequestSchema } from "../domain/schemas.js";
+import { VisualizeRequestSchema } from "../domain/schemas/index.js";
 import { visualizeRouteSchema } from "../lib/openapiSchemas.js";
 
 /** Join Zod validation issues into a single client-facing message. */

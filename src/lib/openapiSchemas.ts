@@ -5,7 +5,7 @@ import { z } from "zod";
 import {
   VisualizeRequestSchema,
   VisualizationResponseSchema,
-} from "../domain/schemas.js";
+} from "../domain/schemas/index.js";
 
 /** Standard API error envelope returned by route handlers. */
 export const ErrorResponseSchema = z.object({
@@ -32,8 +32,9 @@ export const visualizeRouteSchema = {
   summary: "Build a visualization from a natural-language query",
   description:
     "Interprets the query with OpenAI, fetches matching studies from ClinicalTrials.gov, " +
-    "aggregates trial counts by phase, and returns chart-ready JSON. Optional `hints` are " +
-    "advisory context for the LLM and never bypass interpretation.",
+    "and returns chart-ready JSON. V1 comparison queries yield a `bar_chart` (trial counts by " +
+    "phase); V2 timeline queries yield a `line_chart` (trial counts by start year). Optional " +
+    "`hints` are advisory context for the LLM and never bypass interpretation.",
   body: toOpenApiSchema(VisualizeRequestSchema),
   response: {
     200: {

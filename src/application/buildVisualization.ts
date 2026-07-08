@@ -8,7 +8,7 @@
 import { aggregateByPhase } from "../domain/aggregateByPhase.js";
 import { assembleVisualizationResponse } from "../domain/assembleVisualizationResponse.js";
 import { resolveVisualizationType } from "../domain/resolveVisualizationType.js";
-import type { QueryInterpretation, VisualizationResponse } from "../domain/schemas.js";
+import type { QueryInterpretation, VisualizationResponse } from "../domain/schemas/index.js";
 import { validateEntities } from "../domain/validateEntities.js";
 import { fetchStudies } from "../externals/ctgov/fetchStudies.js";
 import { interpretQuery } from "../externals/openai/interpretQuery.js";

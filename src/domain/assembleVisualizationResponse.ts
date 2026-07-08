@@ -1,6 +1,6 @@
 import type { PhaseAggregationBin } from "./aggregationTypes.js";
-import type { QueryEntities, VisualizationResponse } from "./schemas.js";
-import { VisualizationResponseSchema } from "./schemas.js";
+import type { QueryEntities, VisualizationResponse } from "./schemas/index.js";
+import { VisualizationResponseSchema } from "./schemas/index.js";
 
 type AssembleVisualizationResponseInput = {
   filters: QueryEntities;

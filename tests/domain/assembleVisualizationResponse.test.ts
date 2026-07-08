@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { VisualizationResponseSchema } from "../../src/domain/schemas.js";
+import { VisualizationResponseSchema } from "../../src/domain/schemas/index.js";
 import { assembleVisualizationResponse } from "../../src/domain/assembleVisualizationResponse.js";
 import { PHASE_BIN_ORDER } from "../../src/domain/mapPhaseValues.js";
 

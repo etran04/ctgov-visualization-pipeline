@@ -15,7 +15,7 @@
 import "dotenv/config";
 import type { FastifyInstance } from "fastify";
 import { config } from "../src/config.js";
-import { VisualizationResponseSchema } from "../src/domain/schemas.js";
+import { VisualizationResponseSchema } from "../src/domain/schemas/index.js";
 import { buildServer } from "../src/server.js";
 
 type HttpClient = {
