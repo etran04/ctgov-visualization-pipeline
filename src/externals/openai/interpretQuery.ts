@@ -11,6 +11,7 @@ import { HTTP_STATUS, InterpretationError, UnsupportedIntentError } from "../../
 import {
   parseQueryInterpretation,
   QueryInterpretationOpenAiSchema,
+  SUPPORTED_INTENTS,
   type QueryInterpretation,
   type QueryInterpretationOpenAi,
 } from "../../domain/schemas/index.js";
@@ -21,17 +22,26 @@ const openai = new OpenAI({
   timeout: config.OPENAI_TIMEOUT_MS,
 });
 
-const SYSTEM_PROMPT = `You extract structured entities from natural-language queries about clinical trials for comparison visualizations.
+const SYSTEM_PROMPT = `You extract structured entities and visualization intent from natural-language queries about clinical trials.
 
-For V1, always set:
-- intent to "comparison"
-- comparison_dimension to "phase"
-- suggested_viz_type to "bar_chart"
+Supported intents:
+
+1. "comparison" — user wants to compare or break down trials by phase
+   - Set comparison_dimension to "phase"
+   - Set suggested_viz_type to "bar_chart"
+   - Set time_dimension to null
+   - Examples: "compare phases", "breakdown by phase", "trial phases for X"
+
+2. "trend_over_time" — user wants to see how trials change over time
+   - Set time_dimension to "start_year"
+   - Set suggested_viz_type to "line_chart"
+   - Set comparison_dimension to null
+   - Examples: "over time", "timeline", "trend", "per year", "how have X trials changed"
 
 Extract entities from the user query:
 - drug_name: intervention or drug name (null if not mentioned)
 - condition: disease, condition, or indication (null if not mentioned)
-- phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases)
+- phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases or showing trends over time)
 
 Use null for fields that are not mentioned. Do not use empty strings.
 Optional hints from the caller are advisory context only; prefer the user query when they conflict.`;
@@ -109,7 +119,7 @@ function extractInterpretation(
     throw new InterpretationError("OpenAI interpretation failed schema validation");
   }
 
-  if (interpretation.intent !== "comparison") {
+  if (!(SUPPORTED_INTENTS as readonly string[]).includes(interpretation.intent)) {
     throw new UnsupportedIntentError(`Unsupported intent: ${interpretation.intent}`);
   }
 
@@ -181,8 +191,8 @@ async function requestInterpretation(
  *
  * @param query - User's natural-language request.
  * @param hints - Optional partial interpretation passed as advisory context.
- * @returns Validated `QueryInterpretation` with V1 `comparison` intent.
- * @throws {UnsupportedIntentError} When the model returns a non-comparison intent.
+ * @returns Validated `QueryInterpretation` with a supported intent.
+ * @throws {UnsupportedIntentError} When the model returns an unsupported intent.
  * @throws {InterpretationError} On timeout, exhausted retries, blocked/truncated
  *   output, or unparseable structured response.
  */

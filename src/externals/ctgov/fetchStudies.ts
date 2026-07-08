@@ -1,5 +1,7 @@
 import { config } from "../../config.js";
+import type { CtgovStudyLike } from "../../domain/aggregations/types.js";
 import { HTTP_STATUS, NoStudiesFoundError, UpstreamApiError } from "../../domain/errors.js";
+import { parseStudyStartYear } from "../../domain/parseStudyDate.js";
 import type { ValidatedEntities } from "../../domain/validateEntities.js";
 import { logger } from "../../lib/logger.js";
 import { mapQueryParams } from "./mapQueryParams.js";
@@ -7,19 +9,16 @@ import { mapQueryParams } from "./mapQueryParams.js";
 /** Minimal CT.gov field set for phase aggregation (V1 default). */
 export const DEFAULT_CTGOV_FIELDS = ["NCTId", "Phase"] as const;
 
+/**
+ * Normalized CT.gov study record returned by `fetchStudies`.
+ *
+ * Fields are optional because each intent requests only the subset needed
+ * for downstream aggregation.
+ */
+export type CtgovStudyRecord = CtgovStudyLike;
+
 export type FetchStudiesOptions = {
   fields?: readonly string[];
-};
-
-type CtgovStudy = {
-  protocolSection: {
-    identificationModule: {
-      nctId: string;
-    };
-    designModule: {
-      phases: string[];
-    };
-  };
 };
 
 type CtgovStudiesResponse = {
@@ -29,9 +28,9 @@ type CtgovStudiesResponse = {
 
 /** Result of a paginated CT.gov studies fetch. */
 export type FetchStudiesResult = {
-  studies: CtgovStudy[];
+  studies: CtgovStudyRecord[];
   pages_fetched: number;
-  /** Studies dropped during response normalization (missing NCT ID or phases). */
+  /** Studies dropped during response normalization (missing required fields). */
   skipped_malformed: number;
   /** True when `CTGOV_MAX_PAGES` was reached before pagination completed. */
   truncated: boolean;
@@ -49,7 +48,50 @@ async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function normalizeStudy(study: unknown): CtgovStudy | null {
+function normalizePhases(designModule: unknown): string[] | null {
+  if (typeof designModule !== "object" || designModule === null) {
+    return null;
+  }
+
+  const phases = (designModule as Record<string, unknown>).phases;
+  if (!Array.isArray(phases)) {
+    return null;
+  }
+
+  const normalizedPhases = phases.filter((phase): phase is string => typeof phase === "string");
+  if (normalizedPhases.length === 0) {
+    return null;
+  }
+
+  return normalizedPhases;
+}
+
+function normalizeStartDate(statusModule: unknown): string | null {
+  if (typeof statusModule !== "object" || statusModule === null) {
+    return null;
+  }
+
+  const startDateStruct = (statusModule as Record<string, unknown>).startDateStruct;
+  if (typeof startDateStruct !== "object" || startDateStruct === null) {
+    return null;
+  }
+
+  const date = (startDateStruct as Record<string, unknown>).date;
+  if (typeof date !== "string" || parseStudyStartYear(date) === null) {
+    return null;
+  }
+
+  return date;
+}
+
+/**
+ * Validate and normalize a raw CT.gov study against the requested field set.
+ *
+ * Always requires a string `nctId`. When `Phase` is requested, requires a
+ * non-empty phases array. When `StartDate` is requested, requires a parseable
+ * `startDateStruct.date`.
+ */
+function normalizeStudy(study: unknown, requestedFields: readonly string[]): CtgovStudyRecord | null {
   if (typeof study !== "object" || study === null) {
     return null;
   }
@@ -60,37 +102,47 @@ function normalizeStudy(study: unknown): CtgovStudy | null {
   }
 
   const identificationModule = (protocolSection as Record<string, unknown>).identificationModule;
-  const designModule = (protocolSection as Record<string, unknown>).designModule;
-  if (
-    typeof identificationModule !== "object" ||
-    identificationModule === null ||
-    typeof designModule !== "object" ||
-    designModule === null
-  ) {
+  if (typeof identificationModule !== "object" || identificationModule === null) {
     return null;
   }
 
   const nctId = (identificationModule as Record<string, unknown>).nctId;
-  const phases = (designModule as Record<string, unknown>).phases;
-  if (typeof nctId !== "string" || !Array.isArray(phases)) {
+  if (typeof nctId !== "string") {
     return null;
   }
 
-  const normalizedPhases = phases.filter((phase): phase is string => typeof phase === "string");
-  if (normalizedPhases.length === 0) {
-    return null;
-  }
-
-  return {
+  const fieldSet = new Set(requestedFields);
+  const record: CtgovStudyRecord = {
     protocolSection: {
       identificationModule: {
         nctId,
       },
-      designModule: {
-        phases: normalizedPhases,
-      },
     },
   };
+
+  if (fieldSet.has("Phase")) {
+    const designModule = (protocolSection as Record<string, unknown>).designModule;
+    const phases = normalizePhases(designModule);
+    if (phases === null) {
+      return null;
+    }
+
+    record.protocolSection!.designModule = { phases };
+  }
+
+  if (fieldSet.has("StartDate")) {
+    const statusModule = (protocolSection as Record<string, unknown>).statusModule;
+    const date = normalizeStartDate(statusModule);
+    if (date === null) {
+      return null;
+    }
+
+    record.protocolSection!.statusModule = {
+      startDateStruct: { date },
+    };
+  }
+
+  return record;
 }
 
 async function requestStudies(url: URL): Promise<CtgovStudiesResponse> {
@@ -147,9 +199,10 @@ export async function fetchStudies(
   options: FetchStudiesOptions = {},
 ): Promise<FetchStudiesResult> {
   const queryParams = mapQueryParams(entities);
-  const fields = (options.fields ?? DEFAULT_CTGOV_FIELDS).join(",");
+  const requestedFields = options.fields ?? DEFAULT_CTGOV_FIELDS;
+  const fields = requestedFields.join(",");
 
-  const studies: CtgovStudy[] = [];
+  const studies: CtgovStudyRecord[] = [];
   let pagesFetched = 0;
   let skippedMalformed = 0;
   let pageToken: string | null = null;
@@ -171,7 +224,7 @@ export async function fetchStudies(
 
     const pageStudies = Array.isArray(payload.studies) ? payload.studies : [];
     for (const study of pageStudies) {
-      const normalized = normalizeStudy(study);
+      const normalized = normalizeStudy(study, requestedFields);
       if (normalized === null) {
         skippedMalformed += 1;
         continue;
