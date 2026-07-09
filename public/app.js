@@ -30,7 +30,8 @@ const form = document.getElementById("query-form");
 const queryInput = document.getElementById("query-input");
 const submitBtn = document.getElementById("submit-btn");
 const statusEl = document.getElementById("status");
-const resultsPanel = document.getElementById("results-panel");
+const resultsEmpty = document.getElementById("results-empty");
+const resultsContent = document.getElementById("results-content");
 const vizTitle = document.getElementById("viz-title");
 const vizType = document.getElementById("viz-type");
 const chartContainer = document.getElementById("chart-container");
@@ -63,6 +64,16 @@ function setLoading(loading) {
   }
 }
 
+function showResultsEmpty() {
+  resultsEmpty.classList.remove("hidden");
+  resultsContent.classList.add("hidden");
+}
+
+function showResultsContent() {
+  resultsEmpty.classList.add("hidden");
+  resultsContent.classList.remove("hidden");
+}
+
 async function visualize(query) {
   const trimmed = query.trim();
   if (!trimmed) {
@@ -91,7 +102,7 @@ async function visualize(query) {
     renderResponse(body);
     clearStatus();
   } catch (error) {
-    resultsPanel.classList.add("hidden");
+    showResultsEmpty();
     const message = error instanceof Error ? error.message : String(error);
     setStatus(message, "error");
   } finally {
@@ -100,7 +111,7 @@ async function visualize(query) {
 }
 
 function renderResponse(response) {
-  resultsPanel.classList.remove("hidden");
+  showResultsContent();
   vizTitle.textContent = response.visualization.title;
   vizType.textContent = response.visualization.type;
 

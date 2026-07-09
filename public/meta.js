@@ -126,16 +126,24 @@ export function renderMeta(container, meta) {
   }
 }
 
+let activeCitationKey = null;
+
 /**
- * Show citations for a datum or edge in the citations panel.
+ * Show or hide citations for a datum or edge. Clicking the same item again closes the panel.
  */
-export function showCitations(citationsPanel, citationsList, citations, title) {
+export function toggleCitations(citationsPanel, citationsList, citations, title, key) {
   if (!citations || citations.length === 0) {
-    citationsPanel.classList.add("hidden");
-    citationsList.innerHTML = "";
+    hideCitations(citationsPanel, citationsList);
     return;
   }
 
+  const isOpen = !citationsPanel.classList.contains("hidden");
+  if (isOpen && activeCitationKey === key) {
+    hideCitations(citationsPanel, citationsList);
+    return;
+  }
+
+  activeCitationKey = key;
   citationsPanel.classList.remove("hidden");
   citationsList.innerHTML = "";
   if (title) {
@@ -159,4 +167,5 @@ export function showCitations(citationsPanel, citationsList, citations, title) {
 export function hideCitations(citationsPanel, citationsList) {
   citationsPanel.classList.add("hidden");
   citationsList.innerHTML = "";
+  activeCitationKey = null;
 }

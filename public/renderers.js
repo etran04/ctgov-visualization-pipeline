@@ -1,4 +1,4 @@
-import { hideCitations, showCitations } from "./meta.js";
+import { hideCitations, toggleCitations } from "./meta.js";
 
 let activeChart = null;
 
@@ -23,7 +23,7 @@ function getChartColors(count) {
   return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
 }
 
-function onChartClick(event, elements, dataPoints, citationsPanel, citationsList, labelFn) {
+function onChartClick(event, elements, dataPoints, citationsPanel, citationsList, labelFn, keyFn) {
   if (elements.length === 0) {
     hideCitations(citationsPanel, citationsList);
     return;
@@ -32,9 +32,15 @@ function onChartClick(event, elements, dataPoints, citationsPanel, citationsList
   const datasetIndex = elements[0].datasetIndex ?? 0;
   const point = dataPoints[datasetIndex]?.[index] ?? dataPoints[index];
   if (!point) return;
-  const citations = point.citations;
   const label = labelFn(point, datasetIndex);
-  showCitations(citationsPanel, citationsList, citations, `Citations — ${label}`);
+  const key = keyFn(point, datasetIndex);
+  toggleCitations(
+    citationsPanel,
+    citationsList,
+    point.citations,
+    `Citations — ${label}`,
+    key,
+  );
 }
 
 function renderBarChart(canvas, visualization, citationsPanel, citationsList) {
@@ -59,7 +65,15 @@ function renderBarChart(canvas, visualization, citationsPanel, citationsList) {
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       onClick: (event, elements) =>
-        onChartClick(event, elements, [data], citationsPanel, citationsList, (p) => p.phase),
+        onChartClick(
+          event,
+          elements,
+          [data],
+          citationsPanel,
+          citationsList,
+          (p) => p.phase,
+          (p) => `phase:${p.phase}`,
+        ),
     },
   });
 }
@@ -96,11 +110,13 @@ function renderGroupedBarChart(canvas, visualization, citationsPanel, citationsL
         const phase = phases[index];
         const series = seriesNames[datasetIndex];
         const row = data.find((d) => d.phase === phase && d.series === series);
-        showCitations(
+        const key = `grouped:${series}|${phase}`;
+        toggleCitations(
           citationsPanel,
           citationsList,
           row?.citations,
           `Citations — ${series} / ${phase}`,
+          key,
         );
       },
     },
@@ -139,6 +155,7 @@ function renderLineChart(canvas, visualization, citationsPanel, citationsList) {
           citationsPanel,
           citationsList,
           (p) => String(p.year),
+          (p) => `year:${p.year}`,
         ),
     },
   });
@@ -173,6 +190,7 @@ function renderHistogram(canvas, visualization, citationsPanel, citationsList) {
           citationsPanel,
           citationsList,
           (p) => p.bin_label,
+          (p) => `bin:${p.bin_label}`,
         ),
     },
   });
@@ -222,11 +240,12 @@ function renderScatterplot(canvas, visualization, citationsPanel, citationsList)
           return;
         }
         const point = activeChart.data.datasets[0].data[elements[0].index];
-        showCitations(
+        toggleCitations(
           citationsPanel,
           citationsList,
           point.citations,
           `Citations — ${point.nct_id}`,
+          `nct:${point.nct_id}`,
         );
       },
     },
@@ -286,11 +305,13 @@ function renderNetworkTable(container, visualization, citationsPanel, citationsL
     tr.className = "clickable";
     tr.innerHTML = `<td>${escapeHtml(edge.source)}</td><td>${escapeHtml(edge.target)}</td><td>${edge.weight}</td>`;
     tr.addEventListener("click", () => {
-      showCitations(
+      const key = `edge:${edge.source}|${edge.target}`;
+      toggleCitations(
         citationsPanel,
         citationsList,
         edge.citations,
         `Citations — ${edge.source} → ${edge.target}`,
+        key,
       );
     });
     edgesBody.appendChild(tr);
