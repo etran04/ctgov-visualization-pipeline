@@ -22,12 +22,18 @@ vi.mock("../../src/externals/ctgov/fetchStudies.js", () => ({
   fetchStudies: vi.fn(),
 }));
 
+vi.mock("../../src/externals/ctgov/fetchStudiesForGroupedComparison.js", () => ({
+  fetchStudiesForGroupedComparison: vi.fn(),
+}));
+
 import { buildVisualization } from "../../src/application/buildVisualization.js";
 import { fetchStudies } from "../../src/externals/ctgov/fetchStudies.js";
+import { fetchStudiesForGroupedComparison } from "../../src/externals/ctgov/fetchStudiesForGroupedComparison.js";
 import { interpretQuery } from "../../src/externals/openai/interpretQuery.js";
 
 const mockInterpretQuery = vi.mocked(interpretQuery);
 const mockFetchStudies = vi.mocked(fetchStudies);
+const mockFetchStudiesForGroupedComparison = vi.mocked(fetchStudiesForGroupedComparison);
 
 describe("buildVisualization", () => {
   beforeEach(() => {
@@ -76,6 +82,86 @@ describe("buildVisualization", () => {
     expect(response.meta.skipped_malformed).toBe(1);
     expect(response.meta.studies_with_multiple_phases).toBe(1);
     expect(response.meta.truncated).toBe(false);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+
+  it("wires grouped comparison into a valid grouped_bar_chart response", async () => {
+    mockInterpretQuery.mockResolvedValue({
+      intent: "comparison",
+      entities: {
+        drug_name: null,
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: null,
+        phase: null,
+      },
+      comparison_dimension: "phase",
+      suggested_viz_type: "grouped_bar_chart",
+    });
+
+    mockFetchStudiesForGroupedComparison.mockResolvedValue({
+      seriesResults: [
+        {
+          series: "Metformin",
+          studies: [validSinglePhaseStudy],
+          pages_fetched: 1,
+          skipped_malformed: 0,
+          truncated: false,
+        },
+        {
+          series: "Pembrolizumab",
+          studies: [validMultiPhaseStudy],
+          pages_fetched: 1,
+          skipped_malformed: 1,
+          truncated: true,
+        },
+      ],
+      fetched_studies: 2,
+      skipped_malformed: 1,
+      pages_fetched: 2,
+      truncated: true,
+    });
+
+    const response = await buildVisualization({
+      query: "Compare phases for Metformin vs Pembrolizumab",
+    });
+
+    expect(mockFetchStudies).not.toHaveBeenCalled();
+    expect(mockFetchStudiesForGroupedComparison).toHaveBeenCalledWith(
+      {
+        targets: ["Metformin", "Pembrolizumab"],
+        sharedFilters: { condition: null, phase: null },
+      },
+      { fields: ["NCTId", "Phase"] },
+    );
+
+    expect(response.visualization.type).toBe("grouped_bar_chart");
+    expect(response.visualization.title).toBe("Trial phases: Metformin vs Pembrolizumab");
+    if (response.visualization.type !== "grouped_bar_chart") {
+      throw new Error("expected grouped_bar_chart");
+    }
+
+    expect(
+      response.visualization.data.filter(
+        (row) => row.series === "Metformin" && row.phase === "Phase 2",
+      ),
+    ).toEqual([{ phase: "Phase 2", series: "Metformin", trial_count: 1 }]);
+    expect(
+      response.visualization.data.filter(
+        (row) => row.series === "Pembrolizumab" && row.phase === "Phase 1",
+      ),
+    ).toEqual([{ phase: "Phase 1", series: "Pembrolizumab", trial_count: 1 }]);
+    expect(response.meta.comparison_targets).toEqual(["Metformin", "Pembrolizumab"]);
+    expect(response.meta.comparison_dimension).toBe("phase");
+    expect(response.meta.filters).toEqual({
+      drug_name: null,
+      comparison_targets: null,
+      condition: null,
+      phase: null,
+    });
+    expect(response.meta.fetched_studies).toBe(2);
+    expect(response.meta.skipped_malformed).toBe(1);
+    expect(response.meta.studies_with_multiple_phases).toBe(1);
+    expect(response.meta.truncated).toBe(true);
     expect(VisualizationResponseSchema.parse(response)).toEqual(response);
   });
 

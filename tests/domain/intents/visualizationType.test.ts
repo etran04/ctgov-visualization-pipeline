@@ -6,6 +6,34 @@ describe("resolveVisualizationType", () => {
     expect(resolveVisualizationType("comparison")).toBe("bar_chart");
   });
 
+  it("maps grouped comparison mode to a grouped bar chart", () => {
+    expect(
+      resolveVisualizationType("comparison", {
+        comparisonMode: {
+          kind: "grouped",
+          targets: ["Metformin", "Pembrolizumab"],
+          sharedFilters: { condition: null, phase: null },
+        },
+      }),
+    ).toBe("grouped_bar_chart");
+  });
+
+  it("maps single comparison mode to a bar chart", () => {
+    expect(
+      resolveVisualizationType("comparison", {
+        comparisonMode: {
+          kind: "single",
+          entities: {
+            drug_name: "Metformin",
+            comparison_targets: null,
+            condition: null,
+            phase: null,
+          },
+        },
+      }),
+    ).toBe("bar_chart");
+  });
+
   it("maps trend_over_time intent to a line chart", () => {
     expect(resolveVisualizationType("trend_over_time")).toBe("line_chart");
   });

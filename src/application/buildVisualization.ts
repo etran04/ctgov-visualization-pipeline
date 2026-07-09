@@ -9,6 +9,7 @@ import {
   aggregateByEnrollment,
   aggregateByNetwork,
   aggregateByPhase,
+  aggregateGroupedByPhase,
   aggregateByRelationship,
   aggregateByStartYear,
   type DistributionStudyRecord,
@@ -19,10 +20,12 @@ import {
 import { assembleVisualizationResponse } from "../domain/assembleVisualizationResponse.js";
 import { getFieldsForIntent } from "../domain/intents/fieldProfiles.js";
 import { resolveVisualizationType } from "../domain/intents/visualizationType.js";
+import { resolveComparisonMode } from "../domain/resolveComparisonMode.js";
 import type { QueryInterpretation, VisualizationResponse } from "../domain/schemas/index.js";
 import type { NetworkStudyRecord } from "../domain/types/ctgovStudyTypes.js";
 import { validateEntities } from "../domain/validateEntities.js";
 import { fetchStudies } from "../externals/ctgov/fetchStudies.js";
+import { fetchStudiesForGroupedComparison } from "../externals/ctgov/fetchStudiesForGroupedComparison.js";
 import { interpretQuery } from "../externals/openai/interpretQuery.js";
 import { logger } from "../lib/logger.js";
 
@@ -53,21 +56,53 @@ export async function buildVisualization(
   logger.info({ validated_entities: validatedEntities }, "Validated entities");
 
   const intent = interpretation.intent;
-  const fetchResult = await fetchStudies(validatedEntities, {
-    intent,
-    fields:
-      intent === "network"
-        ? getFieldsForIntent(intent, interpretation.network_dimension)
-        : getFieldsForIntent(intent),
-  });
-
-  const visualizationType = resolveVisualizationType(intent);
-  logger.info({ visualization_type: visualizationType }, "Resolved visualization type");
-
   let response: VisualizationResponse;
 
-  switch (intent) {
-    case "comparison": {
+  if (intent === "comparison") {
+    const comparisonMode = resolveComparisonMode(validatedEntities);
+    const visualizationType = resolveVisualizationType(intent, { comparisonMode });
+    logger.info({ visualization_type: visualizationType }, "Resolved visualization type");
+
+    if (comparisonMode.kind === "grouped") {
+      const fetchResult = await fetchStudiesForGroupedComparison(
+        {
+          targets: comparisonMode.targets,
+          sharedFilters: comparisonMode.sharedFilters,
+        },
+        { fields: getFieldsForIntent("comparison") },
+      );
+
+      const aggregation = aggregateGroupedByPhase(
+        fetchResult.seriesResults.map((seriesResult) => ({
+          series: seriesResult.series,
+          studies: seriesResult.studies,
+        })),
+      );
+      logger.info(
+        {
+          rows: aggregation.rows.length,
+          skipped_malformed: aggregation.skipped_malformed,
+          studies_with_multiple_phases: aggregation.studies_with_multiple_phases,
+        },
+        "Aggregated grouped studies by phase",
+      );
+
+      response = assembleVisualizationResponse({
+        filters: validatedEntities,
+        visualizationType: "grouped_bar_chart",
+        comparisonTargets: comparisonMode.targets,
+        aggregation: aggregation.rows,
+        fetchedStudies: fetchResult.fetched_studies,
+        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+        studiesWithMultiplePhases: aggregation.studies_with_multiple_phases,
+        truncated: fetchResult.truncated,
+      });
+    } else {
+      const fetchResult = await fetchStudies(comparisonMode.entities, {
+        intent: "comparison",
+        fields: getFieldsForIntent("comparison"),
+      });
+
       const aggregation = aggregateByPhase(fetchResult.studies as PhaseStudyRecord[]);
       logger.info(
         {
@@ -79,7 +114,7 @@ export async function buildVisualization(
       );
 
       response = assembleVisualizationResponse({
-        filters: validatedEntities,
+        filters: comparisonMode.entities,
         visualizationType: "bar_chart",
         aggregation: aggregation.bins,
         fetchedStudies: fetchResult.studies.length,
@@ -87,106 +122,119 @@ export async function buildVisualization(
         studiesWithMultiplePhases: aggregation.studies_with_multiple_phases,
         truncated: fetchResult.truncated,
       });
-      break;
     }
-    case "trend_over_time": {
-      const aggregation = aggregateByStartYear(fetchResult.studies as TimelineStudyRecord[]);
-      logger.info(
-        {
-          bins: aggregation.bins,
-          skipped_malformed: aggregation.skipped_malformed,
-        },
-        "Aggregated studies by start year",
-      );
+  } else {
+    const fetchResult = await fetchStudies(validatedEntities, {
+      intent,
+      fields:
+        intent === "network"
+          ? getFieldsForIntent(intent, interpretation.network_dimension)
+          : getFieldsForIntent(intent),
+    });
 
-      response = assembleVisualizationResponse({
-        filters: validatedEntities,
-        visualizationType: "line_chart",
-        aggregation: aggregation.bins,
-        fetchedStudies: fetchResult.studies.length,
-        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
-        studiesWithMultiplePhases: 0,
-        truncated: fetchResult.truncated,
-      });
-      break;
-    }
-    case "distribution": {
-      const aggregation = aggregateByEnrollment(
-        fetchResult.studies as DistributionStudyRecord[],
-      );
-      logger.info(
-        {
-          bins: aggregation.bins,
-          skipped_malformed: aggregation.skipped_malformed,
-        },
-        "Aggregated studies by enrollment",
-      );
+    const visualizationType = resolveVisualizationType(intent);
+    logger.info({ visualization_type: visualizationType }, "Resolved visualization type");
 
-      response = assembleVisualizationResponse({
-        filters: validatedEntities,
-        visualizationType: "histogram",
-        aggregation: aggregation.bins,
-        fetchedStudies: fetchResult.studies.length,
-        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
-        studiesWithMultiplePhases: 0,
-        truncated: fetchResult.truncated,
-      });
-      break;
-    }
-    case "relationship": {
-      const aggregation = aggregateByRelationship(
-        fetchResult.studies as RelationshipStudyRecord[],
-      );
-      logger.info(
-        {
-          points: aggregation.points.length,
-          skipped_malformed: aggregation.skipped_malformed,
-        },
-        "Aggregated studies by enrollment vs start year",
-      );
+    switch (intent) {
+      case "trend_over_time": {
+        const aggregation = aggregateByStartYear(fetchResult.studies as TimelineStudyRecord[]);
+        logger.info(
+          {
+            bins: aggregation.bins,
+            skipped_malformed: aggregation.skipped_malformed,
+          },
+          "Aggregated studies by start year",
+        );
 
-      response = assembleVisualizationResponse({
-        filters: validatedEntities,
-        visualizationType: "scatterplot",
-        aggregation: aggregation.points,
-        fetchedStudies: fetchResult.studies.length,
-        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
-        studiesWithMultiplePhases: 0,
-        truncated: fetchResult.truncated,
-      });
-      break;
-    }
-    case "network": {
-      const dimension = interpretation.network_dimension;
-      const aggregation = aggregateByNetwork(
-        fetchResult.studies as NetworkStudyRecord[],
-        dimension,
-        validatedEntities,
-      );
-      logger.info(
-        {
-          nodes: aggregation.nodes.length,
-          edges: aggregation.edges.length,
-          skipped_malformed: aggregation.skipped_malformed,
-        },
-        "Aggregated studies into network graph",
-      );
+        response = assembleVisualizationResponse({
+          filters: validatedEntities,
+          visualizationType: "line_chart",
+          aggregation: aggregation.bins,
+          fetchedStudies: fetchResult.studies.length,
+          skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+          studiesWithMultiplePhases: 0,
+          truncated: fetchResult.truncated,
+        });
+        break;
+      }
+      case "distribution": {
+        const aggregation = aggregateByEnrollment(
+          fetchResult.studies as DistributionStudyRecord[],
+        );
+        logger.info(
+          {
+            bins: aggregation.bins,
+            skipped_malformed: aggregation.skipped_malformed,
+          },
+          "Aggregated studies by enrollment",
+        );
 
-      response = assembleVisualizationResponse({
-        filters: validatedEntities,
-        visualizationType: "network_graph",
-        networkDimension: dimension,
-        aggregation,
-        fetchedStudies: fetchResult.studies.length,
-        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
-        studiesWithMultiplePhases: 0,
-        truncated: fetchResult.truncated,
-      });
-      break;
-    }
-    default: {
-      const _exhaustive: never = intent;
-      throw new Error(`Unsupported intent: ${String(_exhaustive)}`);
+        response = assembleVisualizationResponse({
+          filters: validatedEntities,
+          visualizationType: "histogram",
+          aggregation: aggregation.bins,
+          fetchedStudies: fetchResult.studies.length,
+          skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+          studiesWithMultiplePhases: 0,
+          truncated: fetchResult.truncated,
+        });
+        break;
+      }
+      case "relationship": {
+        const aggregation = aggregateByRelationship(
+          fetchResult.studies as RelationshipStudyRecord[],
+        );
+        logger.info(
+          {
+            points: aggregation.points.length,
+            skipped_malformed: aggregation.skipped_malformed,
+          },
+          "Aggregated studies by enrollment vs start year",
+        );
+
+        response = assembleVisualizationResponse({
+          filters: validatedEntities,
+          visualizationType: "scatterplot",
+          aggregation: aggregation.points,
+          fetchedStudies: fetchResult.studies.length,
+          skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+          studiesWithMultiplePhases: 0,
+          truncated: fetchResult.truncated,
+        });
+        break;
+      }
+      case "network": {
+        const dimension = interpretation.network_dimension;
+        const aggregation = aggregateByNetwork(
+          fetchResult.studies as NetworkStudyRecord[],
+          dimension,
+          validatedEntities,
+        );
+        logger.info(
+          {
+            nodes: aggregation.nodes.length,
+            edges: aggregation.edges.length,
+            skipped_malformed: aggregation.skipped_malformed,
+          },
+          "Aggregated studies into network graph",
+        );
+
+        response = assembleVisualizationResponse({
+          filters: validatedEntities,
+          visualizationType: "network_graph",
+          networkDimension: dimension,
+          aggregation,
+          fetchedStudies: fetchResult.studies.length,
+          skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+          studiesWithMultiplePhases: 0,
+          truncated: fetchResult.truncated,
+        });
+        break;
+      }
+      default: {
+        const _exhaustive: never = intent;
+        throw new Error(`Unsupported intent: ${String(_exhaustive)}`);
+      }
     }
   }
 

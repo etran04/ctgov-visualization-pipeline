@@ -1,5 +1,6 @@
 import type {
   EnrollmentAggregationBin,
+  GroupedPhaseAggregationRow,
   PhaseAggregationBin,
   RelationshipPoint,
   YearAggregationBin,
@@ -21,6 +22,12 @@ type BaseAssembleInput = {
 type BarChartAssembleInput = BaseAssembleInput & {
   visualizationType: "bar_chart";
   aggregation: PhaseAggregationBin[];
+};
+
+type GroupedBarChartAssembleInput = BaseAssembleInput & {
+  visualizationType: "grouped_bar_chart";
+  comparisonTargets: string[];
+  aggregation: GroupedPhaseAggregationRow[];
 };
 
 type LineChartAssembleInput = BaseAssembleInput & {
@@ -46,6 +53,7 @@ type NetworkGraphAssembleInput = BaseAssembleInput & {
 
 export type AssembleVisualizationResponseInput =
   | BarChartAssembleInput
+  | GroupedBarChartAssembleInput
   | LineChartAssembleInput
   | HistogramAssembleInput
   | ScatterplotAssembleInput
@@ -53,6 +61,7 @@ export type AssembleVisualizationResponseInput =
 
 const TITLE_PREFIX_BY_VIZ_TYPE = {
   bar_chart: "Trial phases for",
+  grouped_bar_chart: "Trial phases:",
   line_chart: "Trials started per year for",
   histogram: "Enrollment distribution for",
   scatterplot: "Enrollment vs start year for",
@@ -90,6 +99,24 @@ function buildTitle(
   return `${TITLE_PREFIX_BY_VIZ_TYPE[visualizationType]} ${buildFilterSubject(filters)}`;
 }
 
+function buildGroupedComparisonFilters(filters: QueryEntities): QueryEntities {
+  return {
+    drug_name: null,
+    comparison_targets: null,
+    condition: filters.condition,
+    phase: filters.phase,
+  };
+}
+
+function buildGroupedComparisonTitle(
+  comparisonTargets: string[],
+  filters: QueryEntities,
+): string {
+  const seriesLabel = comparisonTargets.join(" vs ");
+  const conditionSuffix = filters.condition ? ` in ${filters.condition}` : "";
+  return `${TITLE_PREFIX_BY_VIZ_TYPE.grouped_bar_chart} ${seriesLabel}${conditionSuffix}`;
+}
+
 function buildNetworkTitle(
   filters: QueryEntities,
   networkDimension: NetworkDimension,
@@ -106,6 +133,40 @@ function buildMeta(input: BaseAssembleInput) {
     studies_with_multiple_phases: input.studiesWithMultiplePhases,
     truncated: input.truncated,
   };
+}
+
+/**
+ * Build a grouped bar chart visualization response from grouped phase aggregation output.
+ *
+ * Strips internal `source_nct_ids` from data points and validates against
+ * `VisualizationResponseSchema`.
+ */
+export function assembleGroupedBarChartResponse(
+  input: GroupedBarChartAssembleInput,
+): VisualizationResponse {
+  const filters = buildGroupedComparisonFilters(input.filters);
+
+  return VisualizationResponseSchema.parse({
+    visualization: {
+      type: "grouped_bar_chart",
+      title: buildGroupedComparisonTitle(input.comparisonTargets, input.filters),
+      encoding: {
+        x: { field: "phase", type: "nominal" },
+        y: { field: "trial_count", type: "quantitative" },
+        color: { field: "series", type: "nominal" },
+      },
+      data: input.aggregation.map((row) => ({
+        phase: row.phase,
+        series: row.series,
+        trial_count: row.trial_count,
+      })),
+    },
+    meta: {
+      ...buildMeta({ ...input, filters }),
+      comparison_targets: input.comparisonTargets,
+      comparison_dimension: "phase",
+    },
+  });
 }
 
 /**
@@ -267,6 +328,8 @@ export function assembleVisualizationResponse(
   switch (input.visualizationType) {
     case "bar_chart":
       return assembleBarChartResponse(input);
+    case "grouped_bar_chart":
+      return assembleGroupedBarChartResponse(input);
     case "line_chart":
       return assembleLineChartResponse(input);
     case "histogram":

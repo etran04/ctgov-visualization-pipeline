@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
+import { aggregateGroupedByPhase } from "../../src/domain/aggregations/aggregateGroupedByPhase.js";
 import { VisualizationResponseSchema } from "../../src/domain/schemas/index.js";
 import { aggregateByNetwork } from "../../src/domain/aggregations/aggregateByNetwork.js";
 import { assembleVisualizationResponse } from "../../src/domain/assembleVisualizationResponse.js";
 import { ENROLLMENT_BIN_ORDER } from "../../src/domain/mappings/enrollmentBins.js";
 import { PHASE_BIN_ORDER } from "../../src/domain/mappings/phases.js";
 import {
+  validMultiPhaseStudy,
   validNetworkSamePairSecondStudy,
   validNetworkSingleInterventionStudy,
+  validSinglePhaseStudy,
 } from "../fixtures/ctgovStudies.js";
 
 const baseAggregation = PHASE_BIN_ORDER.map((phase) => ({
@@ -105,6 +108,82 @@ describe("assembleBarChartResponse", () => {
 
     expect(response.visualization.data).toEqual([]);
     expect(response.meta.truncated).toBe(true);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+});
+
+describe("assembleGroupedBarChartResponse", () => {
+  const groupedAggregation = aggregateGroupedByPhase([
+    { series: "Metformin", studies: [validSinglePhaseStudy] },
+    { series: "Pembrolizumab", studies: [validMultiPhaseStudy] },
+  ]);
+
+  it("builds a drug-vs-drug title and comparison meta", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: null,
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: "diabetes",
+        phase: null,
+      },
+      visualizationType: "grouped_bar_chart",
+      comparisonTargets: ["Metformin", "Pembrolizumab"],
+      aggregation: groupedAggregation.rows,
+      fetchedStudies: 5600,
+      skippedMalformed: 12,
+      studiesWithMultiplePhases: 508,
+      truncated: false,
+    });
+
+    expect(response.visualization.title).toBe(
+      "Trial phases: Metformin vs Pembrolizumab in diabetes",
+    );
+    expect(response.meta.comparison_targets).toEqual(["Metformin", "Pembrolizumab"]);
+    expect(response.meta.comparison_dimension).toBe("phase");
+    expect(response.meta.filters).toEqual({
+      drug_name: null,
+      comparison_targets: null,
+      condition: "diabetes",
+      phase: null,
+    });
+  });
+
+  it("uses color series encoding and strips source_nct_ids", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: null,
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: null,
+        phase: null,
+      },
+      visualizationType: "grouped_bar_chart",
+      comparisonTargets: ["Metformin", "Pembrolizumab"],
+      aggregation: groupedAggregation.rows,
+      fetchedStudies: 2,
+      skippedMalformed: 0,
+      studiesWithMultiplePhases: 1,
+      truncated: false,
+    });
+
+    expect(response.visualization.type).toBe("grouped_bar_chart");
+    if (response.visualization.type !== "grouped_bar_chart") {
+      throw new Error("expected grouped_bar_chart");
+    }
+
+    expect(response.visualization.encoding).toEqual({
+      x: { field: "phase", type: "nominal" },
+      y: { field: "trial_count", type: "quantitative" },
+      color: { field: "series", type: "nominal" },
+    });
+    expect(response.visualization.data).toHaveLength(PHASE_BIN_ORDER.length * 2);
+    for (const point of response.visualization.data) {
+      expect(point).not.toHaveProperty("source_nct_ids");
+    }
+    expect(
+      response.visualization.data.filter(
+        (row) => row.series === "Metformin" && row.phase === "Phase 2",
+      ),
+    ).toEqual([{ phase: "Phase 2", series: "Metformin", trial_count: 1 }]);
     expect(VisualizationResponseSchema.parse(response)).toEqual(response);
   });
 });

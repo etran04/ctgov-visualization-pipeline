@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { BarChartVisualizationSchema } from "./barChart.js";
+import { GroupedBarChartVisualizationSchema } from "./groupedBarChart.js";
 import { HistogramVisualizationSchema } from "./histogram.js";
 import { LineChartVisualizationSchema } from "./lineChart.js";
 import { NetworkGraphVisualizationSchema } from "./networkGraph.js";
@@ -10,6 +11,7 @@ import { VisualizationMetaSchema } from "./visualizationMeta.js";
 export const VisualizationResponseSchema = z.object({
   visualization: z.discriminatedUnion("type", [
     BarChartVisualizationSchema,
+    GroupedBarChartVisualizationSchema,
     LineChartVisualizationSchema,
     HistogramVisualizationSchema,
     ScatterplotVisualizationSchema,
