@@ -45,7 +45,7 @@ function mockCtgovPage(studies: unknown[], nextPageToken?: string): void {
 }
 
 describe("fetchStudies", () => {
-  const entities = { drug_name: "Pembrolizumab", condition: null, phase: null };
+  const entities = { drug_name: "Pembrolizumab", comparison_targets: null, condition: null, phase: null };
 
   it("normalizes phase fields for comparison fetches", async () => {
     mockCtgovPage([validSinglePhaseStudy, malformedStudyEmptyPhases]);

@@ -10,7 +10,7 @@ const ComparisonInterpretationSchema = z.object({
     .literal("phase")
     .describe("Which comparison dimension should be used in downstream aggregation."),
   suggested_viz_type: z
-    .literal("bar_chart")
+    .enum(["bar_chart", "grouped_bar_chart"])
     .describe("Suggested visualization type for the interpreted comparison request."),
 });
 
@@ -96,9 +96,16 @@ export const QueryInterpretationOpenAiSchema = z.object({
     "Set to drug_sponsor for network intent; null otherwise.",
   ),
   suggested_viz_type: z
-    .enum(["bar_chart", "line_chart", "histogram", "scatterplot", "network_graph"])
+    .enum([
+      "bar_chart",
+      "grouped_bar_chart",
+      "line_chart",
+      "histogram",
+      "scatterplot",
+      "network_graph",
+    ])
     .describe(
-      "bar_chart for comparison; line_chart for trend_over_time; histogram for distribution; scatterplot for relationship; network_graph for network.",
+      "bar_chart or grouped_bar_chart for comparison; line_chart for trend_over_time; histogram for distribution; scatterplot for relationship; network_graph for network.",
     ),
 });
 

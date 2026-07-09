@@ -7,11 +7,13 @@ describe("validateEntities", () => {
     expect(
       validateEntities({
         drug_name: "  Pembrolizumab  ",
+        comparison_targets: null,
         condition: "  lung cancer ",
         phase: "Phase 3",
       }),
     ).toEqual({
       drug_name: "Pembrolizumab",
+      comparison_targets: null,
       condition: "lung cancer",
       phase: "Phase 3",
     });
@@ -21,6 +23,7 @@ describe("validateEntities", () => {
     expect(() =>
       validateEntities({
         drug_name: "   ",
+        comparison_targets: null,
         condition: null,
         phase: null,
       }),
@@ -31,9 +34,75 @@ describe("validateEntities", () => {
     expect(() =>
       validateEntities({
         drug_name: null,
+        comparison_targets: null,
         condition: null,
         phase: null,
       }),
     ).toThrow(InvalidParametersError);
+  });
+
+  it("deduplicates comparison_targets case-insensitively", () => {
+    expect(
+      validateEntities({
+        drug_name: null,
+        comparison_targets: ["Metformin", " metformin ", "Pembrolizumab"],
+        condition: null,
+        phase: null,
+      }),
+    ).toEqual({
+      drug_name: null,
+      comparison_targets: ["Metformin", "Pembrolizumab"],
+      condition: null,
+      phase: null,
+    });
+  });
+
+  it("rejects more than four unique comparison targets", () => {
+    expect(() =>
+      validateEntities({
+        drug_name: null,
+        comparison_targets: ["A", "B", "C", "D", "E"],
+        condition: null,
+        phase: null,
+      }),
+    ).toThrow(InvalidParametersError);
+  });
+
+  it("rejects empty comparison target strings", () => {
+    expect(() =>
+      validateEntities({
+        drug_name: null,
+        comparison_targets: ["Metformin", "  "],
+        condition: null,
+        phase: null,
+      }),
+    ).toThrow(InvalidParametersError);
+  });
+
+  it("rejects drug_name together with multiple comparison targets", () => {
+    expect(() =>
+      validateEntities({
+        drug_name: "Metformin",
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: null,
+        phase: null,
+      }),
+    ).toThrow(InvalidParametersError);
+  });
+
+  it("accepts comparison_targets alone as a valid filter", () => {
+    expect(
+      validateEntities({
+        drug_name: null,
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: null,
+        phase: null,
+      }),
+    ).toEqual({
+      drug_name: null,
+      comparison_targets: ["Metformin", "Pembrolizumab"],
+      condition: null,
+      phase: null,
+    });
   });
 });

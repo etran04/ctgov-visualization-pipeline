@@ -19,7 +19,7 @@ describe("assembleBarChartResponse", () => {
   it("builds a drug-first title when both drug and condition are present", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: "lung cancer",
         phase: null,
       },
@@ -39,7 +39,7 @@ describe("assembleBarChartResponse", () => {
   it("builds a condition-only title when only condition is present", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: null,
+        drug_name: null, comparison_targets: null,
         condition: "melanoma",
         phase: null,
       },
@@ -57,7 +57,7 @@ describe("assembleBarChartResponse", () => {
   it("strips source_nct_ids from the HTTP response payload", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -91,7 +91,7 @@ describe("assembleBarChartResponse", () => {
   it("allows empty aggregation bins and preserves truncated meta", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: null,
+        drug_name: null, comparison_targets: null,
         condition: null,
         phase: "Phase 1",
       },
@@ -120,7 +120,7 @@ describe("assembleLineChartResponse", () => {
   it("builds a drug-first title when both drug and condition are present", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: "lung cancer",
         phase: null,
       },
@@ -140,7 +140,7 @@ describe("assembleLineChartResponse", () => {
   it("uses temporal year encoding and strips source_nct_ids", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -189,7 +189,7 @@ describe("assembleHistogramResponse", () => {
   it("builds a drug-first title when both drug and condition are present", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: "lung cancer",
         phase: null,
       },
@@ -209,7 +209,7 @@ describe("assembleHistogramResponse", () => {
   it("uses ordinal bin_label encoding and strips source_nct_ids", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -257,7 +257,7 @@ describe("assembleScatterplotResponse", () => {
   it("builds a drug-first title when both drug and condition are present", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: "lung cancer",
         phase: null,
       },
@@ -277,7 +277,7 @@ describe("assembleScatterplotResponse", () => {
   it("uses quantitative/temporal encoding and preserves nct_id in data", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -310,7 +310,7 @@ describe("assembleNetworkGraphResponse", () => {
   it("builds a drug-first title when both drug and condition are present", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: "lung cancer",
         phase: null,
       },
@@ -331,7 +331,7 @@ describe("assembleNetworkGraphResponse", () => {
   it("strips source_nct_ids from edges and sets meta.network_dimension", () => {
     const response = assembleVisualizationResponse({
       filters: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },

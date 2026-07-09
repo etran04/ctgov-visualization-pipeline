@@ -42,7 +42,7 @@ describe("VisualizationResponseSchema", () => {
         },
       },
       meta: {
-        filters: { drug_name: "Pembrolizumab", condition: null, phase: null },
+        filters: { drug_name: "Pembrolizumab", comparison_targets: null, condition: null, phase: null },
         network_dimension: "drug_sponsor",
         source: "clinicaltrials.gov",
         fetched_studies: 120,

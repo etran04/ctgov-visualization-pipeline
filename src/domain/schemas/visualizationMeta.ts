@@ -4,6 +4,8 @@ import { NetworkDimensionSchema } from "./networkDimension.js";
 
 export const VisualizationMetaSchema = z.object({
   filters: QueryEntitiesSchema,
+  comparison_targets: z.array(z.string()).nullable().optional(),
+  comparison_dimension: z.literal("phase").nullable().optional(),
   network_dimension: NetworkDimensionSchema.nullable().optional(),
   source: z.literal("clinicaltrials.gov"),
   fetched_studies: z.number().int().nonnegative(),

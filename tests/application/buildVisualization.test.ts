@@ -38,7 +38,7 @@ describe("buildVisualization", () => {
     mockInterpretQuery.mockResolvedValue({
       intent: "comparison",
       entities: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -63,7 +63,7 @@ describe("buildVisualization", () => {
     );
     expect(mockFetchStudies).toHaveBeenCalledWith(
       {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -83,7 +83,7 @@ describe("buildVisualization", () => {
     mockInterpretQuery.mockResolvedValue({
       intent: "trend_over_time",
       entities: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -104,7 +104,7 @@ describe("buildVisualization", () => {
 
     expect(mockFetchStudies).toHaveBeenCalledWith(
       {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -130,7 +130,7 @@ describe("buildVisualization", () => {
     mockInterpretQuery.mockResolvedValue({
       intent: "distribution",
       entities: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -151,7 +151,7 @@ describe("buildVisualization", () => {
 
     expect(mockFetchStudies).toHaveBeenCalledWith(
       {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -179,7 +179,7 @@ describe("buildVisualization", () => {
     mockInterpretQuery.mockResolvedValue({
       intent: "relationship",
       entities: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -201,7 +201,7 @@ describe("buildVisualization", () => {
 
     expect(mockFetchStudies).toHaveBeenCalledWith(
       {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -225,7 +225,7 @@ describe("buildVisualization", () => {
     mockInterpretQuery.mockResolvedValue({
       intent: "network",
       entities: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -246,7 +246,7 @@ describe("buildVisualization", () => {
 
     expect(mockFetchStudies).toHaveBeenCalledWith(
       {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -296,13 +296,13 @@ describe("buildVisualization", () => {
 
   it("passes advisory hints to query interpretation", async () => {
     const hints = {
-      entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
+      entities: { drug_name: "Pembrolizumab", comparison_targets: null, condition: null, phase: null },
     };
 
     mockInterpretQuery.mockResolvedValue({
       intent: "comparison",
       entities: {
-        drug_name: "Pembrolizumab",
+        drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
       },
@@ -329,7 +329,7 @@ describe("buildVisualization", () => {
     mockInterpretQuery.mockResolvedValue({
       intent: "comparison",
       entities: {
-        drug_name: null,
+        drug_name: null, comparison_targets: null,
         condition: null,
         phase: null,
       },

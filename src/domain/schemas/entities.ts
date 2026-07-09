@@ -11,6 +11,12 @@ export const QueryEntitiesSchema = z.object({
     .string()
     .nullable()
     .describe("The intervention or drug name referenced by the user query."),
+  comparison_targets: z
+    .array(z.string())
+    .nullable()
+    .describe(
+      "Drug names when user compares 2+ drugs (e.g. A vs B). Null for single-drug queries.",
+    ),
   condition: z
     .string()
     .nullable()

@@ -18,6 +18,7 @@ export {
   type NetworkDimension,
 } from "./networkDimension.js";
 export { NetworkGraphVisualizationSchema } from "./networkGraph.js";
+export { GroupedBarChartVisualizationSchema } from "./groupedBarChart.js";
 export {
   parseQueryInterpretation,
   QueryInterpretationHintsSchema,

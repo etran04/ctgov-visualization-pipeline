@@ -562,7 +562,7 @@ function createSmokeCases(deps: {
 
         const response = assembleVisualizationResponse({
           filters: {
-            drug_name: "Pembrolizumab",
+            drug_name: "Pembrolizumab", comparison_targets: null,
             condition: null,
             phase: null,
           },
@@ -607,7 +607,7 @@ function createSmokeCases(deps: {
 
         const response = assembleVisualizationResponse({
           filters: {
-            drug_name: "Pembrolizumab",
+            drug_name: "Pembrolizumab", comparison_targets: null,
             condition: null,
             phase: null,
           },
@@ -662,7 +662,7 @@ function createSmokeCases(deps: {
 
         const response = assembleVisualizationResponse({
           filters: {
-            drug_name: "Pembrolizumab",
+            drug_name: "Pembrolizumab", comparison_targets: null,
             condition: null,
             phase: null,
           },
@@ -718,7 +718,7 @@ function createSmokeCases(deps: {
 
         const response = assembleVisualizationResponse({
           filters: {
-            drug_name: "Pembrolizumab",
+            drug_name: "Pembrolizumab", comparison_targets: null,
             condition: null,
             phase: null,
           },
