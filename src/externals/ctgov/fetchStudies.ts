@@ -2,6 +2,7 @@ import { config } from "../../config.js";
 import type {
   CtgovStudyRecord,
   DistributionStudyRecord,
+  NetworkStudyRecord,
   PhaseStudyRecord,
   RelationshipStudyRecord,
   StudyRecordForIntent,
@@ -20,6 +21,7 @@ export const DEFAULT_CTGOV_FIELDS = ["NCTId", "Phase"] as const;
 export type {
   CtgovStudyRecord,
   DistributionStudyRecord,
+  NetworkStudyRecord,
   PhaseStudyRecord,
   RelationshipStudyRecord,
   TimelineStudyRecord,

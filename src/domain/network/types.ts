@@ -1,16 +1,4 @@
-/**
- * Validated study with interventions and lead sponsor — output of network fetch.
- *
- * Defined here for the graph engine; consolidated into `ctgovStudyTypes` when
- * normalization lands in commit 2.
- */
-export type NetworkStudyRecord = {
-  protocolSection: {
-    identificationModule: { nctId: string };
-    armsInterventionsModule: { interventions: { name: string }[] };
-    sponsorCollaboratorsModule: { leadSponsor: { name: string } };
-  };
-};
+export type { NetworkStudyRecord } from "../types/ctgovStudyTypes.js";
 
 export type NetworkNode = {
   id: string;

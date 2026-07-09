@@ -2,6 +2,7 @@ import type { Intent } from "../../domain/schemas/intents.js";
 import type {
   CtgovStudyRecord,
   DistributionStudyRecord,
+  NetworkStudyRecord,
   PhaseStudyRecord,
   RelationshipStudyRecord,
   TimelineStudyRecord,
@@ -187,6 +188,85 @@ function normalizeRelationshipStudy(study: unknown): RelationshipStudyRecord | n
   };
 }
 
+function normalizeInterventions(armsInterventionsModule: unknown): { name: string }[] | null {
+  if (typeof armsInterventionsModule !== "object" || armsInterventionsModule === null) {
+    return null;
+  }
+
+  const interventions = (armsInterventionsModule as Record<string, unknown>).interventions;
+  if (!Array.isArray(interventions) || interventions.length === 0) {
+    return null;
+  }
+
+  const normalized = interventions
+    .map((intervention) => {
+      if (typeof intervention !== "object" || intervention === null) {
+        return null;
+      }
+
+      const name = (intervention as Record<string, unknown>).name;
+      if (typeof name !== "string") {
+        return null;
+      }
+
+      const trimmed = name.trim();
+      return trimmed.length > 0 ? { name: trimmed } : null;
+    })
+    .filter((intervention): intervention is { name: string } => intervention !== null);
+
+  return normalized.length > 0 ? normalized : null;
+}
+
+function normalizeLeadSponsor(sponsorCollaboratorsModule: unknown): { name: string } | null {
+  if (typeof sponsorCollaboratorsModule !== "object" || sponsorCollaboratorsModule === null) {
+    return null;
+  }
+
+  const leadSponsor = (sponsorCollaboratorsModule as Record<string, unknown>).leadSponsor;
+  if (typeof leadSponsor !== "object" || leadSponsor === null) {
+    return null;
+  }
+
+  const name = (leadSponsor as Record<string, unknown>).name;
+  if (typeof name !== "string") {
+    return null;
+  }
+
+  const trimmed = name.trim();
+  return trimmed.length > 0 ? { name: trimmed } : null;
+}
+
+function normalizeNetworkStudy(study: unknown): NetworkStudyRecord | null {
+  if (typeof study !== "object" || study === null) {
+    return null;
+  }
+
+  const rawStudy = study as Record<string, unknown>;
+  const nctId = extractNctId(rawStudy);
+  if (nctId === null || nctId.length === 0) {
+    return null;
+  }
+
+  const protocolSection = rawStudy.protocolSection as Record<string, unknown>;
+  const interventions = normalizeInterventions(protocolSection.armsInterventionsModule);
+  if (interventions === null) {
+    return null;
+  }
+
+  const leadSponsor = normalizeLeadSponsor(protocolSection.sponsorCollaboratorsModule);
+  if (leadSponsor === null) {
+    return null;
+  }
+
+  return {
+    protocolSection: {
+      identificationModule: { nctId },
+      armsInterventionsModule: { interventions },
+      sponsorCollaboratorsModule: { leadSponsor },
+    },
+  };
+}
+
 /**
  * Normalize a raw CT.gov study payload into a typed record.
  *
@@ -209,10 +289,16 @@ export function normalizeStudy(
         return normalizeDistributionStudy(study);
       case "relationship":
         return normalizeRelationshipStudy(study);
+      case "network":
+        return normalizeNetworkStudy(study);
     }
   }
 
   const fieldSet = new Set(requestedFields);
+
+  if (fieldSet.has("InterventionName") || fieldSet.has("LeadSponsorName")) {
+    return normalizeNetworkStudy(study);
+  }
 
   if (fieldSet.has("Phase")) {
     return normalizePhaseStudy(study);

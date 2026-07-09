@@ -129,5 +129,7 @@ export function parseQueryInterpretation(raw: QueryInterpretationOpenAi): QueryI
         relationship_dimension: raw.relationship_dimension,
         suggested_viz_type: raw.suggested_viz_type,
       });
+    case "network":
+      throw new Error("Network intent interpretation is not yet implemented");
   }
 }

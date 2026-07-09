@@ -13,6 +13,8 @@ export type CtgovRawStudy = {
       enrollmentInfo?: { count?: unknown };
     };
     statusModule?: { startDateStruct?: { date?: unknown } };
+    armsInterventionsModule?: { interventions?: unknown };
+    sponsorCollaboratorsModule?: { leadSponsor?: { name?: unknown } };
   };
 };
 
@@ -71,12 +73,21 @@ export type RelationshipStudyRecord = StudyIdentification & {
   };
 };
 
+/** Validated study with interventions and lead sponsor — output of network fetch. */
+export type NetworkStudyRecord = StudyIdentification & {
+  protocolSection: StudyIdentification["protocolSection"] & {
+    armsInterventionsModule: { interventions: { name: string }[] };
+    sponsorCollaboratorsModule: { leadSponsor: { name: string } };
+  };
+};
+
 /** Any successfully normalized study record from `fetchStudies`. */
 export type CtgovStudyRecord =
   | PhaseStudyRecord
   | TimelineStudyRecord
   | DistributionStudyRecord
-  | RelationshipStudyRecord;
+  | RelationshipStudyRecord
+  | NetworkStudyRecord;
 
 /** Map intent to the strict record shape produced by fetch for that intent. */
 export type StudyRecordForIntent<I extends Intent> = I extends "comparison"
@@ -87,4 +98,6 @@ export type StudyRecordForIntent<I extends Intent> = I extends "comparison"
       ? DistributionStudyRecord
       : I extends "relationship"
         ? RelationshipStudyRecord
-        : never;
+        : I extends "network"
+          ? NetworkStudyRecord
+          : never;

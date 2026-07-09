@@ -5,6 +5,7 @@ export const SUPPORTED_INTENTS = [
   "trend_over_time",
   "distribution",
   "relationship",
+  "network",
 ] as const;
 
 export type Intent = (typeof SUPPORTED_INTENTS)[number];

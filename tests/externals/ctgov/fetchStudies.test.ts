@@ -12,7 +12,12 @@ import {
   malformedStudyMissingStartDate,
   malformedStudyNonIntegerEnrollment,
   malformedStudyZeroEnrollment,
+  malformedNetworkStudyEmptyInterventions,
+  malformedNetworkStudyMissingNctId,
+  malformedNetworkStudyMissingSponsor,
   validEnrollmentSmallStudy,
+  validNetworkMultiInterventionStudy,
+  validNetworkSingleInterventionStudy,
   validRelationshipStudy,
   validSinglePhaseStudy,
   validStudyIsoStartDate,
@@ -192,6 +197,55 @@ describe("fetchStudies", () => {
       fetchStudies(entities, {
         intent: "relationship",
         fields: getFieldsForIntent("relationship"),
+      }),
+    ).rejects.toThrow(NoStudiesFoundError);
+  });
+
+  it("normalizes intervention and sponsor fields for network fetches", async () => {
+    mockCtgovPage([
+      validNetworkSingleInterventionStudy,
+      validNetworkMultiInterventionStudy,
+      malformedNetworkStudyMissingSponsor,
+      malformedNetworkStudyEmptyInterventions,
+      malformedNetworkStudyMissingNctId,
+    ]);
+
+    const result = await fetchStudies(entities, {
+      intent: "network",
+      fields: getFieldsForIntent("network"),
+    });
+
+    expect(result.studies).toHaveLength(2);
+    expect(result.studies[0]).toEqual(validNetworkSingleInterventionStudy);
+    expect(result.studies[1]).toEqual(validNetworkMultiInterventionStudy);
+    expect(result.skipped_malformed).toBe(3);
+  });
+
+  it("requests intervention and sponsor fields in the CT.gov query for network fetches", async () => {
+    mockCtgovPage([validNetworkSingleInterventionStudy]);
+
+    await fetchStudies(entities, {
+      intent: "network",
+      fields: getFieldsForIntent("network"),
+    });
+
+    const calledUrl = new URL(mockFetch.mock.calls[0][0] as string);
+    expect(calledUrl.searchParams.get("fields")).toBe(
+      "NCTId,InterventionName,LeadSponsorName",
+    );
+  });
+
+  it("throws NoStudiesFoundError when every network study is malformed", async () => {
+    mockCtgovPage([
+      malformedNetworkStudyMissingSponsor,
+      malformedNetworkStudyEmptyInterventions,
+      malformedNetworkStudyMissingNctId,
+    ]);
+
+    await expect(
+      fetchStudies(entities, {
+        intent: "network",
+        fields: getFieldsForIntent("network"),
       }),
     ).rejects.toThrow(NoStudiesFoundError);
   });

@@ -25,10 +25,19 @@ describe("fieldProfiles", () => {
     ]);
   });
 
+  it("maps network intent to intervention and sponsor fields", () => {
+    expect(getFieldsForIntent("network")).toEqual([
+      "NCTId",
+      "InterventionName",
+      "LeadSponsorName",
+    ]);
+  });
+
   it("covers every supported intent", () => {
     expect(Object.keys(INTENT_FIELD_PROFILES).sort()).toEqual([
       "comparison",
       "distribution",
+      "network",
       "relationship",
       "trend_over_time",
     ]);

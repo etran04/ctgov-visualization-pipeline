@@ -1,4 +1,4 @@
-import type { NetworkStudyRecord } from "../../src/domain/network/types.js";
+import type { NetworkStudyRecord } from "../../src/domain/types/ctgovStudyTypes.js";
 import type {
   DistributionStudyRecord,
   PhaseStudyRecord,

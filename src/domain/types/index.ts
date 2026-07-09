@@ -8,6 +8,7 @@ export type {
   CtgovRawStudy,
   CtgovStudyRecord,
   DistributionStudyRecord,
+  NetworkStudyRecord,
   PhaseStudyRecord,
   StudyRecordForIntent,
   TimelineStudyRecord,
