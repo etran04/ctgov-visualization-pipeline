@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   getFieldsForIntent,
+  getRequiredFieldsForNetworkDimension,
   INTENT_FIELD_PROFILES,
 } from "../../../src/domain/intents/fieldProfiles.js";
 
@@ -25,12 +26,15 @@ describe("fieldProfiles", () => {
     ]);
   });
 
-  it("maps network intent to intervention and sponsor fields", () => {
+  it("maps network intent to intervention and sponsor fields from the dimension registry", () => {
     expect(getFieldsForIntent("network")).toEqual([
       "NCTId",
       "InterventionName",
       "LeadSponsorName",
     ]);
+    expect(getFieldsForIntent("network", "drug_sponsor")).toEqual(
+      getRequiredFieldsForNetworkDimension("drug_sponsor"),
+    );
   });
 
   it("covers every supported intent", () => {

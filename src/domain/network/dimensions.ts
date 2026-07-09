@@ -15,8 +15,9 @@ export type BipartiteDimensionConfig = {
   requiredFields: readonly string[];
 };
 
-// NB: Add a matching registry entry per topology (extractors + requiredFields). Also extend fieldProfiles,
-// normalizeNetworkStudy, interpretation/LLM prompt, and title prefix in assembleVisualizationResponse.
+// NB: Add a matching registry entry per topology (extractors + requiredFields). requiredFields
+// drive fetch via getRequiredFieldsForNetworkDimension. Also extend normalizeNetworkStudy,
+// interpretation/LLM prompt, and title prefix in assembleVisualizationResponse.
 export const NETWORK_DIMENSIONS = {
   drug_sponsor: {
     leftEntityType: "drug",
@@ -26,3 +27,10 @@ export const NETWORK_DIMENSIONS = {
     requiredFields: ["NCTId", "InterventionName", "LeadSponsorName"],
   },
 } as const satisfies Record<NetworkDimension, BipartiteDimensionConfig>;
+
+/** CT.gov `fields` values required to normalize studies for a network topology. */
+export function getRequiredFieldsForNetworkDimension(
+  dimension: NetworkDimension,
+): readonly string[] {
+  return NETWORK_DIMENSIONS[dimension].requiredFields;
+}

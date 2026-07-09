@@ -3,6 +3,7 @@ import { NetworkDimensionSchema } from "../../../src/domain/schemas/networkDimen
 import {
   NETWORK_DIMENSIONS,
   NETWORK_DIMENSION_VALUES,
+  getRequiredFieldsForNetworkDimension,
 } from "../../../src/domain/network/dimensions.js";
 
 describe("NETWORK_DIMENSIONS", () => {
@@ -25,5 +26,11 @@ describe("NETWORK_DIMENSIONS", () => {
     for (const dimension of NETWORK_DIMENSION_VALUES) {
       expect(NetworkDimensionSchema.parse(dimension)).toBe(dimension);
     }
+  });
+
+  it("exposes requiredFields for fetch via getRequiredFieldsForNetworkDimension", () => {
+    expect(getRequiredFieldsForNetworkDimension("drug_sponsor")).toEqual(
+      NETWORK_DIMENSIONS.drug_sponsor.requiredFields,
+    );
   });
 });

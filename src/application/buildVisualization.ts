@@ -55,7 +55,10 @@ export async function buildVisualization(
   const intent = interpretation.intent;
   const fetchResult = await fetchStudies(validatedEntities, {
     intent,
-    fields: getFieldsForIntent(intent),
+    fields:
+      intent === "network"
+        ? getFieldsForIntent(intent, interpretation.network_dimension)
+        : getFieldsForIntent(intent),
   });
 
   const visualizationType = resolveVisualizationType(intent);
