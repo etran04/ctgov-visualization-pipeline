@@ -32,6 +32,7 @@ Supported intents:
    - Set time_dimension to null
    - Set distribution_dimension to null
    - Set relationship_dimension to null
+   - Set network_dimension to null
    - Examples: "compare phases", "breakdown by phase", "trial phases for X"
 
 2. "trend_over_time" — user wants to see how trials change over time
@@ -40,6 +41,7 @@ Supported intents:
    - Set comparison_dimension to null
    - Set distribution_dimension to null
    - Set relationship_dimension to null
+   - Set network_dimension to null
    - Examples: "over time", "timeline", "trend", "per year", "how have X trials changed"
 
 3. "distribution" — user wants to see enrollment sizes or how trials are distributed by enrollment
@@ -48,6 +50,7 @@ Supported intents:
    - Set comparison_dimension to null
    - Set time_dimension to null
    - Set relationship_dimension to null
+   - Set network_dimension to null
    - Examples: "enrollment distribution", "enrollment sizes", "how big are trials", "trial sizes for X"
 
 4. "relationship" — user wants to see how enrollment relates to start year across individual trials
@@ -56,13 +59,30 @@ Supported intents:
    - Set comparison_dimension to null
    - Set time_dimension to null
    - Set distribution_dimension to null
+   - Set network_dimension to null
    - Examples: "relationship between enrollment and start year", "enrollment vs year", "correlation between enrollment and start date", "enrollment and start year for X"
-   - Distinguish from distribution (sizes/bins) and trend_over_time (counts per year over time)
+   - Distinguish from distribution (sizes/bins), trend_over_time (counts per year over time), and network (who sponsors or studies what — see below)
+
+5. "network" — user wants to see which entities are connected in a bipartite graph (e.g. which sponsors run trials for a drug)
+   - Set network_dimension to "drug_sponsor"
+   - Set suggested_viz_type to "network_graph"
+   - Set comparison_dimension to null
+   - Set time_dimension to null
+   - Set distribution_dimension to null
+   - Set relationship_dimension to null
+   - Examples: "which sponsors run trials for X", "network of sponsors studying X", "who is sponsoring X trials", "who is studying X"
+   - Distinguish from relationship: network asks WHO is connected (sponsors, drugs); relationship asks how TWO NUMERIC VARIABLES correlate per trial (enrollment vs start year)
+
+Intent disambiguation (network vs relationship):
+- "relationship between enrollment and start year" → relationship
+- "which sponsors run trials for X" → network
+- "network of sponsors studying X" → network
+- "who is sponsoring X trials" → network
 
 Extract entities from the user query:
 - drug_name: intervention or drug name (null if not mentioned)
 - condition: disease, condition, or indication (null if not mentioned)
-- phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases, showing trends over time, showing enrollment distribution, or showing enrollment vs start year)
+- phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases, showing trends over time, showing enrollment distribution, showing enrollment vs start year, or showing a sponsor/drug network)
 
 Use null for fields that are not mentioned. Do not use empty strings.
 Optional hints from the caller are advisory context only; prefer the user query when they conflict.`;
