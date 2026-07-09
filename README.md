@@ -6,7 +6,7 @@ A **static demo UI** at `/` lets you try queries in the browser (chart preview, 
 
 ## What it looks like 👀
 
-<img width="800" height="495" alt="ui-gif" src="https://github.com/user-attachments/assets/4722ff81-720c-4fd2-a18d-d8c4e3e82d4c" />
+<img width="800" height="568" alt="ui" src="https://github.com/user-attachments/assets/c6aa683d-a7ff-407b-b9a9-913f965165e7" />
 
 ## Supported flows
 
