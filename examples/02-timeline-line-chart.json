@@ -1812,9 +1812,16 @@
       "fetched_studies": 9939,
       "skipped_malformed": 61,
       "studies_with_multiple_phases": 0,
-      "truncated": true
+      "truncated": true,
+      "assumptions": [
+        "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+        "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+        "Year bins span the minimum to maximum start year in fetched studies; gap years are zero-filled.",
+        "Some fetched studies were skipped due to missing or invalid required fields.",
+        "CT.gov pagination limit reached; counts and citations reflect the fetched subset only."
+      ]
     }
   },
-  "generated_at": "2026-07-09T03:10:30.533Z",
+  "generated_at": "2026-07-09T04:45:45.298Z",
   "preset": "timeline"
 }

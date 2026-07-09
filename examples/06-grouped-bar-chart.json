@@ -607,9 +607,16 @@
       "fetched_studies": 5618,
       "skipped_malformed": 359,
       "studies_with_multiple_phases": 646,
-      "truncated": false
+      "truncated": false,
+      "assumptions": [
+        "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+        "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+        "Compared 2 drugs in parallel with shared filters; phase bins are zero-filled per series.",
+        "Some studies list multiple phases and are counted in every applicable phase bin.",
+        "Some fetched studies were skipped due to missing or invalid required fields."
+      ]
     }
   },
-  "generated_at": "2026-07-09T03:10:22.285Z",
+  "generated_at": "2026-07-09T04:45:33.044Z",
   "preset": "grouped"
 }

@@ -310,9 +310,15 @@
       "fetched_studies": 1912,
       "skipped_malformed": 96,
       "studies_with_multiple_phases": 0,
-      "truncated": false
+      "truncated": false,
+      "assumptions": [
+        "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+        "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+        "Enrollment uses six fixed bins; each study maps to exactly one bin.",
+        "Some fetched studies were skipped due to missing or invalid required fields."
+      ]
     }
   },
-  "generated_at": "2026-07-09T03:10:33.943Z",
+  "generated_at": "2026-07-09T04:45:48.432Z",
   "preset": "distribution"
 }
