@@ -8,9 +8,11 @@
 import {
   aggregateByEnrollment,
   aggregateByPhase,
+  aggregateByRelationship,
   aggregateByStartYear,
   type DistributionStudyRecord,
   type PhaseStudyRecord,
+  type RelationshipStudyRecord,
   type TimelineStudyRecord,
 } from "../domain/aggregations/index.js";
 import { assembleVisualizationResponse } from "../domain/assembleVisualizationResponse.js";
@@ -127,7 +129,27 @@ export async function buildVisualization(
       break;
     }
     case "relationship": {
-      throw new Error("Relationship intent is not yet implemented");
+      const aggregation = aggregateByRelationship(
+        fetchResult.studies as RelationshipStudyRecord[],
+      );
+      logger.info(
+        {
+          points: aggregation.points.length,
+          skipped_malformed: aggregation.skipped_malformed,
+        },
+        "Aggregated studies by enrollment vs start year",
+      );
+
+      response = assembleVisualizationResponse({
+        filters: validatedEntities,
+        visualizationType: "scatterplot",
+        aggregation: aggregation.points,
+        fetchedStudies: fetchResult.studies.length,
+        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+        studiesWithMultiplePhases: 0,
+        truncated: fetchResult.truncated,
+      });
+      break;
     }
     default: {
       const _exhaustive: never = intent;

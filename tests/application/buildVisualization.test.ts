@@ -5,6 +5,8 @@ import {
   validEnrollmentMidStudy,
   validEnrollmentSmallStudy,
   validMultiPhaseStudy,
+  validRelationshipStudy,
+  validRelationshipStudySecondYear,
   validSinglePhaseStudy,
   validStudyGapYearStartDate,
   validStudyIsoStartDate,
@@ -163,6 +165,52 @@ describe("buildVisualization", () => {
       { bin_label: "501–1,000", bin_start: 501, bin_end: 1000, trial_count: 0 },
       { bin_label: "1,001–5,000", bin_start: 1001, bin_end: 5000, trial_count: 0 },
       { bin_label: "5,001+", bin_start: 5001, bin_end: null, trial_count: 0 },
+    ]);
+    expect(response.meta.fetched_studies).toBe(2);
+    expect(response.meta.skipped_malformed).toBe(0);
+    expect(response.meta.studies_with_multiple_phases).toBe(0);
+    expect(response.meta.truncated).toBe(false);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+
+  it("wires relationship interpretation into a valid scatterplot response", async () => {
+    mockInterpretQuery.mockResolvedValue({
+      intent: "relationship",
+      entities: {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      relationship_dimension: "enrollment_vs_start_year",
+      suggested_viz_type: "scatterplot",
+    });
+
+    mockFetchStudies.mockResolvedValue({
+      studies: [validRelationshipStudy, validRelationshipStudySecondYear],
+      pages_fetched: 1,
+      skipped_malformed: 0,
+      truncated: false,
+    });
+
+    const response = await buildVisualization({
+      query:
+        "What is the relationship between enrollment and start year for Pembrolizumab trials?",
+    });
+
+    expect(mockFetchStudies).toHaveBeenCalledWith(
+      {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      { intent: "relationship", fields: ["NCTId", "EnrollmentCount", "StartDate"] },
+    );
+
+    expect(response.visualization.type).toBe("scatterplot");
+    expect(response.visualization.title).toBe("Enrollment vs start year for Pembrolizumab");
+    expect(response.visualization.data).toEqual([
+      { nct_id: "NCT00000301", enrollment_count: 120, year: 2020 },
+      { nct_id: "NCT00000302", enrollment_count: 75, year: 2021 },
     ]);
     expect(response.meta.fetched_studies).toBe(2);
     expect(response.meta.skipped_malformed).toBe(0);
