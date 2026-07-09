@@ -21,6 +21,12 @@ const EXAMPLES = [
     filter: "drug: Metformin",
   },
   {
+    id: "grouped",
+    filename: "06-grouped-bar-chart.json",
+    query: "Compare phases for Metformin vs Pembrolizumab",
+    filter: "drugs: Metformin, Pembrolizumab",
+  },
+  {
     id: "timeline",
     filename: "02-timeline-line-chart.json",
     query: "How many breast cancer trials started each year?",

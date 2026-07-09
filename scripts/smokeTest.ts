@@ -91,6 +91,21 @@ function printLiveValidationSummary(response: VisualizationResponse): void {
     for (const point of viz.data) {
       console.log(`      ${point.phase.padEnd(16)} ${point.trial_count}`);
     }
+  } else if (viz.type === "grouped_bar_chart") {
+    const seriesNames = [...new Set(viz.data.map((point) => point.series))];
+    console.log(`      series: ${seriesNames.join(", ")}`);
+    for (const series of seriesNames) {
+      const nonzero = viz.data.filter((point) => point.series === series && point.trial_count > 0);
+      for (const point of nonzero.slice(0, 4)) {
+        console.log(`      ${series.padEnd(16)} ${point.phase.padEnd(16)} ${point.trial_count}`);
+      }
+      if (nonzero.length > 4) {
+        console.log(`      … ${nonzero.length - 4} more nonzero bin(s) for ${series}`);
+      }
+    }
+    if (meta.comparison_targets !== undefined && meta.comparison_targets !== null) {
+      console.log(`      comparison_targets: ${meta.comparison_targets.join(", ")}`);
+    }
   } else if (viz.type === "line_chart") {
     const years = viz.data.map((point) => point.year);
     const zeroFilled = viz.data.filter((point) => point.trial_count === 0).length;
@@ -214,6 +229,7 @@ function createFetchClient(baseUrl: string): HttpClient {
 
 function createSmokeCases(deps: {
   aggregateByEnrollment: typeof import("../src/domain/aggregations/index.js").aggregateByEnrollment;
+  aggregateGroupedByPhase: typeof import("../src/domain/aggregations/index.js").aggregateGroupedByPhase;
   aggregateByNetwork: typeof import("../src/domain/aggregations/index.js").aggregateByNetwork;
   aggregateByRelationship: typeof import("../src/domain/aggregations/index.js").aggregateByRelationship;
   aggregateByStartYear: typeof import("../src/domain/aggregations/index.js").aggregateByStartYear;
@@ -221,15 +237,18 @@ function createSmokeCases(deps: {
   VisualizationResponseSchema: typeof import("../src/domain/schemas/index.js").VisualizationResponseSchema;
   validEnrollmentMidStudy: typeof import("../tests/fixtures/ctgovStudies.js").validEnrollmentMidStudy;
   validEnrollmentSmallStudy: typeof import("../tests/fixtures/ctgovStudies.js").validEnrollmentSmallStudy;
+  validMultiPhaseStudy: typeof import("../tests/fixtures/ctgovStudies.js").validMultiPhaseStudy;
   validNetworkSamePairSecondStudy: typeof import("../tests/fixtures/ctgovStudies.js").validNetworkSamePairSecondStudy;
   validNetworkSingleInterventionStudy: typeof import("../tests/fixtures/ctgovStudies.js").validNetworkSingleInterventionStudy;
   validRelationshipStudy: typeof import("../tests/fixtures/ctgovStudies.js").validRelationshipStudy;
   validRelationshipStudySecondYear: typeof import("../tests/fixtures/ctgovStudies.js").validRelationshipStudySecondYear;
+  validSinglePhaseStudy: typeof import("../tests/fixtures/ctgovStudies.js").validSinglePhaseStudy;
   validStudyGapYearStartDate: typeof import("../tests/fixtures/ctgovStudies.js").validStudyGapYearStartDate;
   validStudyIsoStartDate: typeof import("../tests/fixtures/ctgovStudies.js").validStudyIsoStartDate;
 }): SmokeCase[] {
   const {
     aggregateByEnrollment,
+    aggregateGroupedByPhase,
     aggregateByNetwork,
     aggregateByRelationship,
     aggregateByStartYear,
@@ -237,10 +256,12 @@ function createSmokeCases(deps: {
     VisualizationResponseSchema,
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validMultiPhaseStudy,
     validNetworkSamePairSecondStudy,
     validNetworkSingleInterventionStudy,
     validRelationshipStudy,
     validRelationshipStudySecondYear,
+    validSinglePhaseStudy,
     validStudyGapYearStartDate,
     validStudyIsoStartDate,
   } = deps;
@@ -326,6 +347,45 @@ function createSmokeCases(deps: {
           `unexpected title: ${parsed.data.visualization.title}`,
         );
         assert(parsed.data.visualization.data.length === 6, "expected six phase bins");
+        assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
+        assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+
+        return parsed.data;
+      },
+    },
+    {
+      name: "[LIVE] POST /visualize returns grouped bar chart for Metformin vs Pembrolizumab query",
+      liveOnly: true,
+      async run(client) {
+        const response = await client.post("/visualize", {
+          query: "Compare phases for Metformin vs Pembrolizumab",
+        });
+
+        assert(
+          response.statusCode === 200,
+          `expected 200, got ${response.statusCode}: ${JSON.stringify(response.body)}`,
+        );
+
+        const parsed = VisualizationResponseSchema.safeParse(response.body);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(
+          parsed.data.visualization.type === "grouped_bar_chart",
+          "expected grouped_bar_chart visualization",
+        );
+        assert(
+          parsed.data.visualization.title.includes("Metformin") &&
+            parsed.data.visualization.title.includes("Pembrolizumab"),
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(
+          parsed.data.meta.comparison_targets !== undefined &&
+            parsed.data.meta.comparison_targets !== null &&
+            parsed.data.meta.comparison_targets.length >= 2,
+          "expected comparison_targets in meta",
+        );
+        assert(parsed.data.meta.comparison_dimension === "phase", "expected phase comparison_dimension");
+        assert(parsed.data.visualization.data.length >= 12, "expected phase bins × series rows");
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
 
@@ -756,12 +816,65 @@ function createSmokeCases(deps: {
         }
       },
     },
+    {
+      name: "[MOCK] Grouped comparison pipeline returns grouped_bar_chart with series encoding",
+      mocked: true,
+      async run() {
+        const aggregation = aggregateGroupedByPhase([
+          { series: "Metformin", studies: [validSinglePhaseStudy] },
+          { series: "Pembrolizumab", studies: [validMultiPhaseStudy] },
+        ]);
+
+        const response = assembleVisualizationResponse({
+          filters: {
+            drug_name: null,
+            comparison_targets: ["Metformin", "Pembrolizumab"],
+            condition: null,
+            phase: null,
+          },
+          visualizationType: "grouped_bar_chart",
+          comparisonTargets: ["Metformin", "Pembrolizumab"],
+          aggregation: aggregation.rows,
+          fetchedStudies: 2,
+          skippedMalformed: 0,
+          studiesWithMultiplePhases: 1,
+          truncated: false,
+        });
+
+        const parsed = VisualizationResponseSchema.safeParse(response);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(
+          parsed.data.visualization.type === "grouped_bar_chart",
+          "expected grouped_bar_chart visualization",
+        );
+        assert(
+          parsed.data.visualization.title === "Trial phases: Metformin vs Pembrolizumab",
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(parsed.data.visualization.data.length === 12, "expected six phase bins × two series");
+        assert(
+          parsed.data.meta.comparison_targets?.join(", ") === "Metformin, Pembrolizumab",
+          "expected comparison_targets in meta",
+        );
+        assert(parsed.data.meta.comparison_dimension === "phase", "expected phase comparison_dimension");
+        assert(
+          parsed.data.visualization.data.some(
+            (row) => row.series === "Metformin" && row.phase === "Phase 2" && row.trial_count === 1,
+          ),
+          "expected Metformin Phase 2 count",
+        );
+        for (const point of parsed.data.visualization.data) {
+          assert(!("source_nct_ids" in point), "expected source_nct_ids stripped from data");
+        }
+      },
+    },
   ];
 }
 
 async function main(): Promise<void> {
   const { config } = await import("../src/config.js");
-  const { aggregateByEnrollment, aggregateByNetwork, aggregateByRelationship, aggregateByStartYear } = await import(
+  const { aggregateByEnrollment, aggregateGroupedByPhase, aggregateByNetwork, aggregateByRelationship, aggregateByStartYear } = await import(
     "../src/domain/aggregations/index.js"
   );
   const { assembleVisualizationResponse } = await import(
@@ -772,10 +885,12 @@ async function main(): Promise<void> {
   const {
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validMultiPhaseStudy,
     validNetworkSamePairSecondStudy,
     validNetworkSingleInterventionStudy,
     validRelationshipStudy,
     validRelationshipStudySecondYear,
+    validSinglePhaseStudy,
     validStudyGapYearStartDate,
     validStudyIsoStartDate,
   } = await import("../tests/fixtures/ctgovStudies.js");
@@ -786,6 +901,7 @@ async function main(): Promise<void> {
     : await createInjectClient(buildServer);
   const smokeCases = createSmokeCases({
     aggregateByEnrollment,
+    aggregateGroupedByPhase,
     aggregateByNetwork,
     aggregateByRelationship,
     aggregateByStartYear,
@@ -793,10 +909,12 @@ async function main(): Promise<void> {
     VisualizationResponseSchema,
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validMultiPhaseStudy,
     validNetworkSamePairSecondStudy,
     validNetworkSingleInterventionStudy,
     validRelationshipStudy,
     validRelationshipStudySecondYear,
+    validSinglePhaseStudy,
     validStudyGapYearStartDate,
     validStudyIsoStartDate,
   });

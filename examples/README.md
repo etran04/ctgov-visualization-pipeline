@@ -13,6 +13,7 @@ npm run examples:generate
 | File | Query | Filter | Visualization |
 |------|-------|--------|---------------|
 | [`01-comparison-bar-chart.json`](01-comparison-bar-chart.json) | Compare trial phases for Metformin | drug | `bar_chart` |
+| [`06-grouped-bar-chart.json`](06-grouped-bar-chart.json) | Compare phases for Metformin vs Pembrolizumab | drugs | `grouped_bar_chart` |
 | [`02-timeline-line-chart.json`](02-timeline-line-chart.json) | How many breast cancer trials started each year? | condition | `line_chart` |
 | [`03-distribution-histogram.json`](03-distribution-histogram.json) | What is the enrollment distribution for Nivolumab trials? | drug | `histogram` |
 | [`04-relationship-scatterplot.json`](04-relationship-scatterplot.json) | What is the relationship between enrollment and start year for type 2 diabetes trials? | condition | `scatterplot` |

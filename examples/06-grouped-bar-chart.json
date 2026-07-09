@@ -1,0 +1,107 @@
+{
+  "request": {
+    "query": "Compare phases for Metformin vs Pembrolizumab"
+  },
+  "response": {
+    "visualization": {
+      "type": "grouped_bar_chart",
+      "title": "Trial phases: Metformin vs Pembrolizumab",
+      "encoding": {
+        "x": {
+          "field": "phase",
+          "type": "nominal"
+        },
+        "y": {
+          "field": "trial_count",
+          "type": "quantitative"
+        },
+        "color": {
+          "field": "series",
+          "type": "nominal"
+        }
+      },
+      "data": [
+        {
+          "phase": "Phase 1",
+          "series": "Metformin",
+          "trial_count": 557
+        },
+        {
+          "phase": "Phase 1",
+          "series": "Pembrolizumab",
+          "trial_count": 1031
+        },
+        {
+          "phase": "Phase 2",
+          "series": "Metformin",
+          "trial_count": 643
+        },
+        {
+          "phase": "Phase 2",
+          "series": "Pembrolizumab",
+          "trial_count": 1731
+        },
+        {
+          "phase": "Phase 3",
+          "series": "Metformin",
+          "trial_count": 749
+        },
+        {
+          "phase": "Phase 3",
+          "series": "Pembrolizumab",
+          "trial_count": 357
+        },
+        {
+          "phase": "Phase 4",
+          "series": "Metformin",
+          "trial_count": 617
+        },
+        {
+          "phase": "Phase 4",
+          "series": "Pembrolizumab",
+          "trial_count": 17
+        },
+        {
+          "phase": "Early Phase 1",
+          "series": "Metformin",
+          "trial_count": 61
+        },
+        {
+          "phase": "Early Phase 1",
+          "series": "Pembrolizumab",
+          "trial_count": 51
+        },
+        {
+          "phase": "Not Applicable",
+          "series": "Metformin",
+          "trial_count": 397
+        },
+        {
+          "phase": "Not Applicable",
+          "series": "Pembrolizumab",
+          "trial_count": 53
+        }
+      ]
+    },
+    "meta": {
+      "filters": {
+        "drug_name": null,
+        "comparison_targets": null,
+        "condition": null,
+        "phase": null
+      },
+      "comparison_targets": [
+        "Metformin",
+        "Pembrolizumab"
+      ],
+      "comparison_dimension": "phase",
+      "source": "clinicaltrials.gov",
+      "fetched_studies": 5618,
+      "skipped_malformed": 359,
+      "studies_with_multiple_phases": 646,
+      "truncated": false
+    }
+  },
+  "generated_at": "2026-07-09T01:50:54.969Z",
+  "preset": "grouped"
+}

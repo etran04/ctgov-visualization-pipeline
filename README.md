@@ -1,12 +1,13 @@
 # ClinicalTrials.gov Visualization Pipeline
 
-Turn natural-language clinical trial queries into visualization-ready JSON. The pipeline supports **comparison** queries (trial counts by phase → bar chart), **timeline** queries (trial counts by start year → line chart), **distribution** queries (trial counts by enrollment bin → histogram), **relationship** queries (enrollment vs start year per study → scatterplot), and **network** queries (drug–sponsor bipartite graph → network graph), backed by live ClinicalTrials.gov data.
+Turn natural-language clinical trial queries into visualization-ready JSON. The pipeline supports **comparison** queries (trial counts by phase → bar chart or grouped bar chart for drug-vs-drug comparisons), **timeline** queries (trial counts by start year → line chart), **distribution** queries (trial counts by enrollment bin → histogram), **relationship** queries (enrollment vs start year per study → scatterplot), and **network** queries (drug–sponsor bipartite graph → network graph), backed by live ClinicalTrials.gov data.
 
 ## Supported flows
 
 | Intent | Viz type | Default measure | Example query |
 |--------|----------|-----------------|---------------|
-| `comparison` | `bar_chart` | trial count per **phase** | "Compare trial phases for Pembrolizumab" |
+| `comparison` (single drug) | `bar_chart` | trial count per **phase** | "Compare trial phases for Pembrolizumab" |
+| `comparison` (2–4 drugs) | `grouped_bar_chart` | trial count per **phase** × **drug series** | "Compare phases for Metformin vs Pembrolizumab" |
 | `trend_over_time` | `line_chart` | trial count per **start year** | "How have Pembrolizumab trials changed over time?" |
 | `distribution` | `histogram` | trial count per **enrollment bin** | "What is the enrollment distribution for Pembrolizumab trials?" |
 | `relationship` | `scatterplot` | **one point per study** (enrollment vs start year) | "What is the relationship between enrollment and start year for Pembrolizumab trials?" |
@@ -47,6 +48,7 @@ Run end-to-end demos (OpenAI + ClinicalTrials.gov; prints summary + response JSO
 ```bash
 npm run demo                # default: comparison preset
 npm run demo:comparison     # phase comparison → bar chart
+npm run demo:grouped        # drug-vs-drug phase comparison → grouped bar chart
 npm run demo:timeline       # start-year trend → line chart
 npm run demo:distribution   # enrollment distribution → histogram
 npm run demo:relationship   # enrollment vs start year → scatterplot
@@ -64,8 +66,8 @@ npm test
 Other useful scripts:
 
 - `npm run typecheck` — TypeScript compile check
-- `npm run smoke` — in-process HTTP smoke tests plus mocked timeline, histogram, scatterplot, and network cases (no live APIs)
-- `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, timeline, distribution, relationship, and network queries
+- `npm run smoke` — in-process HTTP smoke tests plus mocked timeline, histogram, scatterplot, network, and grouped comparison cases (no live APIs)
+- `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, grouped drug comparison, timeline, distribution, relationship, and network queries
 - `npm run examples:generate` — regenerate committed JSON outputs in `examples/`
 - `npm run smoke:live:llm` — live OpenAI routing checks only (network vs relationship disambiguation)
 
@@ -75,7 +77,7 @@ With the server running, interactive API docs are available at `http://localhost
 
 ### `POST /visualize`
 
-Interpret a natural-language query and return a visualization specification (`bar_chart`, `line_chart`, `histogram`, `scatterplot`, or `network_graph`).
+Interpret a natural-language query and return a visualization specification (`bar_chart`, `grouped_bar_chart`, `line_chart`, `histogram`, `scatterplot`, or `network_graph`).
 
 **Request**
 
@@ -125,6 +127,47 @@ Interpret a natural-language query and return a visualization specification (`ba
 ```
 
 Phase bins always include all six categories (`Phase 1`–`Phase 4`, `Early Phase 1`, `Not Applicable`), zero-filled when no trials match. Trial counts reflect studies that may appear in multiple phase bins.
+
+**Success response — grouped bar chart (`200`)**
+
+Drug-vs-drug phase comparisons (2–4 drugs) return a long-format dataset with `series` (drug name) on the color channel:
+
+```json
+{
+  "visualization": {
+    "type": "grouped_bar_chart",
+    "title": "Trial phases: Metformin vs Pembrolizumab",
+    "encoding": {
+      "x": { "field": "phase", "type": "nominal" },
+      "y": { "field": "trial_count", "type": "quantitative" },
+      "color": { "field": "series", "type": "nominal" }
+    },
+    "data": [
+      { "phase": "Phase 1", "series": "Metformin", "trial_count": 120 },
+      { "phase": "Phase 1", "series": "Pembrolizumab", "trial_count": 1031 },
+      { "phase": "Phase 2", "series": "Metformin", "trial_count": 85 },
+      { "phase": "Phase 2", "series": "Pembrolizumab", "trial_count": 400 }
+    ]
+  },
+  "meta": {
+    "filters": {
+      "drug_name": null,
+      "comparison_targets": null,
+      "condition": null,
+      "phase": null
+    },
+    "comparison_targets": ["Metformin", "Pembrolizumab"],
+    "comparison_dimension": "phase",
+    "source": "clinicaltrials.gov",
+    "fetched_studies": 5600,
+    "skipped_malformed": 12,
+    "studies_with_multiple_phases": 508,
+    "truncated": false
+  }
+}
+```
+
+Every `(phase, series)` pair appears even when `trial_count` is 0 (zero-fill across all six phase bins × all series). Compared drugs are listed in `meta.comparison_targets`; `meta.filters.drug_name` stays `null`. CT.gov is queried once per drug in parallel with shared `condition` / `phase` filters.
 
 **Success response — line chart (`200`)**
 
@@ -309,6 +352,14 @@ curl -X POST http://localhost:3000/visualize \
   -d '{"query": "Compare trial phases for Pembrolizumab"}'
 ```
 
+Grouped comparison (grouped bar chart):
+
+```bash
+curl -X POST http://localhost:3000/visualize \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Compare phases for Metformin vs Pembrolizumab"}'
+```
+
 Timeline (line chart):
 
 ```bash
@@ -348,6 +399,7 @@ Committed outputs from live pipeline runs (OpenAI + ClinicalTrials.gov) are in [
 | File | Query focus | Visualization |
 |------|-------------|---------------|
 | [`examples/01-comparison-bar-chart.json`](examples/01-comparison-bar-chart.json) | Metformin phases | `bar_chart` |
+| [`examples/06-grouped-bar-chart.json`](examples/06-grouped-bar-chart.json) | Metformin vs Pembrolizumab phases | `grouped_bar_chart` |
 | [`examples/02-timeline-line-chart.json`](examples/02-timeline-line-chart.json) | Breast cancer over time | `line_chart` |
 | [`examples/03-distribution-histogram.json`](examples/03-distribution-histogram.json) | Nivolumab enrollment | `histogram` |
 | [`examples/04-relationship-scatterplot.json`](examples/04-relationship-scatterplot.json) | Type 2 diabetes enrollment vs year | `scatterplot` |
@@ -360,10 +412,10 @@ Regenerate with `npm run examples:generate` (requires `OPENAI_API_KEY`). Scatter
 Layered pipeline with a thin orchestrator (`buildVisualization`):
 
 1. **Interpret** — OpenAI structured output extracts entities and intent
-2. **Validate** — trim and require at least one filter (`drug_name`, `condition`, or `phase`)
-3. **Fetch** — paginated ClinicalTrials.gov `/studies` with intent-specific fields
-4. **Aggregate** — deterministic bin counts (phase bins, start-year bins, enrollment bins with zero-fill), per-study relationship points, or bipartite network graphs
-5. **Resolve** — map intent → visualization type (`comparison` → `bar_chart`, `trend_over_time` → `line_chart`, `distribution` → `histogram`, `relationship` → `scatterplot`, `network` → `network_graph`)
+2. **Validate** — trim and require at least one filter (`drug_name`, `comparison_targets`, `condition`, or `phase`)
+3. **Fetch** — paginated ClinicalTrials.gov `/studies` with intent-specific fields (parallel per-drug fetches for grouped comparisons)
+4. **Aggregate** — deterministic bin counts (phase bins, grouped phase bins, start-year bins, enrollment bins with zero-fill), per-study relationship points, or bipartite network graphs
+5. **Resolve** — map intent → visualization type (`comparison` → `bar_chart` or `grouped_bar_chart` by target count, `trend_over_time` → `line_chart`, `distribution` → `histogram`, `relationship` → `scatterplot`, `network` → `network_graph`)
 6. **Assemble** — build title, encoding, data, and meta; validate against Zod schema
 
 LLM calls live in `src/externals/`; aggregation and response shaping are deterministic in `src/domain/`.
@@ -371,6 +423,7 @@ LLM calls live in `src/externals/`; aggregation and response shaping are determi
 ## Design notes
 
 - **Phase zero-fill (V1):** All six phase categories appear in every bar chart response, even when empty. Stable axes and honest gaps.
+- **Grouped phase comparison (V1):** Drug-vs-drug queries (2–4 targets) use `grouped_bar_chart` with `color: series`. The x-axis is **phase only** in V1; the underlying pattern (multiple series × shared category bins) is designed to extend to other comparison dimensions later (e.g. enrollment bins), but aggregation, schema, and routing are phase-specific today.
 - **Year zero-fill (V2):** All years from min to max start year appear in line chart responses. Gap years use `trial_count: 0` so clients do not interpolate across missing data.
 - **Enrollment zero-fill (V2b):** All six fixed enrollment bins appear in every histogram response, even when empty. Each study contributes to exactly one bin; the top bin (`5,001+`) is open-ended.
 - **Per-study scatter (V2c):** Relationship queries return one point per valid study with `nct_id`, `enrollment_count`, and `year`. No binning or zero-fill — unlike histogram and line chart paths. Studies missing either dimension are skipped; all valid points are returned (subject to CT.gov pagination via `meta.truncated`).
@@ -378,7 +431,7 @@ LLM calls live in `src/externals/`; aggregation and response shaping are determi
 
 ## Testing
 
-Unit tests cover deterministic domain logic (`npm test`). `npm run demo` runs the full pipeline for a preset or custom query. `npm run smoke` includes HTTP validation plus mocked timeline, histogram, scatterplot, and network cases that do not call live APIs.
+Unit tests cover deterministic domain logic (`npm test`). `npm run demo` runs the full pipeline for a preset or custom query. `npm run smoke` includes HTTP validation plus mocked timeline, histogram, scatterplot, network, and grouped comparison cases that do not call live APIs.
 
 ## Integrity note (AI tools & authorship)
 
@@ -429,7 +482,7 @@ Invalid shapes fail fast with typed domain errors instead of partial JSON.
 
 ~20 Vitest files cover deterministic paths without live APIs:
 
-- Aggregations (phase, start year, enrollment, relationship, network)
+- Aggregations (phase, grouped phase, start year, enrollment, relationship, network)
 - CT.gov normalization and query param mapping
 - Entity validation, visualization type resolution, response assembly
 - Bipartite graph engine (weight accumulation, intervention collapse, skip rules)
@@ -471,7 +524,7 @@ Known limitations and next steps if given more time:
 ### Query & visualization coverage
 
 - Additional network topologies via dimension registry: `drug_condition`, `sponsor_condition`, drug–drug co-occurrence
-- Grouped bar chart for cross-dimensional comparisons (e.g. phase by sponsor)
+- Extend grouped comparison beyond phase (e.g. enrollment bins on the x-axis) and beyond drug series (e.g. condition-vs-condition)
 - Geographic breakdowns (country/site nodes) using `contactsLocationsModule`
 - Broader structured input fields: `sponsor`, `country`, `start_year`, `end_year` in request schema and CT.gov filters
 - `meta.assumptions` — log interpretation choices, zero-fill policy, truncation warnings

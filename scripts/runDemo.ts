@@ -6,6 +6,7 @@
  *
  *   npm run demo                    # default comparison preset
  *   npm run demo:comparison
+ *   npm run demo:grouped
  *   npm run demo:timeline
  *   npm run demo:distribution
  *   npm run demo:relationship
@@ -24,6 +25,10 @@ const PRESETS = {
   comparison: {
     label: "comparison → bar chart",
     query: "Compare trial phases for Pembrolizumab",
+  },
+  grouped: {
+    label: "grouped comparison → grouped bar chart",
+    query: "Compare phases for Metformin vs Pembrolizumab",
   },
   timeline: {
     label: "timeline → line chart",
@@ -112,6 +117,20 @@ function printSummary(response: VisualizationResponse): void {
   if (viz.type === "bar_chart") {
     for (const point of viz.data) {
       console.log(`${point.phase.padEnd(16)} ${point.trial_count}`);
+    }
+  } else if (viz.type === "grouped_bar_chart") {
+    const seriesNames = [...new Set(viz.data.map((point) => point.series))];
+    console.log(`series: ${seriesNames.join(", ")}`);
+    for (const series of seriesNames) {
+      console.log(`\n  ${series}`);
+      for (const point of viz.data.filter((row) => row.series === series)) {
+        if (point.trial_count > 0) {
+          console.log(`    ${point.phase.padEnd(16)} ${point.trial_count}`);
+        }
+      }
+    }
+    if (meta.comparison_targets !== undefined && meta.comparison_targets !== null) {
+      console.log(`comparison_targets: ${meta.comparison_targets.join(", ")}`);
     }
   } else if (viz.type === "line_chart") {
     const years = viz.data.map((point) => point.year);
