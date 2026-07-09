@@ -9,6 +9,7 @@
  *   npm run demo:timeline
  *   npm run demo:distribution
  *   npm run demo:relationship
+ *   npm run demo:network
  *   npm run demo -- timeline
  *   npm run demo -- --query "Compare trial phases for Pembrolizumab"
  *   npm run demo -- --list
@@ -36,6 +37,10 @@ const PRESETS = {
     label: "relationship → scatterplot",
     query:
       "What is the relationship between enrollment and start year for Pembrolizumab trials?",
+  },
+  network: {
+    label: "network → network graph",
+    query: "Which sponsors are running Pembrolizumab trials?",
   },
 } as const;
 
@@ -133,6 +138,27 @@ function printSummary(response: VisualizationResponse): void {
     }
     if (viz.data.length > preview.length) {
       console.log(`… ${viz.data.length - preview.length} more point(s) omitted`);
+    }
+  } else if (viz.type === "network_graph") {
+    console.log(
+      `nodes: ${viz.data.nodes.length}, edges: ${viz.data.edges.length}` +
+        (meta.network_dimension !== undefined && meta.network_dimension !== null
+          ? `, dimension=${meta.network_dimension}`
+          : ""),
+    );
+    const nodePreview = viz.data.nodes.slice(0, 6);
+    for (const node of nodePreview) {
+      console.log(`${node.id.padEnd(36)} ${node.label}`);
+    }
+    if (viz.data.nodes.length > nodePreview.length) {
+      console.log(`… ${viz.data.nodes.length - nodePreview.length} more node(s) omitted`);
+    }
+    const edgePreview = viz.data.edges.slice(0, 6);
+    for (const edge of edgePreview) {
+      console.log(`${edge.source} → ${edge.target} (weight=${edge.weight})`);
+    }
+    if (viz.data.edges.length > edgePreview.length) {
+      console.log(`… ${viz.data.edges.length - edgePreview.length} more edge(s) omitted`);
     }
   }
 

@@ -1,6 +1,6 @@
 # ClinicalTrials.gov Visualization Pipeline
 
-Turn natural-language clinical trial queries into visualization-ready JSON. The pipeline supports **comparison** queries (trial counts by phase → bar chart), **timeline** queries (trial counts by start year → line chart), **distribution** queries (trial counts by enrollment bin → histogram), and **relationship** queries (enrollment vs start year per study → scatterplot), backed by live ClinicalTrials.gov data.
+Turn natural-language clinical trial queries into visualization-ready JSON. The pipeline supports **comparison** queries (trial counts by phase → bar chart), **timeline** queries (trial counts by start year → line chart), **distribution** queries (trial counts by enrollment bin → histogram), **relationship** queries (enrollment vs start year per study → scatterplot), and **network** queries (drug–sponsor bipartite graph → network graph), backed by live ClinicalTrials.gov data.
 
 ## Supported flows
 
@@ -10,6 +10,7 @@ Turn natural-language clinical trial queries into visualization-ready JSON. The 
 | `trend_over_time` | `line_chart` | trial count per **start year** | "How have Pembrolizumab trials changed over time?" |
 | `distribution` | `histogram` | trial count per **enrollment bin** | "What is the enrollment distribution for Pembrolizumab trials?" |
 | `relationship` | `scatterplot` | **one point per study** (enrollment vs start year) | "What is the relationship between enrollment and start year for Pembrolizumab trials?" |
+| `network` | `network_graph` | **drug–sponsor edges** (weight = trial count per pair) | "Which sponsors are running Pembrolizumab trials?" |
 
 ## Setup
 
@@ -49,6 +50,7 @@ npm run demo:comparison     # phase comparison → bar chart
 npm run demo:timeline       # start-year trend → line chart
 npm run demo:distribution   # enrollment distribution → histogram
 npm run demo:relationship   # enrollment vs start year → scatterplot
+npm run demo:network        # drug–sponsor network → network graph
 npm run demo -- --query "Compare trial phases for Pembrolizumab"
 npm run demo -- --list      # show available presets
 ```
@@ -62,8 +64,8 @@ npm test
 Other useful scripts:
 
 - `npm run typecheck` — TypeScript compile check
-- `npm run smoke` — in-process HTTP smoke tests plus mocked timeline, histogram, and scatterplot cases (no live APIs)
-- `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, timeline, distribution, and relationship queries
+- `npm run smoke` — in-process HTTP smoke tests plus mocked timeline, histogram, scatterplot, and network cases (no live APIs)
+- `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, timeline, distribution, relationship, and network queries
 
 With the server running, interactive API docs are available at `http://localhost:3000/docs` (or your configured `PORT`).
 
@@ -71,7 +73,7 @@ With the server running, interactive API docs are available at `http://localhost
 
 ### `POST /visualize`
 
-Interpret a natural-language query and return a visualization specification (`bar_chart`, `line_chart`, `histogram`, or `scatterplot`).
+Interpret a natural-language query and return a visualization specification (`bar_chart`, `line_chart`, `histogram`, `scatterplot`, or `network_graph`).
 
 **Request**
 
@@ -227,6 +229,53 @@ Enrollment bins always include all six fixed categories (`1–50`, `51–100`, `
 
 Each valid study becomes one scatterplot point (`x = enrollment_count`, `y = year`). Every point includes `nct_id` for tooltips and CT.gov links. Studies missing either dimension (non-positive enrollment or unparseable start date) are skipped and counted in `meta.skipped_malformed`. There is no binning or zero-fill — only studies with both valid enrollment and start year appear as points. Large result sets return all valid points; pagination limits are reflected in `meta.truncated`.
 
+**Success response — network graph (`200`)**
+
+```json
+{
+  "visualization": {
+    "type": "network_graph",
+    "title": "Drug–sponsor network for Pembrolizumab",
+    "encoding": {
+      "nodes": {
+        "id": { "field": "id", "type": "nominal" },
+        "label": { "field": "label", "type": "nominal" },
+        "entity_type": { "field": "entity_type", "type": "nominal" }
+      },
+      "edges": {
+        "source": { "field": "source", "type": "nominal" },
+        "target": { "field": "target", "type": "nominal" },
+        "weight": { "field": "weight", "type": "quantitative" }
+      }
+    },
+    "data": {
+      "nodes": [
+        { "id": "drug:pembrolizumab", "label": "Pembrolizumab", "entity_type": "drug" },
+        { "id": "sponsor:merck-sharp-dohme-llc", "label": "Merck Sharp & Dohme LLC", "entity_type": "sponsor" }
+      ],
+      "edges": [
+        { "source": "drug:pembrolizumab", "target": "sponsor:merck-sharp-dohme-llc", "weight": 12 }
+      ]
+    }
+  },
+  "meta": {
+    "filters": {
+      "drug_name": "Pembrolizumab",
+      "condition": null,
+      "phase": null
+    },
+    "network_dimension": "drug_sponsor",
+    "source": "clinicaltrials.gov",
+    "fetched_studies": 120,
+    "skipped_malformed": 3,
+    "studies_with_multiple_phases": 0,
+    "truncated": false
+  }
+}
+```
+
+Network queries return a bipartite graph: nodes are drugs and sponsors; edges link intervention names to lead sponsors. Edge `weight` is the number of trials connecting that pair. Node IDs use type prefixes (`drug:`, `sponsor:`) to prevent collisions. Studies missing NCT ID, interventions, or lead sponsor are skipped (`meta.skipped_malformed`). `meta.network_dimension` identifies the topology rendered (`drug_sponsor` in V1).
+
 **Error response**
 
 ```json
@@ -241,10 +290,10 @@ Each valid study becomes one scatterplot point (`x = enrollment_count`, `y = yea
 | HTTP | Code | When |
 |------|------|------|
 | 400 | `INVALID_REQUEST` | Malformed or empty request body |
-| 400 | `UNSUPPORTED_INTENT` | Intent outside supported set (`comparison`, `trend_over_time`, `distribution`, `relationship`) |
+| 400 | `UNSUPPORTED_INTENT` | Intent outside supported set (`comparison`, `trend_over_time`, `distribution`, `relationship`, `network`) |
 | 404 | `NO_STUDIES_FOUND` | CT.gov returned zero studies |
 | 422 | `INVALID_PARAMETERS` | No usable entity filters after validation |
-| 422 | `NO_AGGREGATABLE_DATA` | Studies fetched but none had mappable phase, start-date, or enrollment data |
+| 422 | `NO_AGGREGATABLE_DATA` | Studies fetched but none had mappable phase, start-date, enrollment, or network data |
 | 502 | `UPSTREAM_API_FAILURE` | CT.gov request failed after retries |
 | 502 | `INTERPRETATION_FAILURE` | OpenAI interpretation failed after retries |
 
@@ -282,6 +331,14 @@ curl -X POST http://localhost:3000/visualize \
   -d '{"query": "What is the relationship between enrollment and start year for Pembrolizumab trials?"}'
 ```
 
+Network (network graph):
+
+```bash
+curl -X POST http://localhost:3000/visualize \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Which sponsors are running Pembrolizumab trials?"}'
+```
+
 ## Architecture
 
 Layered pipeline with a thin orchestrator (`buildVisualization`):
@@ -289,8 +346,8 @@ Layered pipeline with a thin orchestrator (`buildVisualization`):
 1. **Interpret** — OpenAI structured output extracts entities and intent
 2. **Validate** — trim and require at least one filter (`drug_name`, `condition`, or `phase`)
 3. **Fetch** — paginated ClinicalTrials.gov `/studies` with intent-specific fields
-4. **Aggregate** — deterministic bin counts (phase bins, start-year bins, enrollment bins with zero-fill) or per-study relationship points
-5. **Resolve** — map intent → visualization type (`comparison` → `bar_chart`, `trend_over_time` → `line_chart`, `distribution` → `histogram`, `relationship` → `scatterplot`)
+4. **Aggregate** — deterministic bin counts (phase bins, start-year bins, enrollment bins with zero-fill), per-study relationship points, or bipartite network graphs
+5. **Resolve** — map intent → visualization type (`comparison` → `bar_chart`, `trend_over_time` → `line_chart`, `distribution` → `histogram`, `relationship` → `scatterplot`, `network` → `network_graph`)
 6. **Assemble** — build title, encoding, data, and meta; validate against Zod schema
 
 LLM calls live in `src/externals/`; aggregation and response shaping are deterministic in `src/domain/`.
@@ -301,7 +358,8 @@ LLM calls live in `src/externals/`; aggregation and response shaping are determi
 - **Year zero-fill (V2):** All years from min to max start year appear in line chart responses. Gap years use `trial_count: 0` so clients do not interpolate across missing data.
 - **Enrollment zero-fill (V2b):** All six fixed enrollment bins appear in every histogram response, even when empty. Each study contributes to exactly one bin; the top bin (`5,001+`) is open-ended.
 - **Per-study scatter (V2c):** Relationship queries return one point per valid study with `nct_id`, `enrollment_count`, and `year`. No binning or zero-fill — unlike histogram and line chart paths. Studies missing either dimension are skipped; all valid points are returned (subject to CT.gov pagination via `meta.truncated`).
+- **Bipartite network (V3):** Network queries return `{ nodes, edges }` for graph renderers. V1 ships `drug_sponsor` topology: one edge per intervention–sponsor pair per study, with `weight` counting trials. Internal `source_nct_ids` are tracked during aggregation but not emitted in the HTTP response.
 
 ## Testing
 
-Unit tests cover deterministic domain logic (`npm test`). `npm run demo` runs the full pipeline for a preset or custom query. `npm run smoke` includes HTTP validation plus mocked timeline, histogram, and scatterplot cases that do not call live APIs.
+Unit tests cover deterministic domain logic (`npm test`). `npm run demo` runs the full pipeline for a preset or custom query. `npm run smoke` includes HTTP validation plus mocked timeline, histogram, scatterplot, and network cases that do not call live APIs.

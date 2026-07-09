@@ -117,6 +117,27 @@ function printLiveValidationSummary(response: VisualizationResponse): void {
     if (viz.data.length > preview.length) {
       console.log(`      … ${viz.data.length - preview.length} more point(s) omitted`);
     }
+  } else if (viz.type === "network_graph") {
+    console.log(
+      `      nodes: ${viz.data.nodes.length}, edges: ${viz.data.edges.length}` +
+        (meta.network_dimension !== undefined && meta.network_dimension !== null
+          ? `, dimension=${meta.network_dimension}`
+          : ""),
+    );
+    const nodePreview = viz.data.nodes.slice(0, 6);
+    for (const node of nodePreview) {
+      console.log(`      ${node.id.padEnd(36)} ${node.label}`);
+    }
+    if (viz.data.nodes.length > nodePreview.length) {
+      console.log(`      … ${viz.data.nodes.length - nodePreview.length} more node(s) omitted`);
+    }
+    const edgePreview = viz.data.edges.slice(0, 6);
+    for (const edge of edgePreview) {
+      console.log(`      ${edge.source} → ${edge.target} (weight=${edge.weight})`);
+    }
+    if (viz.data.edges.length > edgePreview.length) {
+      console.log(`      … ${viz.data.edges.length - edgePreview.length} more edge(s) omitted`);
+    }
   }
 
   console.log(
@@ -185,12 +206,15 @@ function createFetchClient(baseUrl: string): HttpClient {
 
 function createSmokeCases(deps: {
   aggregateByEnrollment: typeof import("../src/domain/aggregations/index.js").aggregateByEnrollment;
+  aggregateByNetwork: typeof import("../src/domain/aggregations/index.js").aggregateByNetwork;
   aggregateByRelationship: typeof import("../src/domain/aggregations/index.js").aggregateByRelationship;
   aggregateByStartYear: typeof import("../src/domain/aggregations/index.js").aggregateByStartYear;
   assembleVisualizationResponse: typeof import("../src/domain/assembleVisualizationResponse.js").assembleVisualizationResponse;
   VisualizationResponseSchema: typeof import("../src/domain/schemas/index.js").VisualizationResponseSchema;
   validEnrollmentMidStudy: typeof import("../tests/fixtures/ctgovStudies.js").validEnrollmentMidStudy;
   validEnrollmentSmallStudy: typeof import("../tests/fixtures/ctgovStudies.js").validEnrollmentSmallStudy;
+  validNetworkSamePairSecondStudy: typeof import("../tests/fixtures/ctgovStudies.js").validNetworkSamePairSecondStudy;
+  validNetworkSingleInterventionStudy: typeof import("../tests/fixtures/ctgovStudies.js").validNetworkSingleInterventionStudy;
   validRelationshipStudy: typeof import("../tests/fixtures/ctgovStudies.js").validRelationshipStudy;
   validRelationshipStudySecondYear: typeof import("../tests/fixtures/ctgovStudies.js").validRelationshipStudySecondYear;
   validStudyGapYearStartDate: typeof import("../tests/fixtures/ctgovStudies.js").validStudyGapYearStartDate;
@@ -198,12 +222,15 @@ function createSmokeCases(deps: {
 }): SmokeCase[] {
   const {
     aggregateByEnrollment,
+    aggregateByNetwork,
     aggregateByRelationship,
     aggregateByStartYear,
     assembleVisualizationResponse,
     VisualizationResponseSchema,
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validNetworkSamePairSecondStudy,
+    validNetworkSingleInterventionStudy,
     validRelationshipStudy,
     validRelationshipStudySecondYear,
     validStudyGapYearStartDate,
@@ -384,6 +411,64 @@ function createSmokeCases(deps: {
       },
     },
     {
+      name: "POST /visualize returns network graph for Pembrolizumab sponsor query [LIVE]",
+      liveOnly: true,
+      async run(client) {
+        const response = await client.post("/visualize", {
+          query: "Which sponsors are running Pembrolizumab trials?",
+        });
+
+        assert(
+          response.statusCode === 200,
+          `expected 200, got ${response.statusCode}: ${JSON.stringify(response.body)}`,
+        );
+
+        const parsed = VisualizationResponseSchema.safeParse(response.body);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(parsed.data.visualization.type === "network_graph", "expected network_graph visualization");
+        assert(
+          parsed.data.visualization.title.includes("Pembrolizumab"),
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(parsed.data.meta.network_dimension === "drug_sponsor", "expected drug_sponsor dimension");
+        assert(parsed.data.visualization.data.nodes.length > 0, "expected at least one node");
+        assert(parsed.data.visualization.data.edges.length > 0, "expected at least one edge");
+        assert(
+          parsed.data.visualization.data.nodes.every(
+            (node) =>
+              typeof node.id === "string" &&
+              typeof node.label === "string" &&
+              typeof node.entity_type === "string",
+          ),
+          "expected nodes with id, label, and entity_type",
+        );
+        assert(
+          parsed.data.visualization.data.edges.every(
+            (edge) =>
+              typeof edge.source === "string" &&
+              typeof edge.target === "string" &&
+              Number.isInteger(edge.weight) &&
+              edge.weight >= 1 &&
+              !("source_nct_ids" in edge),
+          ),
+          "expected edges with source, target, positive weight, and no source_nct_ids",
+        );
+        assert(
+          parsed.data.visualization.data.nodes.some((node) => node.entity_type === "drug"),
+          "expected at least one drug node",
+        );
+        assert(
+          parsed.data.visualization.data.nodes.some((node) => node.entity_type === "sponsor"),
+          "expected at least one sponsor node",
+        );
+        assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
+        assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+
+        return parsed.data;
+      },
+    },
+    {
       name: "[MOCK] Timeline pipeline returns line chart with zero-filled gap years",
       mocked: true,
       async run() {
@@ -538,12 +623,62 @@ function createSmokeCases(deps: {
         );
       },
     },
+    {
+      name: "[MOCK] Network pipeline returns network_graph with drug-sponsor edges",
+      mocked: true,
+      async run() {
+        const aggregation = aggregateByNetwork(
+          [validNetworkSingleInterventionStudy, validNetworkSamePairSecondStudy],
+          "drug_sponsor",
+          { drug_name: "Pembrolizumab" },
+        );
+
+        const response = assembleVisualizationResponse({
+          filters: {
+            drug_name: "Pembrolizumab",
+            condition: null,
+            phase: null,
+          },
+          visualizationType: "network_graph",
+          networkDimension: "drug_sponsor",
+          aggregation,
+          fetchedStudies: 2,
+          skippedMalformed: 0,
+          studiesWithMultiplePhases: 0,
+          truncated: false,
+        });
+
+        const parsed = VisualizationResponseSchema.safeParse(response);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(parsed.data.visualization.type === "network_graph", "expected network_graph visualization");
+        assert(
+          parsed.data.visualization.title === "Drug–sponsor network for Pembrolizumab",
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(parsed.data.meta.network_dimension === "drug_sponsor", "expected drug_sponsor dimension");
+        assert(parsed.data.visualization.data.nodes.length >= 2, "expected at least two nodes");
+        assert(parsed.data.visualization.data.edges.length >= 1, "expected at least one edge");
+        assert(
+          parsed.data.visualization.data.edges.some(
+            (edge) =>
+              edge.source === "drug:pembrolizumab" &&
+              edge.target === "sponsor:merck-sharp-dohme-llc" &&
+              edge.weight === 2,
+          ),
+          "expected weighted drug-sponsor edge",
+        );
+        for (const edge of parsed.data.visualization.data.edges) {
+          assert(!("source_nct_ids" in edge), "expected source_nct_ids stripped from edges");
+        }
+      },
+    },
   ];
 }
 
 async function main(): Promise<void> {
   const { config } = await import("../src/config.js");
-  const { aggregateByEnrollment, aggregateByRelationship, aggregateByStartYear } = await import(
+  const { aggregateByEnrollment, aggregateByNetwork, aggregateByRelationship, aggregateByStartYear } = await import(
     "../src/domain/aggregations/index.js"
   );
   const { assembleVisualizationResponse } = await import(
@@ -554,6 +689,8 @@ async function main(): Promise<void> {
   const {
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validNetworkSamePairSecondStudy,
+    validNetworkSingleInterventionStudy,
     validRelationshipStudy,
     validRelationshipStudySecondYear,
     validStudyGapYearStartDate,
@@ -566,12 +703,15 @@ async function main(): Promise<void> {
     : await createInjectClient(buildServer);
   const smokeCases = createSmokeCases({
     aggregateByEnrollment,
+    aggregateByNetwork,
     aggregateByRelationship,
     aggregateByStartYear,
     assembleVisualizationResponse,
     VisualizationResponseSchema,
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validNetworkSamePairSecondStudy,
+    validNetworkSingleInterventionStudy,
     validRelationshipStudy,
     validRelationshipStudySecondYear,
     validStudyGapYearStartDate,
