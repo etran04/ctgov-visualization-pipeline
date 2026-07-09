@@ -1,3 +1,4 @@
+import type { NetworkStudyRecord } from "../../src/domain/network/types.js";
 import type {
   DistributionStudyRecord,
   PhaseStudyRecord,
@@ -530,4 +531,107 @@ export const malformedRelationshipStudyUnparseableStartDate = {
 /** Cast intentionally malformed fixtures for defensive aggregator tests. */
 export function asRelationshipStudy(study: unknown): RelationshipStudyRecord {
   return study as RelationshipStudyRecord;
+}
+
+export const validNetworkSingleInterventionStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000401",
+    },
+    armsInterventionsModule: {
+      interventions: [{ name: "Pembrolizumab" }],
+    },
+    sponsorCollaboratorsModule: {
+      leadSponsor: { name: "Merck Sharp & Dohme LLC" },
+    },
+  },
+} satisfies NetworkStudyRecord;
+
+export const validNetworkMultiInterventionStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000402",
+    },
+    armsInterventionsModule: {
+      interventions: [{ name: "Pembrolizumab" }, { name: "Carboplatin" }],
+    },
+    sponsorCollaboratorsModule: {
+      leadSponsor: { name: "National Cancer Institute" },
+    },
+  },
+} satisfies NetworkStudyRecord;
+
+export const validNetworkSamePairSecondStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000403",
+    },
+    armsInterventionsModule: {
+      interventions: [{ name: "Pembrolizumab 2 mg/kg" }],
+    },
+    sponsorCollaboratorsModule: {
+      leadSponsor: { name: "Merck Sharp & Dohme LLC" },
+    },
+  },
+} satisfies NetworkStudyRecord;
+
+export const validNetworkComboTrialStudy = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000404",
+    },
+    armsInterventionsModule: {
+      interventions: [{ name: "Drug A" }, { name: "Drug B" }, { name: "Placebo" }],
+    },
+    sponsorCollaboratorsModule: {
+      leadSponsor: { name: "Acme Pharma Inc." },
+    },
+  },
+} satisfies NetworkStudyRecord;
+
+export const malformedNetworkStudyMissingSponsor = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000405",
+    },
+    armsInterventionsModule: {
+      interventions: [{ name: "Pembrolizumab" }],
+    },
+    sponsorCollaboratorsModule: {
+      leadSponsor: { name: "" },
+    },
+  },
+} satisfies NetworkStudyRecord;
+
+export const malformedNetworkStudyEmptyInterventions = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "NCT00000406",
+    },
+    armsInterventionsModule: {
+      interventions: [],
+    },
+    sponsorCollaboratorsModule: {
+      leadSponsor: { name: "Merck Sharp & Dohme LLC" },
+    },
+  },
+} satisfies NetworkStudyRecord;
+
+export const malformedNetworkStudyMissingNctId = {
+  protocolSection: {
+    identificationModule: {
+      nctId: "",
+    },
+    armsInterventionsModule: {
+      interventions: [{ name: "Pembrolizumab" }],
+    },
+    sponsorCollaboratorsModule: {
+      leadSponsor: { name: "Merck Sharp & Dohme LLC" },
+    },
+  },
+} satisfies NetworkStudyRecord;
+
+/** Cast intentionally malformed fixtures for defensive aggregator tests. */
+export function asNetworkStudy(study: unknown): NetworkStudyRecord {
+  return study as NetworkStudyRecord;
 }

@@ -1,4 +1,5 @@
 export { aggregateByEnrollment, type EnrollmentAggregationResult } from "./aggregateByEnrollment.js";
+export { aggregateByNetwork } from "./aggregateByNetwork.js";
 export { aggregateByPhase, type PhaseAggregationResult } from "./aggregateByPhase.js";
 export {
   aggregateByRelationship,
