@@ -87,6 +87,36 @@ describe("interpretQuery interpretation shape", () => {
     });
   });
 
+  it("accepts grouped comparison intent from OpenAI flat output", () => {
+    const interpretation = parseQueryInterpretation({
+      intent: "comparison",
+      entities: {
+        drug_name: null,
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: "diabetes",
+        phase: null,
+      },
+      comparison_dimension: "phase",
+      time_dimension: null,
+      distribution_dimension: null,
+      relationship_dimension: null,
+      network_dimension: null,
+      suggested_viz_type: "grouped_bar_chart",
+    });
+
+    expect(interpretation).toEqual({
+      intent: "comparison",
+      entities: {
+        drug_name: null,
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: "diabetes",
+        phase: null,
+      },
+      comparison_dimension: "phase",
+      suggested_viz_type: "grouped_bar_chart",
+    });
+  });
+
   it("accepts trend_over_time intent from OpenAI flat output", () => {
     const interpretation = parseQueryInterpretation({
       intent: "trend_over_time",
@@ -198,6 +228,55 @@ describe("interpretQuery", () => {
       network_dimension: "drug_sponsor",
       suggested_viz_type: "network_graph",
     });
+  });
+
+  it("returns grouped comparison interpretation from mocked OpenAI output", async () => {
+    mockOpenAiInterpretation({
+      intent: "comparison",
+      entities: {
+        drug_name: null,
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: null,
+        phase: null,
+      },
+      comparison_dimension: "phase",
+      time_dimension: null,
+      distribution_dimension: null,
+      relationship_dimension: null,
+      network_dimension: null,
+      suggested_viz_type: "grouped_bar_chart",
+    });
+
+    const { interpretQuery } = await import("../../../src/externals/openai/interpretQuery.js");
+    const interpretation = await interpretQuery(
+      "Compare phases for Metformin vs Pembrolizumab",
+    );
+
+    expect(interpretation).toEqual({
+      intent: "comparison",
+      entities: {
+        drug_name: null,
+        comparison_targets: ["Metformin", "Pembrolizumab"],
+        condition: null,
+        phase: null,
+      },
+      comparison_dimension: "phase",
+      suggested_viz_type: "grouped_bar_chart",
+    });
+    expect(mockParse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messages: expect.arrayContaining([
+          expect.objectContaining({
+            role: "system",
+            content: expect.stringContaining("comparison_targets"),
+          }),
+          expect.objectContaining({
+            role: "user",
+            content: "Compare phases for Metformin vs Pembrolizumab",
+          }),
+        ]),
+      }),
+    );
   });
 
   it("returns relationship interpretation with null network_dimension from mocked OpenAI output", async () => {

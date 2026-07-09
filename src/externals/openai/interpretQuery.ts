@@ -28,12 +28,20 @@ Supported intents:
 
 1. "comparison" — user wants to compare or break down trials by phase
    - Set comparison_dimension to "phase"
-   - Set suggested_viz_type to "bar_chart"
    - Set time_dimension to null
    - Set distribution_dimension to null
    - Set relationship_dimension to null
    - Set network_dimension to null
-   - Examples: "compare phases", "breakdown by phase", "trial phases for X"
+   - Single drug (one intervention named, no "vs" / "and" between drugs):
+     - Set entities.drug_name to that drug; entities.comparison_targets to null
+     - Set suggested_viz_type to "bar_chart"
+     - Examples: "compare phases for Metformin", "trial phases for X"
+   - Drug-vs-drug comparison (2–4 drugs, e.g. "A vs B", "compare X and Y"):
+     - Set entities.comparison_targets to the drug names in order mentioned
+     - Set entities.drug_name to null (never set both drug_name and comparison_targets)
+     - Set suggested_viz_type to "grouped_bar_chart"
+     - Examples: "compare phases for Metformin vs Pembrolizumab", "Metformin and Pembrolizumab phase breakdown"
+   - Shared filters still go in entities: condition and phase apply to every compared drug
 
 2. "trend_over_time" — user wants to see how trials change over time
    - Set time_dimension to "start_year"
@@ -80,9 +88,16 @@ Intent disambiguation (network vs relationship):
 - "who is sponsoring X trials" → network
 
 Extract entities from the user query:
-- drug_name: intervention or drug name (null if not mentioned)
+- drug_name: single intervention or drug name (null when comparing multiple drugs via comparison_targets)
+- comparison_targets: array of 2–4 drug names when the user compares drugs to each other (e.g. "A vs B", "compare X and Y"); null for single-drug queries
 - condition: disease, condition, or indication (null if not mentioned)
 - phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases, showing trends over time, showing enrollment distribution, showing enrollment vs start year, or showing a sponsor/drug network)
+
+Comparison entity rules:
+- Use comparison_targets (and drug_name null) for 2+ named drugs being compared
+- Use drug_name (and comparison_targets null) for a single named drug
+- Never populate both drug_name and comparison_targets
+- comparison_targets may contain at most 4 unique drugs
 
 Use null for fields that are not mentioned. Do not use empty strings.
 Optional hints from the caller are advisory context only; prefer the user query when they conflict.`;
