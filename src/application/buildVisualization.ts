@@ -96,6 +96,7 @@ export async function buildVisualization(
         skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
         studiesWithMultiplePhases: aggregation.studies_with_multiple_phases,
         truncated: fetchResult.truncated,
+        studyExcerptIndex: new Map(),
       });
     } else {
       const fetchResult = await fetchStudies(comparisonMode.entities, {
@@ -121,6 +122,7 @@ export async function buildVisualization(
         skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
         studiesWithMultiplePhases: aggregation.studies_with_multiple_phases,
         truncated: fetchResult.truncated,
+        studyExcerptIndex: new Map(),
       });
     }
   } else {
@@ -154,6 +156,7 @@ export async function buildVisualization(
           skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
           studiesWithMultiplePhases: 0,
           truncated: fetchResult.truncated,
+          studyExcerptIndex: new Map(),
         });
         break;
       }
@@ -177,6 +180,7 @@ export async function buildVisualization(
           skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
           studiesWithMultiplePhases: 0,
           truncated: fetchResult.truncated,
+          studyExcerptIndex: new Map(),
         });
         break;
       }
@@ -200,6 +204,7 @@ export async function buildVisualization(
           skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
           studiesWithMultiplePhases: 0,
           truncated: fetchResult.truncated,
+          studyExcerptIndex: new Map(),
         });
         break;
       }
@@ -228,6 +233,7 @@ export async function buildVisualization(
           skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
           studiesWithMultiplePhases: 0,
           truncated: fetchResult.truncated,
+          studyExcerptIndex: new Map(),
         });
         break;
       }

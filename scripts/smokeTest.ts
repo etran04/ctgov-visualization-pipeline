@@ -636,6 +636,7 @@ function createSmokeCases(deps: {
           skippedMalformed: 0,
           studiesWithMultiplePhases: 0,
           truncated: false,
+          studyExcerptIndex: new Map(),
         });
 
         const parsed = VisualizationResponseSchema.safeParse(response);
@@ -685,6 +686,7 @@ function createSmokeCases(deps: {
           skippedMalformed: 0,
           studiesWithMultiplePhases: 0,
           truncated: false,
+          studyExcerptIndex: new Map(),
         });
 
         const parsed = VisualizationResponseSchema.safeParse(response);
@@ -744,6 +746,7 @@ function createSmokeCases(deps: {
           skippedMalformed: 0,
           studiesWithMultiplePhases: 0,
           truncated: false,
+          studyExcerptIndex: new Map(),
         });
 
         const parsed = VisualizationResponseSchema.safeParse(response);
@@ -805,6 +808,7 @@ function createSmokeCases(deps: {
           skippedMalformed: 0,
           studiesWithMultiplePhases: 0,
           truncated: false,
+          studyExcerptIndex: new Map(),
         });
 
         const parsed = VisualizationResponseSchema.safeParse(response);
@@ -859,6 +863,7 @@ function createSmokeCases(deps: {
           skippedMalformed: 0,
           studiesWithMultiplePhases: 1,
           truncated: false,
+          studyExcerptIndex: new Map(),
         });
 
         const parsed = VisualizationResponseSchema.safeParse(response);

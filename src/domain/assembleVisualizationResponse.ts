@@ -5,6 +5,7 @@ import type {
   RelationshipPoint,
   YearAggregationBin,
 } from "./aggregations/index.js";
+import { buildCitations } from "./citations/index.js";
 import type { BipartiteGraphResult } from "./network/types.js";
 import type { QueryEntities, VisualizationResponse } from "./schemas/index.js";
 import { VisualizationResponseSchema } from "./schemas/index.js";
@@ -17,6 +18,7 @@ type BaseAssembleInput = {
   skippedMalformed: number;
   studiesWithMultiplePhases: number;
   truncated: boolean;
+  studyExcerptIndex: Map<string, string>;
 };
 
 type BarChartAssembleInput = BaseAssembleInput & {
@@ -139,6 +141,19 @@ function buildMeta(input: BaseAssembleInput) {
   };
 }
 
+function withCitations<T extends Record<string, unknown>>(
+  datum: T,
+  nctIds: string[],
+  index: Map<string, string>,
+): T | (T & { citations: ReturnType<typeof buildCitations> }) {
+  const citations = buildCitations(nctIds, index);
+  if (citations.length === 0) {
+    return datum;
+  }
+
+  return { ...datum, citations };
+}
+
 /**
  * Build a grouped bar chart visualization response from grouped phase aggregation output.
  *
@@ -159,11 +174,17 @@ export function assembleGroupedBarChartResponse(
         y: { field: "trial_count", type: "quantitative" },
         color: { field: "series", type: "nominal" },
       },
-      data: input.aggregation.map((row) => ({
-        phase: row.phase,
-        series: row.series,
-        trial_count: row.trial_count,
-      })),
+      data: input.aggregation.map((row) =>
+        withCitations(
+          {
+            phase: row.phase,
+            series: row.series,
+            trial_count: row.trial_count,
+          },
+          row.source_nct_ids,
+          input.studyExcerptIndex,
+        ),
+      ),
     },
     meta: {
       ...buildMeta({ ...input, filters }),
@@ -190,10 +211,16 @@ export function assembleBarChartResponse(
         x: { field: "phase", type: "nominal" },
         y: { field: "trial_count", type: "quantitative" },
       },
-      data: input.aggregation.map((bin) => ({
-        phase: bin.phase,
-        trial_count: bin.trial_count,
-      })),
+      data: input.aggregation.map((bin) =>
+        withCitations(
+          {
+            phase: bin.phase,
+            trial_count: bin.trial_count,
+          },
+          bin.source_nct_ids,
+          input.studyExcerptIndex,
+        ),
+      ),
     },
     meta: buildMeta(input),
   });
@@ -216,10 +243,16 @@ export function assembleLineChartResponse(
         x: { field: "year", type: "temporal" },
         y: { field: "trial_count", type: "quantitative" },
       },
-      data: input.aggregation.map((bin) => ({
-        year: bin.year,
-        trial_count: bin.trial_count,
-      })),
+      data: input.aggregation.map((bin) =>
+        withCitations(
+          {
+            year: bin.year,
+            trial_count: bin.trial_count,
+          },
+          bin.source_nct_ids,
+          input.studyExcerptIndex,
+        ),
+      ),
     },
     meta: buildMeta(input),
   });
@@ -242,12 +275,18 @@ export function assembleHistogramResponse(
         x: { field: "bin_label", type: "ordinal" },
         y: { field: "trial_count", type: "quantitative" },
       },
-      data: input.aggregation.map((bin) => ({
-        bin_label: bin.bin_label,
-        bin_start: bin.bin_start,
-        bin_end: bin.bin_end,
-        trial_count: bin.trial_count,
-      })),
+      data: input.aggregation.map((bin) =>
+        withCitations(
+          {
+            bin_label: bin.bin_label,
+            bin_start: bin.bin_start,
+            bin_end: bin.bin_end,
+            trial_count: bin.trial_count,
+          },
+          bin.source_nct_ids,
+          input.studyExcerptIndex,
+        ),
+      ),
     },
     meta: buildMeta(input),
   });
@@ -270,11 +309,17 @@ export function assembleScatterplotResponse(
         x: { field: "enrollment_count", type: "quantitative" },
         y: { field: "year", type: "temporal" },
       },
-      data: input.aggregation.map((point) => ({
-        nct_id: point.nct_id,
-        enrollment_count: point.enrollment_count,
-        year: point.year,
-      })),
+      data: input.aggregation.map((point) =>
+        withCitations(
+          {
+            nct_id: point.nct_id,
+            enrollment_count: point.enrollment_count,
+            year: point.year,
+          },
+          [point.nct_id],
+          input.studyExcerptIndex,
+        ),
+      ),
     },
     meta: buildMeta(input),
   });
@@ -307,11 +352,9 @@ export function assembleNetworkGraphResponse(
       },
       data: {
         nodes: input.aggregation.nodes,
-        edges: input.aggregation.edges.map(({ source, target, weight }) => ({
-          source,
-          target,
-          weight,
-        })),
+        edges: input.aggregation.edges.map(({ source, target, weight, source_nct_ids }) =>
+          withCitations({ source, target, weight }, source_nct_ids, input.studyExcerptIndex),
+        ),
       },
     },
     meta: {

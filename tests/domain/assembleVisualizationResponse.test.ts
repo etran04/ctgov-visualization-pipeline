@@ -18,6 +18,8 @@ const baseAggregation = PHASE_BIN_ORDER.map((phase) => ({
   source_nct_ids: phase === "Phase 2" ? ["NCT00000001", "NCT00000002", "NCT00000003"] : [],
 }));
 
+const emptyStudyExcerptIndex = new Map<string, string>();
+
 describe("assembleBarChartResponse", () => {
   it("builds a drug-first title when both drug and condition are present", () => {
     const response = assembleVisualizationResponse({
@@ -36,6 +38,7 @@ describe("assembleBarChartResponse", () => {
       skippedMalformed: 2,
       studiesWithMultiplePhases: 1,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.title).toBe(
@@ -60,6 +63,7 @@ describe("assembleBarChartResponse", () => {
       skippedMalformed: 0,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.title).toBe("Trial phases for melanoma");
@@ -82,6 +86,7 @@ describe("assembleBarChartResponse", () => {
       skippedMalformed: 0,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.type).toBe("bar_chart");
@@ -120,6 +125,7 @@ describe("assembleBarChartResponse", () => {
       skippedMalformed: 4,
       studiesWithMultiplePhases: 9,
       truncated: true,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.data).toEqual([]);
@@ -153,6 +159,7 @@ describe("assembleGroupedBarChartResponse", () => {
       skippedMalformed: 12,
       studiesWithMultiplePhases: 508,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.title).toBe(
@@ -191,6 +198,7 @@ describe("assembleGroupedBarChartResponse", () => {
       skippedMalformed: 0,
       studiesWithMultiplePhases: 1,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.type).toBe("grouped_bar_chart");
@@ -241,6 +249,7 @@ describe("assembleLineChartResponse", () => {
       skippedMalformed: 2,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.title).toBe(
@@ -265,6 +274,7 @@ describe("assembleLineChartResponse", () => {
       skippedMalformed: 0,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.type).toBe("line_chart");
@@ -318,6 +328,7 @@ describe("assembleHistogramResponse", () => {
       skippedMalformed: 2,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.title).toBe(
@@ -342,6 +353,7 @@ describe("assembleHistogramResponse", () => {
       skippedMalformed: 0,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.type).toBe("histogram");
@@ -394,6 +406,7 @@ describe("assembleScatterplotResponse", () => {
       skippedMalformed: 2,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.title).toBe(
@@ -418,6 +431,7 @@ describe("assembleScatterplotResponse", () => {
       skippedMalformed: 0,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.type).toBe("scatterplot");
@@ -456,6 +470,7 @@ describe("assembleNetworkGraphResponse", () => {
       skippedMalformed: 2,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.title).toBe(
@@ -481,6 +496,7 @@ describe("assembleNetworkGraphResponse", () => {
       skippedMalformed: 0,
       studiesWithMultiplePhases: 0,
       truncated: false,
+      studyExcerptIndex: emptyStudyExcerptIndex,
     });
 
     expect(response.visualization.type).toBe("network_graph");
