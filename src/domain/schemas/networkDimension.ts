@@ -1,9 +1,11 @@
 import { z } from "zod";
+import {
+  NETWORK_DIMENSION_VALUES,
+  type NetworkDimension,
+} from "../network/dimensions.js";
 
-export const NETWORK_DIMENSIONS = ["drug_sponsor"] as const;
-
-export type NetworkDimension = (typeof NETWORK_DIMENSIONS)[number];
+export { NETWORK_DIMENSION_VALUES, type NetworkDimension };
 
 export const NetworkDimensionSchema = z
-  .enum(NETWORK_DIMENSIONS)
+  .enum(NETWORK_DIMENSION_VALUES)
   .describe("Bipartite network topology rendered in the visualization.");

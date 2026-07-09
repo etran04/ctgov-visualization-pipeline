@@ -1,7 +1,11 @@
 import { extractInterventions, extractLeadSponsor } from "./extractors.js";
 import type { NetworkStudyRecord } from "./types.js";
 
-export type NetworkDimension = "drug_sponsor";
+/** Supported bipartite network topologies. Single source of truth for domain and schemas. */
+// NB: Add additional topology literals here (e.g. "drug_condition"); NetworkDimensionSchema updates automatically.
+export const NETWORK_DIMENSION_VALUES = ["drug_sponsor"] as const;
+
+export type NetworkDimension = (typeof NETWORK_DIMENSION_VALUES)[number];
 
 export type BipartiteDimensionConfig = {
   leftEntityType: string;
@@ -11,7 +15,9 @@ export type BipartiteDimensionConfig = {
   requiredFields: readonly string[];
 };
 
-export const NETWORK_DIMENSIONS: Record<NetworkDimension, BipartiteDimensionConfig> = {
+// NB: Add a matching registry entry per topology (extractors + requiredFields). Also extend fieldProfiles,
+// normalizeNetworkStudy, interpretation/LLM prompt, and title prefix in assembleVisualizationResponse.
+export const NETWORK_DIMENSIONS = {
   drug_sponsor: {
     leftEntityType: "drug",
     rightEntityType: "sponsor",
@@ -19,4 +25,4 @@ export const NETWORK_DIMENSIONS: Record<NetworkDimension, BipartiteDimensionConf
     extractRight: extractLeadSponsor,
     requiredFields: ["NCTId", "InterventionName", "LeadSponsorName"],
   },
-};
+} as const satisfies Record<NetworkDimension, BipartiteDimensionConfig>;

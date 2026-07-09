@@ -1,5 +1,5 @@
 export { buildBipartiteGraph } from "./buildBipartiteGraph.js";
-export { NETWORK_DIMENSIONS, type BipartiteDimensionConfig, type NetworkDimension } from "./dimensions.js";
+export { NETWORK_DIMENSIONS, NETWORK_DIMENSION_VALUES, type BipartiteDimensionConfig, type NetworkDimension } from "./dimensions.js";
 export { extractInterventions, extractLeadSponsor } from "./extractors.js";
 export {
   buildNodeId,

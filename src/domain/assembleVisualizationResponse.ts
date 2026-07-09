@@ -7,7 +7,7 @@ import type {
 import type { BipartiteGraphResult } from "./network/types.js";
 import type { QueryEntities, VisualizationResponse } from "./schemas/index.js";
 import { VisualizationResponseSchema } from "./schemas/index.js";
-import type { NetworkDimension } from "./schemas/networkDimension.js";
+import type { NetworkDimension } from "./network/dimensions.js";
 import type { VisualizationType } from "./intents/visualizationType.js";
 
 type BaseAssembleInput = {

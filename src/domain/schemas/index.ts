@@ -14,7 +14,7 @@ export {
 export { IntentSchema, SUPPORTED_INTENTS, type Intent } from "./intents.js";
 export {
   NetworkDimensionSchema,
-  NETWORK_DIMENSIONS,
+  NETWORK_DIMENSION_VALUES,
   type NetworkDimension,
 } from "./networkDimension.js";
 export { NetworkGraphVisualizationSchema } from "./networkGraph.js";
