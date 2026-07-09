@@ -379,3 +379,111 @@ LLM calls live in `src/externals/`; aggregation and response shaping are determi
 ## Testing
 
 Unit tests cover deterministic domain logic (`npm test`). `npm run demo` runs the full pipeline for a preset or custom query. `npm run smoke` includes HTTP validation plus mocked timeline, histogram, scatterplot, and network cases that do not call live APIs.
+
+## Integrity note (AI tools & authorship)
+
+AI tools were used freely during development, as permitted by the assignment. Engineering judgment and design reasoning—not tool usage—drive the architecture below.
+
+### Tools used
+
+| Tool | Role |
+|------|------|
+| **Cursor (AI-assisted IDE)** | Exploration, refactoring, test scaffolding, README drafting |
+| **OpenAI API** (`gpt-5.4` default) | Runtime query interpretation only — extracts `intent`, `entities`, and dimension fields via structured output |
+| **ClinicalTrials.gov Data API v2** | Authoritative trial data source (`/studies`) |
+| **TypeScript, Fastify, Zod, Vitest** | Implementation and validation stack |
+
+The LLM is **not** used to generate chart values. All visualization data comes from deterministic aggregation of CT.gov records after interpretation.
+
+### Deliberate design vs AI-assisted work
+
+**Designed and implemented deliberately (human-led):**
+
+- Layered architecture: `externals/` for I/O, `domain/` for pure logic, thin `buildVisualization` orchestrator
+- Intent → visualization type routing and intent-specific CT.gov field profiles
+- Aggregation semantics: phase/year/enrollment zero-fill, per-study scatterplot model, bipartite network engine with dimension registry
+- Zod schemas as the single contract for HTTP, OpenAI structured output, and response validation
+- Error taxonomy and HTTP status mapping
+- Test fixtures and edge-case coverage (multi-phase studies, malformed records, empty graphs)
+
+**AI-assisted, then reviewed and adapted:**
+
+- Initial boilerplate and file structure suggestions
+- OpenAI system prompt drafts (edited for intent disambiguation, especially network vs relationship)
+- Unit test cases and README prose
+- Network graph dimension registry pattern (reviewed for extensibility before merge)
+
+## Validation approach
+
+Correctness is validated at multiple layers so probabilistic steps (LLM interpretation) never leak into chart data unchecked.
+
+### 1. Schema validation (boundaries)
+
+- **Request:** `VisualizeRequestSchema` on `POST /visualize`
+- **Interpretation:** OpenAI output parsed through `QueryInterpretationOpenAiSchema` → discriminated `QueryInterpretationSchema`
+- **Response:** `VisualizationResponseSchema.parse()` before every HTTP 200
+
+Invalid shapes fail fast with typed domain errors instead of partial JSON.
+
+### 2. Unit tests (`npm test`)
+
+~20 Vitest files cover deterministic paths without live APIs:
+
+- Aggregations (phase, start year, enrollment, relationship, network)
+- CT.gov normalization and query param mapping
+- Entity validation, visualization type resolution, response assembly
+- Bipartite graph engine (weight accumulation, intervention collapse, skip rules)
+- Interpretation parsing (mocked OpenAI payloads)
+
+### 3. Smoke tests (`npm run smoke`)
+
+In-process HTTP tests via Fastify `inject()`:
+
+- Mocked end-to-end cases per visualization type (no OpenAI / CT.gov)
+- Contract checks: `visualization.type`, encoding fields, meta shape, error codes
+
+Optional (and very useful) live modes:
+
+- `npm run smoke:live` — full pipeline against OpenAI + CT.gov
+- `npm run smoke:live:llm` — intent routing checks (e.g. network vs relationship disambiguation)
+
+### 4. Manual / committed examples
+
+- `npm run demo` — interactive E2E for any query
+- `npm run examples:generate` — regenerates committed outputs in [`examples/`](examples/) from live API runs
+- OpenAPI docs at `/docs` — schema inspection
+
+### 5. Operational guardrails
+
+- CT.gov and OpenAI clients retry on transient failures (429, 5xx)
+- `meta.truncated`, `meta.skipped_malformed`, and `meta.fetched_studies` surface data-quality caveats to clients
+- `hints` are advisory only — they never bypass LLM interpretation or entity validation
+
+## Future improvements
+
+Known limitations and next steps if given more time:
+
+### Citations & traceability
+
+- Populate `citations` (`nct_id` + excerpt) on every bar, line, histogram, and network datum
+- `source_nct_ids` are already collected internally during aggregation; assembly layer needs to wire excerpts from normalized study fields
+
+### Query & visualization coverage
+
+- Additional network topologies via dimension registry: `drug_condition`, `sponsor_condition`, drug–drug co-occurrence
+- Grouped bar chart for cross-dimensional comparisons (e.g. phase by sponsor)
+- Geographic breakdowns (country/site nodes) using `contactsLocationsModule`
+- Broader structured input fields: `sponsor`, `country`, `start_year`, `end_year` in request schema and CT.gov filters
+- `meta.assumptions` — log interpretation choices, zero-fill policy, truncation warnings
+
+### Agent & resilience
+
+- Tool-use loop: LLM calls CT.gov with refined queries on empty results
+- Fallback when interpretation confidence is low (clarifying error or suggested rephrase)
+- Graph pruning / top-N edges for large condition-wide networks
+
+### Performance & ops
+
+- Response size limits or pagination for scatterplot and network outputs on broad queries
+- Caching layer for repeated CT.gov fetches
+- Rate-limit awareness for CT.gov public API
