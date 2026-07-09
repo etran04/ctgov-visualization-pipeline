@@ -1,4 +1,6 @@
 import { fileURLToPath } from "node:url";
+import path from "node:path";
+import fastifyStatic from "@fastify/static";
 import Fastify, { type FastifyError } from "fastify";
 import { config } from "./config.js";
 import { HTTP_STATUS } from "./domain/errors.js";
@@ -39,11 +41,16 @@ export async function buildServer(options?: { logger?: boolean }) {
 
   await registerVisualizeRoute(app);
 
-  // Sanity check endpoint
   app.get("/health", async () => {
     return {
       status: "ok",
     };
+  });
+
+  const publicDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public");
+  await app.register(fastifyStatic, {
+    root: publicDir,
+    prefix: "/",
   });
 
   return app;

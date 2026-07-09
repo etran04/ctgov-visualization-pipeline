@@ -2,6 +2,8 @@
 
 Turn natural-language clinical trial queries into visualization-ready JSON. The pipeline supports **comparison** queries (trial counts by phase → bar chart or grouped bar chart for drug-vs-drug comparisons), **timeline** queries (trial counts by start year → line chart), **distribution** queries (trial counts by enrollment bin → histogram), **relationship** queries (enrollment vs start year per study → scatterplot), and **network** queries (drug–sponsor bipartite graph → network graph), backed by live ClinicalTrials.gov data.
 
+A **static demo UI** at `/` lets you try queries in the browser (chart preview, meta, click-to-reveal citations, raw JSON) — no frontend build step.
+
 ## Supported flows
 
 | Intent | Viz type | Default measure | Example query |
@@ -43,7 +45,29 @@ Start the HTTP server (default port `3000`, or `PORT` from `.env`):
 npm run dev
 ```
 
-Run end-to-end demos (OpenAI + ClinicalTrials.gov; prints summary + response JSON):
+## Demo UI
+
+With the server running, open **http://localhost:3000/** (or your configured `PORT`).
+
+The demo is a vanilla HTML/JS page served from [`public/`](public/) via `@fastify/static` — no Vite/React build. It calls `POST /visualize` on the same origin (no CORS setup).
+
+**Try it**
+
+1. Type a question in the text area (e.g. *Compare trial phases for Metformin*) or click a **preset** — one per visualization type (bar, grouped bar, line, histogram, scatter, network).
+2. Click **Visualize**. Live queries need `OPENAI_API_KEY` and usually take several seconds.
+3. Inspect the result:
+   - **Chart** — Chart.js preview for bar, grouped bar, line, histogram, and scatterplot types.
+   - **Citations** — click a bar, point, or network edge row to reveal up to 10 `nct_id` + BriefTitle excerpts (linked to ClinicalTrials.gov).
+   - **Meta** — stats (`fetched_studies`, `truncated`, etc.), **read-only filters** (what the LLM extracted from your query), and `assumptions`.
+   - **Raw JSON** — collapsible full API response.
+
+**Notes**
+
+- Filters in the UI are **display-only** — they show `meta.filters` from the response, not editable controls. Mention sponsors, conditions, countries, or years in your question to apply them.
+- Network queries render as **scrollable node/edge tables** in V1 (not a force-directed graph). Large graphs are truncated in the table preview; use raw JSON for the full list.
+- API reference: **http://localhost:3000/docs** · health check: **/health**
+
+Run end-to-end demos from the CLI (OpenAI + ClinicalTrials.gov; prints summary + response JSON):
 
 ```bash
 npm run demo                # default: comparison preset
@@ -68,10 +92,10 @@ Other useful scripts:
 - `npm run typecheck` — TypeScript compile check
 - `npm run smoke` — in-process HTTP smoke tests plus mocked timeline, histogram, scatterplot, network, and grouped comparison cases (no live APIs)
 - `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, grouped drug comparison, timeline, distribution, relationship, and network queries
-- `npm run examples:generate` — regenerate committed JSON outputs in `examples/`
 - `npm run smoke:live:llm` — live OpenAI routing checks only (network vs relationship disambiguation)
+- `npm run examples:generate` — regenerate committed JSON outputs in `examples/`
 
-With the server running, interactive API docs are available at `http://localhost:3000/docs` (or your configured `PORT`).
+Interactive OpenAPI docs: **http://localhost:3000/docs** (when the server is running).
 
 ## API contract
 
@@ -121,21 +145,41 @@ At least one of `drug_name`, `comparison_targets`, `condition`, `phase`, `sponso
       "y": { "field": "trial_count", "type": "quantitative" }
     },
     "data": [
-      { "phase": "Phase 1", "trial_count": 42 },
+      {
+        "phase": "Phase 1",
+        "trial_count": 42,
+        "citations": [
+          {
+            "nct_id": "NCT03615326",
+            "excerpt": "A Phase 1 Study of Pembrolizumab in Advanced Melanoma"
+          }
+        ]
+      },
       { "phase": "Phase 2", "trial_count": 18 }
     ]
   },
   "meta": {
     "filters": {
       "drug_name": "Pembrolizumab",
+      "comparison_targets": null,
       "condition": null,
-      "phase": null
+      "phase": null,
+      "sponsor": null,
+      "country": null,
+      "start_year": null,
+      "end_year": null
     },
     "source": "clinicaltrials.gov",
     "fetched_studies": 120,
     "skipped_malformed": 0,
     "studies_with_multiple_phases": 15,
-    "truncated": false
+    "truncated": false,
+    "assumptions": [
+      "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+      "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+      "Phase bins are zero-filled across all six standard categories; multi-phase studies may appear in multiple bins.",
+      "Some studies list multiple phases and are counted in every applicable phase bin."
+    ]
   }
 }
 ```
@@ -168,7 +212,11 @@ Drug-vs-drug phase comparisons (2–4 drugs) return a long-format dataset with `
       "drug_name": null,
       "comparison_targets": null,
       "condition": null,
-      "phase": null
+      "phase": null,
+      "sponsor": null,
+      "country": null,
+      "start_year": null,
+      "end_year": null
     },
     "comparison_targets": ["Metformin", "Pembrolizumab"],
     "comparison_dimension": "phase",
@@ -176,7 +224,14 @@ Drug-vs-drug phase comparisons (2–4 drugs) return a long-format dataset with `
     "fetched_studies": 5600,
     "skipped_malformed": 12,
     "studies_with_multiple_phases": 508,
-    "truncated": false
+    "truncated": false,
+    "assumptions": [
+      "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+      "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+      "Compared 2 drugs in parallel with shared filters; phase bins are zero-filled per series.",
+      "Some studies list multiple phases and are counted in every applicable phase bin.",
+      "Some fetched studies were skipped due to missing or invalid required fields."
+    ]
   }
 }
 ```
@@ -204,14 +259,24 @@ Every `(phase, series)` pair appears even when `trial_count` is 0 (zero-fill acr
   "meta": {
     "filters": {
       "drug_name": "Pembrolizumab",
+      "comparison_targets": null,
       "condition": null,
-      "phase": null
+      "phase": null,
+      "sponsor": null,
+      "country": null,
+      "start_year": null,
+      "end_year": null
     },
     "source": "clinicaltrials.gov",
     "fetched_studies": 20,
     "skipped_malformed": 0,
     "studies_with_multiple_phases": 0,
-    "truncated": false
+    "truncated": false,
+    "assumptions": [
+      "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+      "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+      "Year bins span the minimum to maximum start year in fetched studies; gap years are zero-filled."
+    ]
   }
 }
 ```
@@ -241,14 +306,24 @@ Year bins span from the minimum to maximum start year in the fetched studies (in
   "meta": {
     "filters": {
       "drug_name": "Pembrolizumab",
+      "comparison_targets": null,
       "condition": null,
-      "phase": null
+      "phase": null,
+      "sponsor": null,
+      "country": null,
+      "start_year": null,
+      "end_year": null
     },
     "source": "clinicaltrials.gov",
     "fetched_studies": 60,
     "skipped_malformed": 0,
     "studies_with_multiple_phases": 0,
-    "truncated": false
+    "truncated": false,
+    "assumptions": [
+      "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+      "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+      "Enrollment uses six fixed bins; each study maps to exactly one bin."
+    ]
   }
 }
 ```
@@ -274,14 +349,25 @@ Enrollment bins always include all six fixed categories (`1–50`, `51–100`, `
   "meta": {
     "filters": {
       "drug_name": "Pembrolizumab",
+      "comparison_targets": null,
       "condition": null,
-      "phase": null
+      "phase": null,
+      "sponsor": null,
+      "country": null,
+      "start_year": null,
+      "end_year": null
     },
     "source": "clinicaltrials.gov",
     "fetched_studies": 60,
     "skipped_malformed": 3,
     "studies_with_multiple_phases": 0,
-    "truncated": false
+    "truncated": false,
+    "assumptions": [
+      "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+      "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+      "One scatterplot point per valid study; no binning or zero-fill.",
+      "Some fetched studies were skipped due to missing or invalid required fields."
+    ]
   }
 }
 ```
@@ -320,15 +406,26 @@ Each valid study becomes one scatterplot point (`x = enrollment_count`, `y = yea
   "meta": {
     "filters": {
       "drug_name": "Pembrolizumab",
+      "comparison_targets": null,
       "condition": null,
-      "phase": null
+      "phase": null,
+      "sponsor": null,
+      "country": null,
+      "start_year": null,
+      "end_year": null
     },
     "network_dimension": "drug_sponsor",
     "source": "clinicaltrials.gov",
     "fetched_studies": 120,
     "skipped_malformed": 3,
     "studies_with_multiple_phases": 0,
-    "truncated": false
+    "truncated": false,
+    "assumptions": [
+      "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+      "Citations are capped at 10 per datum; excerpts use BriefTitle from fetched studies.",
+      "Network topology is drug_sponsor; edge weight counts trials per intervention–sponsor pair.",
+      "Some fetched studies were skipped due to missing or invalid required fields."
+    ]
   }
 }
 ```
@@ -499,6 +596,7 @@ The LLM is **not** used to generate chart values. All visualization data comes f
 - OpenAI system prompt drafts (edited for intent disambiguation, especially network vs relationship)
 - Unit test cases and README prose
 - Network graph dimension registry pattern (reviewed for extensibility before merge)
+- Static demo UI in [`public/`](public/) (Chart.js preview, meta panel, citation drill-down)
 
 ## Validation approach
 
@@ -536,7 +634,8 @@ Optional (and very useful) live modes:
 
 ### 4. Manual / committed examples
 
-- `npm run demo` — interactive E2E for any query
+- **Demo UI** at `/` — interactive chart preview with presets (see [Demo UI](#demo-ui))
+- `npm run demo` — interactive E2E for any query from the CLI
 - `npm run examples:generate` — regenerates committed outputs in [`examples/`](examples/) from live API runs
 - OpenAPI docs at `/docs` — schema inspection
 

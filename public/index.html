@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CTGov Visualization Demo</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js" defer></script>
+    <script type="module" src="/meta.js"></script>
+    <script type="module" src="/renderers.js"></script>
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>ClinicalTrials.gov Visualization Demo</h1>
+      <p class="subtitle">
+        Natural-language query → <code>POST /visualize</code> → chart + meta + raw JSON
+      </p>
+      <nav class="header-links">
+        <a href="/docs">API docs</a>
+        <a href="/health">Health</a>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <section class="panel input-panel">
+        <h2>Ask a question</h2>
+        <form id="query-form">
+          <label for="query-input">What would you like to know about clinical trials?</label>
+          <textarea
+            id="query-input"
+            name="query"
+            rows="4"
+            placeholder="e.g. Compare trial phases for Metformin, or how many breast cancer trials started each year?"
+            required
+          ></textarea>
+          <div class="form-actions">
+            <button type="submit" id="submit-btn">Visualize</button>
+          </div>
+        </form>
+
+        <div class="presets">
+          <p class="presets-label">Presets</p>
+          <div class="preset-buttons" id="preset-buttons"></div>
+        </div>
+
+        <div id="status" class="status hidden" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="panel results-panel hidden" id="results-panel">
+        <h2 id="viz-title">Visualization</h2>
+        <p class="viz-type-badge" id="viz-type"></p>
+
+        <div id="chart-container" class="chart-container">
+          <canvas id="chart-canvas" aria-label="Visualization chart"></canvas>
+        </div>
+        <div id="network-container" class="network-container hidden"></div>
+
+        <div id="citations-panel" class="citations-panel hidden">
+          <h3>Citations</h3>
+          <ul id="citations-list"></ul>
+        </div>
+
+        <div id="meta-container"></div>
+
+        <details class="raw-json">
+          <summary>Raw JSON response</summary>
+          <pre id="raw-json"></pre>
+        </details>
+      </section>
+    </main>
+  </body>
+</html>
