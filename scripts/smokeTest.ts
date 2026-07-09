@@ -79,6 +79,95 @@ function getErrorCode(body: unknown): string | undefined {
   return typeof body.error.code === "string" ? body.error.code : undefined;
 }
 
+type Citation = { nct_id: string; excerpt: string };
+
+function hasCitations(item: Record<string, unknown>): item is { citations: Citation[] } {
+  return (
+    Array.isArray(item.citations) &&
+    item.citations.length > 0 &&
+    item.citations.every(
+      (citation) =>
+        typeof citation === "object" &&
+        citation !== null &&
+        typeof citation.nct_id === "string" &&
+        typeof citation.excerpt === "string",
+    )
+  );
+}
+
+function assertNoSourceNctIds(visualization: VisualizationResponse["visualization"]): void {
+  if (visualization.type === "network_graph") {
+    for (const edge of visualization.data.edges) {
+      assert(!("source_nct_ids" in edge), "expected source_nct_ids stripped from edges");
+    }
+    return;
+  }
+
+  if (visualization.type === "scatterplot") {
+    return;
+  }
+
+  for (const point of visualization.data) {
+    assert(!("source_nct_ids" in point), "expected source_nct_ids stripped from data");
+  }
+}
+
+/** Live responses should surface citations on at least one populated datum when CT.gov returns titles. */
+function assertCitationsOnNonemptyDatums(visualization: VisualizationResponse["visualization"]): void {
+  switch (visualization.type) {
+    case "bar_chart":
+    case "grouped_bar_chart":
+    case "line_chart":
+    case "histogram": {
+      const nonempty = visualization.data.filter((point) => point.trial_count > 0);
+      if (nonempty.length === 0) {
+        return;
+      }
+
+      assert(
+        nonempty.some((point) => hasCitations(point as Record<string, unknown>)),
+        "expected citations on at least one datum with trial_count > 0",
+      );
+
+      for (const point of nonempty) {
+        if ("citations" in point && point.citations != null) {
+          assert(point.citations.length <= 10, "expected at most 10 citations per datum");
+        }
+      }
+      break;
+    }
+    case "scatterplot": {
+      if (visualization.data.length === 0) {
+        return;
+      }
+
+      assert(
+        visualization.data.some((point) => hasCitations(point as Record<string, unknown>)),
+        "expected citations on at least one scatterplot point when brief titles are available",
+      );
+      break;
+    }
+    case "network_graph": {
+      const nonempty = visualization.data.edges.filter((edge) => edge.weight > 0);
+      if (nonempty.length === 0) {
+        return;
+      }
+
+      assert(
+        nonempty.some((edge) => hasCitations(edge as Record<string, unknown>)),
+        "expected citations on at least one edge with weight > 0",
+      );
+
+      for (const edge of nonempty) {
+        if ("citations" in edge && edge.citations != null) {
+          assert(edge.citations.length <= 10, "expected at most 10 citations per edge");
+        }
+      }
+      break;
+    }
+  }
+}
+
 /** Human-readable snapshot of a live visualization response for manual validation. */
 function printLiveValidationSummary(response: VisualizationResponse): void {
   const { visualization: viz, meta } = response;
@@ -234,6 +323,7 @@ function createSmokeCases(deps: {
   aggregateByRelationship: typeof import("../src/domain/aggregations/index.js").aggregateByRelationship;
   aggregateByStartYear: typeof import("../src/domain/aggregations/index.js").aggregateByStartYear;
   assembleVisualizationResponse: typeof import("../src/domain/assembleVisualizationResponse.js").assembleVisualizationResponse;
+  buildStudyExcerptIndex: typeof import("../src/domain/citations/index.js").buildStudyExcerptIndex;
   VisualizationResponseSchema: typeof import("../src/domain/schemas/index.js").VisualizationResponseSchema;
   validEnrollmentMidStudy: typeof import("../tests/fixtures/ctgovStudies.js").validEnrollmentMidStudy;
   validEnrollmentSmallStudy: typeof import("../tests/fixtures/ctgovStudies.js").validEnrollmentSmallStudy;
@@ -253,6 +343,7 @@ function createSmokeCases(deps: {
     aggregateByRelationship,
     aggregateByStartYear,
     assembleVisualizationResponse,
+    buildStudyExcerptIndex,
     VisualizationResponseSchema,
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
@@ -287,6 +378,8 @@ function createSmokeCases(deps: {
       `expected ${expectedType} for query "${query}", got ${parsed.data.visualization.type}`,
     );
     assertMeta?.(parsed.data.meta);
+    assertNoSourceNctIds(parsed.data.visualization);
+    assertCitationsOnNonemptyDatums(parsed.data.visualization);
 
     return parsed.data;
   }
@@ -349,6 +442,8 @@ function createSmokeCases(deps: {
         assert(parsed.data.visualization.data.length === 6, "expected six phase bins");
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+        assertNoSourceNctIds(parsed.data.visualization);
+        assertCitationsOnNonemptyDatums(parsed.data.visualization);
 
         return parsed.data;
       },
@@ -388,6 +483,8 @@ function createSmokeCases(deps: {
         assert(parsed.data.visualization.data.length >= 12, "expected phase bins × series rows");
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+        assertNoSourceNctIds(parsed.data.visualization);
+        assertCitationsOnNonemptyDatums(parsed.data.visualization);
 
         return parsed.data;
       },
@@ -422,6 +519,8 @@ function createSmokeCases(deps: {
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+        assertNoSourceNctIds(parsed.data.visualization);
+        assertCitationsOnNonemptyDatums(parsed.data.visualization);
 
         return parsed.data;
       },
@@ -460,6 +559,8 @@ function createSmokeCases(deps: {
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+        assertNoSourceNctIds(parsed.data.visualization);
+        assertCitationsOnNonemptyDatums(parsed.data.visualization);
 
         return parsed.data;
       },
@@ -500,6 +601,8 @@ function createSmokeCases(deps: {
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+        assertNoSourceNctIds(parsed.data.visualization);
+        assertCitationsOnNonemptyDatums(parsed.data.visualization);
 
         return parsed.data;
       },
@@ -559,6 +662,8 @@ function createSmokeCases(deps: {
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+        assertNoSourceNctIds(parsed.data.visualization);
+        assertCitationsOnNonemptyDatums(parsed.data.visualization);
 
         return parsed.data;
       },
@@ -665,10 +770,31 @@ function createSmokeCases(deps: {
       name: "[MOCK] Distribution pipeline returns histogram with zero-filled enrollment bins",
       mocked: true,
       async run() {
-        const aggregation = aggregateByEnrollment([
-          validEnrollmentSmallStudy,
-          validEnrollmentMidStudy,
-        ]);
+        const studiesWithTitles = [
+          {
+            ...validEnrollmentSmallStudy,
+            protocolSection: {
+              ...validEnrollmentSmallStudy.protocolSection,
+              identificationModule: {
+                ...validEnrollmentSmallStudy.protocolSection.identificationModule,
+                briefTitle: "Low-enrollment Pembrolizumab study",
+              },
+            },
+          },
+          {
+            ...validEnrollmentMidStudy,
+            protocolSection: {
+              ...validEnrollmentMidStudy.protocolSection,
+              identificationModule: {
+                ...validEnrollmentMidStudy.protocolSection.identificationModule,
+                briefTitle: "Mid-enrollment Pembrolizumab study",
+              },
+            },
+          },
+        ];
+
+        const aggregation = aggregateByEnrollment(studiesWithTitles);
+        const studyExcerptIndex = buildStudyExcerptIndex(studiesWithTitles);
 
         const response = assembleVisualizationResponse({
           filters: {
@@ -686,7 +812,7 @@ function createSmokeCases(deps: {
           skippedMalformed: 0,
           studiesWithMultiplePhases: 0,
           truncated: false,
-          studyExcerptIndex: new Map(),
+          studyExcerptIndex,
         });
 
         const parsed = VisualizationResponseSchema.safeParse(response);
@@ -719,6 +845,20 @@ function createSmokeCases(deps: {
         for (const point of parsed.data.visualization.data) {
           assert(!("source_nct_ids" in point), "expected source_nct_ids stripped from data");
         }
+
+        const bin50 = parsed.data.visualization.data.find((point) => point.bin_label === "1–50");
+        const bin100 = parsed.data.visualization.data.find((point) => point.bin_label === "51–100");
+        assert(
+          bin50?.citations?.[0]?.nct_id === "NCT00000201" &&
+            bin50.citations[0]?.excerpt === "Low-enrollment Pembrolizumab study",
+          "expected citations on 1–50 enrollment bin",
+        );
+        assert(
+          bin100?.citations?.[0]?.nct_id === "NCT00000202" &&
+            bin100.citations[0]?.excerpt === "Mid-enrollment Pembrolizumab study",
+          "expected citations on 51–100 enrollment bin",
+        );
+        assertCitationsOnNonemptyDatums(parsed.data.visualization);
       },
     },
     {
@@ -905,6 +1045,7 @@ async function main(): Promise<void> {
   const { assembleVisualizationResponse } = await import(
     "../src/domain/assembleVisualizationResponse.js"
   );
+  const { buildStudyExcerptIndex } = await import("../src/domain/citations/index.js");
   const { VisualizationResponseSchema } = await import("../src/domain/schemas/index.js");
   const { buildServer } = await import("../src/server.js");
   const {
@@ -931,6 +1072,7 @@ async function main(): Promise<void> {
     aggregateByRelationship,
     aggregateByStartYear,
     assembleVisualizationResponse,
+    buildStudyExcerptIndex,
     VisualizationResponseSchema,
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,

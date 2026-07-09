@@ -19,7 +19,13 @@
       "data": [
         {
           "year": 1971,
-          "trial_count": 1
+          "trial_count": 1,
+          "citations": [
+            {
+              "nct_id": "NCT00002455",
+              "excerpt": "Immunotherapy After Surgery in Treating Patients With Breast Cancer, Colon Cancer, or Melanoma"
+            }
+          ]
         },
         {
           "year": 1972,
@@ -43,7 +49,13 @@
         },
         {
           "year": 1977,
-          "trial_count": 1
+          "trial_count": 1,
+          "citations": [
+            {
+              "nct_id": "NCT03390608",
+              "excerpt": "Prognostic and Predictive Factors for Small Breast Tumors"
+            }
+          ]
         },
         {
           "year": 1978,
@@ -51,11 +63,23 @@
         },
         {
           "year": 1979,
-          "trial_count": 1
+          "trial_count": 1,
+          "citations": [
+            {
+              "nct_id": "NCT01468883",
+              "excerpt": "The Treatment of Stage I and II Carcinoma of the Breast With Mastectomy and Axillary Dissection Versus Excisional Biopsy, Axillary Dissection, and Definitive Irradiation"
+            }
+          ]
         },
         {
           "year": 1980,
-          "trial_count": 1
+          "trial_count": 1,
+          "citations": [
+            {
+              "nct_id": "NCT00655447",
+              "excerpt": "Examining the Long-Term Risks of Oophorectomy"
+            }
+          ]
         },
         {
           "year": 1981,
@@ -83,7 +107,13 @@
         },
         {
           "year": 1987,
-          "trial_count": 1
+          "trial_count": 1,
+          "citations": [
+            {
+              "nct_id": "NCT00002460",
+              "excerpt": "Adjuvant Hormone Therapy in Treating Women With Operable Breast Cancer"
+            }
+          ]
         },
         {
           "year": 1988,
@@ -91,171 +121,1692 @@
         },
         {
           "year": 1989,
-          "trial_count": 4
+          "trial_count": 4,
+          "citations": [
+            {
+              "nct_id": "NCT00001250",
+              "excerpt": "Effect of Preoperative Chemotherapy on Axillary Lymph Node Metastases in Stage II Breast Cancer: A Prospective Randomized Trial"
+            },
+            {
+              "nct_id": "NCT00291096",
+              "excerpt": "High Risk Breast Clinic: Protocol for Women at Increased Risk for Developing Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00929591",
+              "excerpt": "SWOG-8814 Tamoxifen With or Without Combination Chemotherapy in Postmenopausal Women Who Have Undergone Surgery for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02295033",
+              "excerpt": "Randomized Boost Versus no Boost Irradiation of Early Breast Cancer"
+            }
+          ]
         },
         {
           "year": 1990,
-          "trial_count": 3
+          "trial_count": 3,
+          "citations": [
+            {
+              "nct_id": "NCT00002520",
+              "excerpt": "Physician-Initiated Stop-Smoking Program for Patients Receiving Treatment for Early-Stage Cancer"
+            },
+            {
+              "nct_id": "NCT00252408",
+              "excerpt": "Danish Osteoporosis Prevention Study"
+            },
+            {
+              "nct_id": "NCT00309478",
+              "excerpt": "Randomized Study Comparing CMF and Goserelin + Tamoxifen in Premenopausal Receptor-positive Patients"
+            }
+          ]
         },
         {
           "year": 1991,
-          "trial_count": 5
+          "trial_count": 5,
+          "citations": [
+            {
+              "nct_id": "NCT00001269",
+              "excerpt": "Phase I Trial of FLAC (5-Fluorouracil, Leucovorin, Adriamycin, Cytoxan) Plus GM-CSF (Granulocyte-Macrophage Colony Stimulating Factor) Plus Dose Escalation of IL-3 (Interleukin-3) in Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002509",
+              "excerpt": "High-Dose Combination Chemotherapy Followed by Peripheral Stem Cell Transplantation in Treating Patients With Poor-Prognosis Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00060255",
+              "excerpt": "High-Dose Chemotherapy, Total-Body Irradiation, and Autologous Stem Cell Transplantation or Bone Marrow Transplantation in Treating Patients With Hematologic Cancer or Solid Tumors"
+            },
+            {
+              "nct_id": "NCT01034891",
+              "excerpt": "Women At Risk: The High Risk Breast Cancer Program"
+            },
+            {
+              "nct_id": "NCT06637202",
+              "excerpt": "Swebcg 91:A RT. Breast Conserving Surgery With or Without Radiotherapy for Breast Cancer Patients"
+            }
+          ]
         },
         {
           "year": 1992,
-          "trial_count": 4
+          "trial_count": 4,
+          "citations": [
+            {
+              "nct_id": "NCT00001302",
+              "excerpt": "A Phase I Study of Infusional Chemotherapy With the P-Glycoprotein Antagonist PSC 833"
+            },
+            {
+              "nct_id": "NCT00002498",
+              "excerpt": "Combination Chemotherapy Compared With Mitoxantrone in Treating Older Patients With Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00006030",
+              "excerpt": "Comparison of Four Different Treatment Regimens in Treating Women With Stage I Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00584428",
+              "excerpt": "High Dose Chemo With Autologous BMT for Treatment of Metastatic Breast Cancer"
+            }
+          ]
         },
         {
           "year": 1993,
-          "trial_count": 6
+          "trial_count": 6,
+          "citations": [
+            {
+              "nct_id": "NCT00002542",
+              "excerpt": "Tamoxifen in Treating Women With High-Risk Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002544",
+              "excerpt": "Mitoxantrone With or Without Docetaxel in Treating Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002581",
+              "excerpt": "Tamoxifen With or Without Combination Chemotherapy in Treating Postmenopausal Women With Operable Invasive Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00156052",
+              "excerpt": "Hypofractionated Radiotherapy Post-Lumpectomy in Women With Node Negative Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00220792",
+              "excerpt": "Group Therapy for Primary Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01317108",
+              "excerpt": "Prognostic and Predictive Impact of uPA/PAI-1"
+            }
+          ]
         },
         {
           "year": 1994,
-          "trial_count": 14
+          "trial_count": 14,
+          "citations": [
+            {
+              "nct_id": "NCT00001378",
+              "excerpt": "A Pilot Trial of Tamoxifen and 4-HPR (4-N-Hydroxyphenyl Retinamide) in Persons at High Risk for Developing Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00001383",
+              "excerpt": "A Phase I Study of Infusional Paclitaxel With the P-Glycoprotein Antagonist PSC 833"
+            },
+            {
+              "nct_id": "NCT00001384",
+              "excerpt": "A Pilot Trial of AC (Adriamycin, Cyclophosphamide) Chemotherapy With G-CSF (Granulocyte Colony-Stimulating Factor) Followed by Infusional Taxol (Paclitaxel) as Adjuvant Treatment for High Risk Stage II and Stage III Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT00001385",
+              "excerpt": "Positron Emission Tomography in Patients With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002628",
+              "excerpt": "Addition of Paclitaxel to High-Dose Combination Chemotherapy in Treating Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002644",
+              "excerpt": "Tamoxifen for the Prevention of Breast Cancer in High-Risk Women"
+            },
+            {
+              "nct_id": "NCT00002662",
+              "excerpt": "Paclitaxel or Docetaxel in Treating Women With Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002680",
+              "excerpt": "Sequential High-Dose Chemotherapy and Stem Cell Transplantation in Treating Patients With Chemotherapy-Sensitive Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002854",
+              "excerpt": "High-Dose Combination Chemotherapy Plus Peripheral Stem Cell Transplantation in Treating Patients With Advanced Cancer"
+            },
+            {
+              "nct_id": "NCT00002870",
+              "excerpt": "High Dose Chemotherapy Plus Peripheral Stem Cell Transplantation Compared With Standard Therapy in Treating Women With Locally Recurrent or Metastatic Breast Cancer"
+            }
+          ]
         },
         {
           "year": 1995,
-          "trial_count": 10
+          "trial_count": 10,
+          "citations": [
+            {
+              "nct_id": "NCT00001444",
+              "excerpt": "A Phase I Trial of Continuous Infusion UCN-01 in Patients With Refractory Neoplasms"
+            },
+            {
+              "nct_id": "NCT00001468",
+              "excerpt": "Outcomes of Education and Counseling for BRCA1 Testing"
+            },
+            {
+              "nct_id": "NCT00002755",
+              "excerpt": "Standard Chemotherapy Compared With High-Dose Combination Chemotherapy and Peripheral Stem Cell Transplantation in Treating Women With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002836",
+              "excerpt": "Filgrastim Plus Chemotherapy Compared With Filgrastim Alone In Treating Women Undergoing Peripheral Stem Cell Transplantation For Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002837",
+              "excerpt": "High-Dose Combination Chemotherapy and Peripheral Stem Cell Transplantation in Treating Patients With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003016",
+              "excerpt": "Prolonged Tamoxifen Compared With Shorter Tamoxifen in Treating Patients Who Have Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003787",
+              "excerpt": "Women's Healthy Eating and Living Study"
+            },
+            {
+              "nct_id": "NCT00210236",
+              "excerpt": "Surgical Breast Resection With or Without Axillary Lymph Node Excision in Treating Women With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00608452",
+              "excerpt": "Prevalence+Significance of Paraneoplastic Autoantibodies in Many Cancers"
+            },
+            {
+              "nct_id": "NCT03304171",
+              "excerpt": "Overall Diet Quality and Breast Cancer Risk"
+            }
+          ]
         },
         {
           "year": 1996,
-          "trial_count": 27
+          "trial_count": 27,
+          "citations": [
+            {
+              "nct_id": "NCT00001496",
+              "excerpt": "Establishment of Normal Breast Epithelial Cell Lines From Patients at High Risk for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00001503",
+              "excerpt": "Follow-up Protocol for Patients With Cancer/AIDS/Skin Disease"
+            },
+            {
+              "nct_id": "NCT00001507",
+              "excerpt": "Chemotherapy and Progenitor Cell Transplantation to Treat Inflammatory Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002668",
+              "excerpt": "Pain Control in Patients With Recurrent or Metastatic Breast or Prostate Cancer"
+            },
+            {
+              "nct_id": "NCT00002772",
+              "excerpt": "S9623, Combination Chemotherapy Plus Peripheral Stem Cell Transplantation in Treating Women With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002777",
+              "excerpt": "Exemestane Compared With Tamoxifen in Treating Women With Locally Recurrent or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002851",
+              "excerpt": "Lymph Node Radiation Therapy in Patients With Stage I, Stage II, or Stage III Breast Cancer That Has Been Surgically Removed"
+            },
+            {
+              "nct_id": "NCT00002864",
+              "excerpt": "Tamoxifen With or Without Octreotide in Treating Postmenopausal Women With Stage I, Stage II, or Stage III Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002937",
+              "excerpt": "Paclitaxel With or Without PSC 833 in Treating Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002942",
+              "excerpt": "Bone Marrow or Peripheral Stem Cell Transplantation in Treating Patients With Breast Cancer"
+            }
+          ]
         },
         {
           "year": 1997,
-          "trial_count": 34
+          "trial_count": 34,
+          "citations": [
+            {
+              "nct_id": "NCT00002900",
+              "excerpt": "SWOG-9342 Chemotherapy in Treating Women Enrolled in the SWOG-8897 Clinical Trial"
+            },
+            {
+              "nct_id": "NCT00002920",
+              "excerpt": "S9630, Medroxyprogesterone in Treating Women With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00002934",
+              "excerpt": "Evaluation of Breast Cancer Recurrence Rates Following Surgery in Women With Ductal Carcinoma In Situ"
+            },
+            {
+              "nct_id": "NCT00002998",
+              "excerpt": "Gemcitabine and Cisplatin in Treating Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003032",
+              "excerpt": "High Dose Chemotherapy Plus Peripheral Stem Cell Transplantation Compared With Standard Therapy in Treating Women With Metastatic or Recurrent Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003035",
+              "excerpt": "Doxorubicin and Paclitaxel in Treating Women With Locally Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003041",
+              "excerpt": "Pyrazoloacridine in Treating Women With Refractory Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003086",
+              "excerpt": "Repeated Bone Marrow Transplantation in Treating Women With Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003095",
+              "excerpt": "S9719 Gene Damage Following Chemotherapy in Women With Stage II or Stage III Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003098",
+              "excerpt": "Diet and Estrogen Metabolism in Postmenopausal Women"
+            }
+          ]
         },
         {
           "year": 1998,
-          "trial_count": 45
+          "trial_count": 45,
+          "citations": [
+            {
+              "nct_id": "NCT00001837",
+              "excerpt": "Effects of Raloxifene on the Uterus and Ovaries of Premenopausal Patients"
+            },
+            {
+              "nct_id": "NCT00003140",
+              "excerpt": "Letrozole After Tamoxifen in Treating Women With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003162",
+              "excerpt": "Radiation Therapy in Treating Patients With Bone Metastases From Breast or Prostate Cancer"
+            },
+            {
+              "nct_id": "NCT00003205",
+              "excerpt": "Bryostatin 1 in Treating Patients With Stage IV Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003236",
+              "excerpt": "Chemotherapy in Treating Women With Previously Treated Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003269",
+              "excerpt": "Amifostine Followed by High Dose Chemotherapy in Treating Patients With Hematologic Cancer or Solid Tumors"
+            },
+            {
+              "nct_id": "NCT00003329",
+              "excerpt": "Identification of Genes Associated With Cancer in Patients and Siblings Who Have Cancer"
+            },
+            {
+              "nct_id": "NCT00003351",
+              "excerpt": "Irinotecan in Treating Patients With Refractory Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003357",
+              "excerpt": "Vaccine Therapy Plus QS21 in Treating Women With Breast Cancer Who Have No Evidence of Disease"
+            },
+            {
+              "nct_id": "NCT00003404",
+              "excerpt": "Radiation Therapy After Surgery in Treating Women With Phyllodes Tumor of the Breast"
+            }
+          ]
         },
         {
           "year": 1999,
-          "trial_count": 56
+          "trial_count": 56,
+          "citations": [
+            {
+              "nct_id": "NCT00001805",
+              "excerpt": "A Phase II Clinical Trial of Suppression of Human Antimouse Antibody and Human Antitoxin Response to Immunotoxin LMB-1 by Rituximab"
+            },
+            {
+              "nct_id": "NCT00001832",
+              "excerpt": "Lymphocyte Re-infusion During Immune Suppression to Treat Metastatic Melanoma"
+            },
+            {
+              "nct_id": "NCT00001898",
+              "excerpt": "Microarray Analysis for Human Genetic Disease"
+            },
+            {
+              "nct_id": "NCT00001944",
+              "excerpt": "Vinorelbine and XR9576 to Treat Cancer"
+            },
+            {
+              "nct_id": "NCT00003403",
+              "excerpt": "GPX-100 in Treating Patients With Solid Tumors"
+            },
+            {
+              "nct_id": "NCT00003736",
+              "excerpt": "MRI for Detecting Cancer in Women Who Are at High Risk of Developing Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003761",
+              "excerpt": "Vaccine Therapy in Treating Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003796",
+              "excerpt": "Irofulven in Treating Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003830",
+              "excerpt": "Surgery to Remove Sentinel Lymph Nodes With or Without Removing Lymph Nodes in the Armpit in Treating Women With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00003855",
+              "excerpt": "Lymph Node Removal in Treating Women Who Have Stage I or Stage IIA Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2000,
-          "trial_count": 69
+          "trial_count": 69,
+          "citations": [
+            {
+              "nct_id": "NCT00004067",
+              "excerpt": "Doxorubicin and Cyclophosphamide Plus Paclitaxel With or Without Trastuzumab in Treating Women With Node-Positive Breast Cancer That Overexpresses HER2"
+            },
+            {
+              "nct_id": "NCT00004565",
+              "excerpt": "Susceptibility to Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00005635",
+              "excerpt": "Trastuzumab Plus Paclitaxel in Treating Women With Metastatic Breast Cancer That Overexpresses HER2"
+            },
+            {
+              "nct_id": "NCT00005655",
+              "excerpt": "Combination Therapy of Interleukin-12 and Interleukin-2 to Treat Advanced Cancer"
+            },
+            {
+              "nct_id": "NCT00005963",
+              "excerpt": "Docetaxel and Carboplatin in Treating Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00005980",
+              "excerpt": "Comparison of Two Regimens of Liposomal Doxorubicin in Treating Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00005983",
+              "excerpt": "S9927 Radiation Therapy After Surgery, Chemotherapy, and/or Hormone Therapy in Stage II Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00006032",
+              "excerpt": "Combination Chemotherapy Followed by Peripheral Stem Cell Transplantation in Treating Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00006121",
+              "excerpt": "Oxaliplatin in Treating Women With Advanced or Metastatic Breast Cancer That Has Not Responded to Previous Chemotherapy"
+            },
+            {
+              "nct_id": "NCT00006228",
+              "excerpt": "Trastuzumab and Interleukin-2 in Treating Patients With Metastatic Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2001,
-          "trial_count": 88
+          "trial_count": 88,
+          "citations": [
+            {
+              "nct_id": "NCT00004888",
+              "excerpt": "Combination Chemotherapy With or Without Trastuzumab in Treating Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00008346",
+              "excerpt": "Digital Mammography Screening Trial (ACRIN6652)"
+            },
+            {
+              "nct_id": "NCT00009763",
+              "excerpt": "Monoclonal Antibody Therapy, Cyclosporine, and Paclitaxel in Treating Patients With Recurrent or Refractory Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00010829",
+              "excerpt": "Macrobiotic Diet and Flax Seed: Effects on Estrogens, Phytoestrogens, & Fibrinolytic Factors"
+            },
+            {
+              "nct_id": "NCT00014612",
+              "excerpt": "Comparison of Complete Axillary Lymph Node Dissection With Axillary Radiation Therapy in Treating Women With Invasive Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00014638",
+              "excerpt": "Letrozole in Treating Postmenopausal Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00015938",
+              "excerpt": "S0102: Docetaxel, Vinorelbine, and Filgrastim in Treating Women With Stage IV Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00016406",
+              "excerpt": "S0012 Doxorubicin, Cyclophosphamide, and Paclitaxel With or Without Filgrastim in Treating Women With Inflammatory or Locally Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00016549",
+              "excerpt": "Bevacizumab to Treat Inflammatory Breast Cancer or Locally Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00017095",
+              "excerpt": "Biomarker (p53 Gene) Analysis and Combination Chemotherapy Followed by Radiation Therapy and Surgery in Treating Women With Large Operable or Locally Advanced or Inflammatory Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2002,
-          "trial_count": 114
+          "trial_count": 114,
+          "citations": [
+            {
+              "nct_id": "NCT00024154",
+              "excerpt": "Trastuzumab and Gefitinib in Treating Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00027534",
+              "excerpt": "Vaccine Therapy in Treating Patients With Advanced or Metastatic Cancer"
+            },
+            {
+              "nct_id": "NCT00028990",
+              "excerpt": "Paclitaxel With or Without Bevacizumab in Treating Patients With Locally Recurrent or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00031720",
+              "excerpt": "Soy Protein Supplement In Treating Hot Flashes in Postmenopausal Women Receiving Tamoxifen for Breast Disease"
+            },
+            {
+              "nct_id": "NCT00033345",
+              "excerpt": "Indole-3-Carbinol in Preventing Breast Cancer in Nonsmoking Women Who Are at High Risk For Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00033384",
+              "excerpt": "CI-1040 in Treating Patients With Advanced Breast, Colon, Pancreatic, or Non-Small Cell Lung Cancer"
+            },
+            {
+              "nct_id": "NCT00033397",
+              "excerpt": "Diagnostic Procedures in Women With Locally Advanced Breast Cancer Who Are Receiving Chemotherapy Before Breast Cancer Surgery"
+            },
+            {
+              "nct_id": "NCT00034216",
+              "excerpt": "Collection of Blood From Patients With Cancer"
+            },
+            {
+              "nct_id": "NCT00034918",
+              "excerpt": "This Study is to Assess the Efficacy and Safety of ZD6474 in Subjects With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00036868",
+              "excerpt": "Combination Chemotherapy With Trastuzumab in Treating Women With Metastatic Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2003,
-          "trial_count": 123
+          "trial_count": 123,
+          "citations": [
+            {
+              "nct_id": "NCT00028340",
+              "excerpt": "High-Risk Breast Duct Epithelium"
+            },
+            {
+              "nct_id": "NCT00045591",
+              "excerpt": "Celecoxib in Treating Women With Metastatic or Recurrent Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00047970",
+              "excerpt": "The Sister Study: Genetic and Environmental Risk Factors for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00052169",
+              "excerpt": "Therapy With Docetaxel and ZD1839 for Patients Who Have Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00053898",
+              "excerpt": "Anastrozole or Tamoxifen in Treating Postmenopausal Women With Ductal Carcinoma in Situ Who Are Undergoing Lumpectomy and Radiation Therapy"
+            },
+            {
+              "nct_id": "NCT00054145",
+              "excerpt": "Perifosine in Treating Patients With Recurrent, Refractory, Locally Advanced, or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00054977",
+              "excerpt": "Safety of GM-CT-01 With and Without 5-Fluorouracil in Patients With Solid Tumors"
+            },
+            {
+              "nct_id": "NCT00058851",
+              "excerpt": "Massage Therapy for Breast Cancer Treatment-Related Swelling of the Arms"
+            },
+            {
+              "nct_id": "NCT00060320",
+              "excerpt": "Black Cohosh in Treating Hot Flashes in Women Who Have or Who Are At Risk of Developing Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00060372",
+              "excerpt": "Ipilimumab After Allogeneic Stem Cell Transplant in Treating Patients With Persistent or Progressive Cancer"
+            }
+          ]
         },
         {
           "year": 2004,
-          "trial_count": 162
+          "trial_count": 162,
+          "citations": [
+            {
+              "nct_id": "NCT00026754",
+              "excerpt": "Eligibility Screening for the NIH Intramural Research Program Clinical Protocols"
+            },
+            {
+              "nct_id": "NCT00072501",
+              "excerpt": "Breast Ultrasound and Mammography in Screening Women at High Risk for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00076024",
+              "excerpt": "AG-013736 In Combination With Docetaxel Versus Docetaxel Alone For Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00077025",
+              "excerpt": "Comparing Anastrozole-Placebo to the Combination Anastrozole-ZD1839 in Postmenopausal Patients With Estrogen Receptor and/or Progesterone Receptor Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00077090",
+              "excerpt": "Hyperbaric Oxygen Therapy Compared With Standard Therapy in Treating Chronic Arm Lymphedema in Patients Who Have Undergone Radiation Therapy for Cancer"
+            },
+            {
+              "nct_id": "NCT00077168",
+              "excerpt": "Adjuvant Radiation Therapy Compared With Observation After Surgery in Treating Women With Estrogen Receptor Positive or Progesterone Receptor Positive Ductal Carcinoma In Situ of the Breast Who Are Receiving Tamoxifen or Anastrozole"
+            },
+            {
+              "nct_id": "NCT00077363",
+              "excerpt": "Capecitabine and Tipifarnib in Treating Women With Taxane-Resistant Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00078572",
+              "excerpt": "Capecitabine (XELODA) With Or Without Lapatinib (GW572016) For Women With Refractory Advanced or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00078845",
+              "excerpt": "Amifostine in Treating Peripheral Neuropathy Caused by Paclitaxel in Patients With Solid Tumors"
+            },
+            {
+              "nct_id": "NCT00079157",
+              "excerpt": "Vaccine Plus Montanide ISA-51 and Sargramostim in Treating Patients With Stage IV Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2005,
-          "trial_count": 203
+          "trial_count": 203,
+          "citations": [
+            {
+              "nct_id": "NCT00096109",
+              "excerpt": "Tanespimycin in Treating Women With Refractory Locally Advanced or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00099437",
+              "excerpt": "Comparison of Fulvestrant (FASLODEX™) 250 mg and 500 mg in Postmenopausal Women With Oestrogen Receptor Positive Advanced Breast Cancer Progressing or Relapsing After Previous Endocrine Therapy."
+            },
+            {
+              "nct_id": "NCT00100893",
+              "excerpt": "IH636 Grape Seed Extract in Preventing Breast Cancer in Postmenopausal Women at Risk of Developing Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00102895",
+              "excerpt": "A Research Study of CP-724,714 in Patients With HER2 Overexpressing Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00103181",
+              "excerpt": "Radiation Therapy (WBI Versus PBI) in Treating Women Who Have Undergone Surgery For Ductal Carcinoma In Situ or Stage I or Stage II Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00104650",
+              "excerpt": "Study of AMG 162 in Subjects With Advanced Cancer Currently Being Treated With Intravenous (IV) Bisphosphonates"
+            },
+            {
+              "nct_id": "NCT00105950",
+              "excerpt": "Study Of Lapatinib In Patients With Relapsed Or Refractory Inflammatory Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00106002",
+              "excerpt": "Pemetrexed as the First Treatment in Advanced or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00106145",
+              "excerpt": "A Notch Signalling Pathway Inhibitor for Patients With Advanced Breast Cancer (0752-014)"
+            },
+            {
+              "nct_id": "NCT00107094",
+              "excerpt": "Study of Adriamycin Plus Cyclophosphamide Followed by Abraxane as Adjuvant Therapy for Patients With Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2006,
-          "trial_count": 247
+          "trial_count": 247,
+          "citations": [
+            {
+              "nct_id": "NCT00094133",
+              "excerpt": "Hypnosis in Treating Hot Flashes in Breast Cancer Survivors"
+            },
+            {
+              "nct_id": "NCT00173303",
+              "excerpt": "The Diagnostic Efficacy of Computer-Aided Detection (CAD) in Full-Field Digital Mammography (FFDM)- A Prospective Study"
+            },
+            {
+              "nct_id": "NCT00182767",
+              "excerpt": "Ixabepilone and Liposomal Doxorubicin in Advanced Ovarian Cancer"
+            },
+            {
+              "nct_id": "NCT00188721",
+              "excerpt": "Breast Study to Learn More About the Application of Optical Transillumination Measurements to Assess Breast Cancer Risk and to Potentially Detect the Presence of Breast Cancer."
+            },
+            {
+              "nct_id": "NCT00243503",
+              "excerpt": "Open Label Study Of SU011248 In Combination With Trastuzumab For Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00243607",
+              "excerpt": "Hydrotherapy Against Menopausal Symptoms in Breast Cancer Survivors"
+            },
+            {
+              "nct_id": "NCT00243685",
+              "excerpt": "Chemotherapy Drug Sensitivity Microculture (MiCK) Assay for Apoptosis"
+            },
+            {
+              "nct_id": "NCT00247442",
+              "excerpt": "Australian Screening Mammography Decision Aid Trial (ASMDAT)"
+            },
+            {
+              "nct_id": "NCT00258349",
+              "excerpt": "Vorinostat and Trastuzumab in Treating Patients With Metastatic or Locally Recurrent Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00258960",
+              "excerpt": "Caelyx, Cyclophosphamide and Herceptin in Patients With Metastatic Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2007,
-          "trial_count": 269
+          "trial_count": 269,
+          "citations": [
+            {
+              "nct_id": "NCT00020722",
+              "excerpt": "Chemotherapy Followed by Peripheral Stem Cell Transplantation Plus Biological Therapy in Treating Women With Stage IV Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00089323",
+              "excerpt": "Diagnostic Procedures in Detecting Tumor Cells in the Bone Marrow of Patients Undergoing Surgery for Stage I, Stage II, or Stage IIIA Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00201487",
+              "excerpt": "Choline Quantification in Breast Cancer by MRS"
+            },
+            {
+              "nct_id": "NCT00287040",
+              "excerpt": "Breast Cancer Screening Via Computer V. Phone"
+            },
+            {
+              "nct_id": "NCT00299286",
+              "excerpt": "Short-term Presurgical Study to Assess Molecular Predictors of Lapatinib's Effects in Primary Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00370552",
+              "excerpt": "A Trial of 2 Schedules of Ixabepilone Plus Bevacizumab and Paclitaxel Plus Bevacizumab for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00372996",
+              "excerpt": "Study Of CP-751,871 In Combination With Exemestane In Postmenopausal Women With Hormone Receptor Positive Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00375024",
+              "excerpt": "Patient Navigator Project"
+            },
+            {
+              "nct_id": "NCT00393939",
+              "excerpt": "Study Of Sunitinib In Combination With Docetaxel Vs Docetaxel In Patients With Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00412412",
+              "excerpt": "CNF2024 (BIIB021) HER2- (QD) HER2+ (BIW w/Herceptin) PK/PD Study"
+            }
+          ]
         },
         {
           "year": 2008,
-          "trial_count": 294
+          "trial_count": 294,
+          "citations": [
+            {
+              "nct_id": "NCT00438100",
+              "excerpt": "Capecitabine vs. S-1 in Unresectable or Recurrent Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00456846",
+              "excerpt": "First Line Therapy for Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00490646",
+              "excerpt": "A Phase II Combination of Trastuzumab and Ixabepilone Versus Trastuzumab and Docetaxel in Patients With Advanced and/or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00496288",
+              "excerpt": "Prophylactic Irradiation to the Contralateral Breast for BRCA Mutation Carriers Undergoing Treatment for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00503750",
+              "excerpt": "Phase II Neoadjuvant Trial of Trastuzumab in Combination With Dose-Dense ABI-007 (Abraxane™)"
+            },
+            {
+              "nct_id": "NCT00522457",
+              "excerpt": "Phase II Study With the Trifunctional Antibody Ertumaxomab to Treat Metastatic Breast Cancer After Progression on Trastuzumab Therapy"
+            },
+            {
+              "nct_id": "NCT00546364",
+              "excerpt": "Randomized Study Evaluating Ixabepilone Plus Capecitabine or Docetaxel Plus Capecitabine in Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00548184",
+              "excerpt": "Lapatinib and Trastuzumab With or Without Endocrine Therapy"
+            },
+            {
+              "nct_id": "NCT00553358",
+              "excerpt": "Neo ALTTO (Neoadjuvant Lapatinib and/or Trastuzumab Treatment Optimisation) Study"
+            },
+            {
+              "nct_id": "NCT00559845",
+              "excerpt": "A Study of Avastin (Bevacizumab) in Patients With Inflammatory or Locally Advanced Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2009,
-          "trial_count": 298
+          "trial_count": 298,
+          "citations": [
+            {
+              "nct_id": "NCT00500383",
+              "excerpt": "Breast Cancer Risk Assessment Using Optical Breast Spectroscopy (OBS)"
+            },
+            {
+              "nct_id": "NCT00570908",
+              "excerpt": "Brain Mets - Capecitabine Plus Sunitinib and WBRT"
+            },
+            {
+              "nct_id": "NCT00686465",
+              "excerpt": "Positron Emission Tomography/Computed Tomography (PET/CT) for the Diagnosis of Recurrent Cancer: a Feasibility Study"
+            },
+            {
+              "nct_id": "NCT00717340",
+              "excerpt": "A Phase 1b/2a, Open-Label, Multi-Center Study of Tivozanib (AV-951) in Combination With Paclitaxel in Subjects With Advanced or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00723398",
+              "excerpt": "Nutritional Supplements and Hormonal Manipulations for Breast Cancer Prevention"
+            },
+            {
+              "nct_id": "NCT00759642",
+              "excerpt": "Lapatinib in Women With Metastatic Breast Cancer Who Have Failed Prior Antihormone Therapy"
+            },
+            {
+              "nct_id": "NCT00765765",
+              "excerpt": "Ixabepilone and Hydroxychloroquine in Treating Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00766532",
+              "excerpt": "Do Aromatase Inhibitors (AIs) Decrease Intestinal Calcium Absorption?"
+            },
+            {
+              "nct_id": "NCT00767520",
+              "excerpt": "Safety and Efficacy of Exemestane Plus Dasatinib Versus Placebo for Advanced ER+ Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00769470",
+              "excerpt": "Docetaxel, Carboplatin, and Trastuzumab and/or Lapatinib in Treating Women With Stage I, Stage II, or Stage III Breast Cancer That Can Be Removed by Surgery"
+            }
+          ]
         },
         {
           "year": 2010,
-          "trial_count": 305
+          "trial_count": 305,
+          "citations": [
+            {
+              "nct_id": "NCT00816582",
+              "excerpt": "PET/CT Guided Fulvestrant Therapy for Patients With Recurrent or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00894504",
+              "excerpt": "Panitumumab, Gemcitabine and Carboplatin in Triple-Negative Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00925652",
+              "excerpt": "Bevacizumab, Metronomic Chemotherapy (CM), Diet and Exercise After Preoperative Chemotherapy for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00968968",
+              "excerpt": "Continued HER2 Suppression With Lapatinib Plus Trastuzumab Versus Trastuzumab Alone"
+            },
+            {
+              "nct_id": "NCT00972023",
+              "excerpt": "DHEA in Treating Women Undergoing Surgery for Stage I, Stage II, or Stage III Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00991978",
+              "excerpt": "VEGF Early Imaging for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00994279",
+              "excerpt": "Yoga or Educational Wellness Class for Women With Stage I, Stage II, or Stage III Breast Cancer Undergoing Chemotherapy"
+            },
+            {
+              "nct_id": "NCT01007695",
+              "excerpt": "Molecular Signature of Valproic Acid in Breast Cancer With Functional Imaging Assessment - a Pilot"
+            },
+            {
+              "nct_id": "NCT01008150",
+              "excerpt": "Phase II Randomized Trial Evaluating Neoadjuvant Therapy With Neratinib and/or Trastuzumab Followed by Postoperative Trastuzumab in Women With Locally Advanced HER2-positive Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01009437",
+              "excerpt": "Ritonavir and Its Effects on Biomarkers in Women Undergoing Surgery for Newly Diagnosed Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2011,
-          "trial_count": 303
+          "trial_count": 303,
+          "citations": [
+            {
+              "nct_id": "NCT00797199",
+              "excerpt": "Monitoring of Breast Tissue Change Due to Hormone Replacement Therapy in Post-menopausal Women Using OBS"
+            },
+            {
+              "nct_id": "NCT00918892",
+              "excerpt": "Assessment of Candidate Protein Expression in Breast Cancer Specimens"
+            },
+            {
+              "nct_id": "NCT00964704",
+              "excerpt": "A Study of Herceptin (Trastuzumab) in Combination With Avastin (Bevacizumab) and Sequential Xeloda (Capecitabine) or Docetaxel in Patients With HER2-Positive Locally Recurrent or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00992602",
+              "excerpt": "Liposomal Cytarabine and High-Dose Methotrexate in Treating Patients With Central Nervous System Metastases From Breast Cancer"
+            },
+            {
+              "nct_id": "NCT00999804",
+              "excerpt": "Extension Study of Lapatinib Plus Herceptin With or Without Endocrine Therapy"
+            },
+            {
+              "nct_id": "NCT01011218",
+              "excerpt": "Management of Insomnia in Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT01016574",
+              "excerpt": "Evaluating the Adequacy of Giro-Couch to Support Prone Breast Boost Irradiation Using IMRT Technique With IGRT."
+            },
+            {
+              "nct_id": "NCT01048099",
+              "excerpt": "Use of PRO Onc Assay to Assess HER2 in Patients With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01079676",
+              "excerpt": "A Non-inferiority Study Comparing Two Filgrastim Preparations in Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01093612",
+              "excerpt": "Positron Emission Tomography in Women With Advanced HER2-Positive Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2012,
-          "trial_count": 278
+          "trial_count": 278,
+          "citations": [
+            {
+              "nct_id": "NCT01140282",
+              "excerpt": "Exercise Program for Early Breast Cancer Survivors"
+            },
+            {
+              "nct_id": "NCT01219907",
+              "excerpt": "Ex Vivo-Expanded HER2-Specific T Cells and Cyclophosphamide After Vaccine Therapy in Treating Patients With HER2-Positive Stage IV Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01288092",
+              "excerpt": "BEZ235 Trial in Patients With HER2-(Human Epidermal Growth Factor Receptor 2 Negative) /HR+ (Hormonal Receptor Positive) Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01324479",
+              "excerpt": "Study of INC280 in Patients With c-MET Dependent Advanced Solid Tumors"
+            },
+            {
+              "nct_id": "NCT01333423",
+              "excerpt": "Maximum Tolerated Dose (MTD) of Liposomal Doxorubicin in Combination With Seliciclib for Patients With Metastatic Triple Negative Breast Cancer (TNBC)"
+            },
+            {
+              "nct_id": "NCT01385137",
+              "excerpt": "S0927:Omega3-Fatty Acid Supp in Treating Muscle&Bone Pain&Stiffness in Pts W/Stg I,II,III Brst Canc Rec'v Hormone Thpy"
+            },
+            {
+              "nct_id": "NCT01388777",
+              "excerpt": "Cryoablation for Invasive Breast Carcinoma Following Neoadjuvant Therapy"
+            },
+            {
+              "nct_id": "NCT01392586",
+              "excerpt": "Systemic Therapy With or Without Upfront Surgery in Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01409811",
+              "excerpt": "Biomarkers in Tissue Samples From Patients With Newly Diagnosed Breast Cancer Treated With Zoledronic Acid"
+            },
+            {
+              "nct_id": "NCT01434303",
+              "excerpt": "Entinostat, Lapatinib Ditosylate and Trastuzumab in Treating Patients With Locally Recurrent or Distant Relapsed Metastatic Breast Cancer Previously Treated With Trastuzumab Only"
+            }
+          ]
         },
         {
           "year": 2013,
-          "trial_count": 322
+          "trial_count": 322,
+          "citations": [
+            {
+              "nct_id": "NCT00397501",
+              "excerpt": "BBBD Followed By Methotrexate and Carboplatin With or Without Trastuzumab in Treating Women With Breast Cancer That Has Spread to the Brain"
+            },
+            {
+              "nct_id": "NCT01038908",
+              "excerpt": "Breast Lymph Node Mapping"
+            },
+            {
+              "nct_id": "NCT01349088",
+              "excerpt": "Investigational Drug in Combination With Two Chemotherapy Drugs in Women With Locally Recurrent or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01370239",
+              "excerpt": "HumanaH - Hu3s193 in the Treatment of Advanced Breast Cancer After Hormonal Therapy"
+            },
+            {
+              "nct_id": "NCT01548677",
+              "excerpt": "Efficacy Study of Herceptin to Treat HER2-negative CTC Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01570036",
+              "excerpt": "Combination Immunotherapy With Herceptin and the HER2 Vaccine NeuVax"
+            },
+            {
+              "nct_id": "NCT01589159",
+              "excerpt": "A Phase Ⅱ Study of an All-Oral Combination of Low-dose Etoposide/Capecitabine in Patients With Metastatic Breast Cancer Previously Treated With Anthracyclines and/or Taxanes"
+            },
+            {
+              "nct_id": "NCT01597414",
+              "excerpt": "Elderly Metastatic Breast Cancer: Pertuzumab-Herceptin vs Pertuzumab-Herceptin-Metronomic Chemotherapy, Followed by T-DM1"
+            },
+            {
+              "nct_id": "NCT01598298",
+              "excerpt": "S1202: Duloxetine Hydrochloride for Muscle/Joint Pain in Early-Stage Breast Cancer Receiving Hormone Therapy"
+            },
+            {
+              "nct_id": "NCT01612728",
+              "excerpt": "Treatment for Joint Pains Due to Aromatase Inhibitor Therapy in Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2014,
-          "trial_count": 357
+          "trial_count": 357,
+          "citations": [
+            {
+              "nct_id": "NCT01320787",
+              "excerpt": "18-F-Fluoroacetate as PET Imaging Agent"
+            },
+            {
+              "nct_id": "NCT01471106",
+              "excerpt": "Phase II Short-term Adjuvant Therapy and Biomarker Studies With Targeted Agents in Women With Estrogen Receptor Negative Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01646034",
+              "excerpt": "High Dose Chemotherapy in Oligo-metastatic Homologous Recombination Deficient Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01670448",
+              "excerpt": "PECBLOCK for the Treatment of Pain After Breast Surgery"
+            },
+            {
+              "nct_id": "NCT01679223",
+              "excerpt": "Incorporation of AlloMaxTM in Breast Reconstruction Ver8-15-12"
+            },
+            {
+              "nct_id": "NCT01755130",
+              "excerpt": "Laser Optoacoustic and Ultrasonic Imaging System Assembly in Finding Changes in Tumors in Patients With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01757327",
+              "excerpt": "LDE225 in Treating Patients With Stage II-III Estrogen Receptor- and HER2-Negative Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01815346",
+              "excerpt": "Acupuncture Chemotherapy-Induced Peripheral Neuropathy (CIPN) IRG"
+            },
+            {
+              "nct_id": "NCT01816035",
+              "excerpt": "Trastuzumab Emtansine in Treating Patients With HER2-Positive Metastatic or Locally Advanced Breast Cancer That Cannot Be Removed by Surgery"
+            },
+            {
+              "nct_id": "NCT01817452",
+              "excerpt": "A Prospective, Randomized Multicenter, Open-label Comparison of Preoperative Combination of Trastuzumab and Pertuzumab With or Without Concurrent Taxane Chemotherapy Given for Twelve Weeks in Patients With Operable HER2+/HR- Breast Cancer Within the ADAPT Protocol"
+            }
+          ]
         },
         {
           "year": 2015,
-          "trial_count": 418
+          "trial_count": 418,
+          "citations": [
+            {
+              "nct_id": "NCT00589043",
+              "excerpt": "Computed Tomography Laser Mammography Breast Imaging Device"
+            },
+            {
+              "nct_id": "NCT01740323",
+              "excerpt": "Phase II Study of Curcumin vs Placebo for Chemotherapy-Treated Breast Cancer Patients Undergoing Radiotherapy"
+            },
+            {
+              "nct_id": "NCT01799031",
+              "excerpt": "Educational Intervention for Reducing Work Disability in Breast Cancer Survivors"
+            },
+            {
+              "nct_id": "NCT01817374",
+              "excerpt": "Breast VCEUS to Evaluate Early Response to Neoadjuvant Chemotherapy"
+            },
+            {
+              "nct_id": "NCT01881022",
+              "excerpt": "An Internet-based Psychosexual Intervention for Couples Following Treatment for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01905046",
+              "excerpt": "Metformin Hydrochloride in Preventing Breast Cancer in Patients With Atypical Hyperplasia or In Situ Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01924351",
+              "excerpt": "HER2-positive Breast Cancer With Brain Metastasis (GCC 1345)"
+            },
+            {
+              "nct_id": "NCT01970670",
+              "excerpt": "Contrast-Enhanced Digital Mammography(CEDM) vs Contrast-Enhanced Breast MRI(CE-MRI) in Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02013726",
+              "excerpt": "MBI and Breast Tomosynthesis Screening Accuracies in Patients With Dense Breast Tissue"
+            },
+            {
+              "nct_id": "NCT02095184",
+              "excerpt": "GCC 1366: Anti-Proliferative Response to NeoAdjuvant AIs in Overweight and Obese Patients"
+            }
+          ]
         },
         {
           "year": 2016,
-          "trial_count": 455
+          "trial_count": 455,
+          "citations": [
+            {
+              "nct_id": "NCT00194714",
+              "excerpt": "Vaccine Therapy in Treating Patients With Stage IV HLA-A2 and HER2 Positive Breast or Ovarian Cancer Receiving Trastuzumab"
+            },
+            {
+              "nct_id": "NCT00999557",
+              "excerpt": "Bimatoprost Ophthalmic Solution in Increasing Eyebrow and Eyelash Growth in Patients Who Have Undergone Chemotherapy for Breast Cancer and in Healthy Participants"
+            },
+            {
+              "nct_id": "NCT01635465",
+              "excerpt": "Vinorelbine Plus Capecitabine Versus Docetaxel Plus Capecitabine in Anthracycline-pretreated Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01936064",
+              "excerpt": "The Safety and Efficacy of Jobelyn in the Treatment of Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT02006979",
+              "excerpt": "Acute Exercise Cardioprotection From Doxorubicin"
+            },
+            {
+              "nct_id": "NCT02111031",
+              "excerpt": "Clinical Utility of CTC Test in Medicare-Eligible Metastatic Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT02183597",
+              "excerpt": "Whole-body MRI for the Detection of Metastasis"
+            },
+            {
+              "nct_id": "NCT02286778",
+              "excerpt": "Eradication of Malignant Carcinoma in the Breast Tissue"
+            },
+            {
+              "nct_id": "NCT02317367",
+              "excerpt": "Self-Affirmation: Construct Validity"
+            },
+            {
+              "nct_id": "NCT02336529",
+              "excerpt": "Nerveblocks for Persistent Pain After Breast Cancer Surgery"
+            }
+          ]
         },
         {
           "year": 2017,
-          "trial_count": 449
+          "trial_count": 449,
+          "citations": [
+            {
+              "nct_id": "NCT01959867",
+              "excerpt": "SurgiMend in Two-stage Implant-based Breast Reconstruction in Patients With Pre-Mastectomy Radiotherapy"
+            },
+            {
+              "nct_id": "NCT02261311",
+              "excerpt": "An Innovation During the Surgical Wait; Evaluation of the Opportunity for Intervention"
+            },
+            {
+              "nct_id": "NCT02368275",
+              "excerpt": "Genetic, Neurophysiological and Psychological Risk Factors for Neuropathic Pain"
+            },
+            {
+              "nct_id": "NCT02448576",
+              "excerpt": "PCI in Advanced Triple Negative Breast Cancer Patients Who Response to 1st Line Chemotherapy"
+            },
+            {
+              "nct_id": "NCT02476786",
+              "excerpt": "Endocrine Treatment Alone for Elderly Patients With Estrogen Receptor Positive Operable Breast Cancer and Low Recurrence Score"
+            },
+            {
+              "nct_id": "NCT02492607",
+              "excerpt": "Management of Low-risk (Grade I and II) DCIS"
+            },
+            {
+              "nct_id": "NCT02521077",
+              "excerpt": "Intravenous Ascorbic Acid in Women Receiving Adjuvant or Neo-Adjuvant Chemotherapy for Early Stage Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02574455",
+              "excerpt": "Trial of Sacituzumab Govitecan in Participants With Refractory/Relapsed Metastatic Triple-Negative Breast Cancer (TNBC)"
+            },
+            {
+              "nct_id": "NCT02574546",
+              "excerpt": "Markers for Predicting Risk of Breast Cancer in Women of Different Races"
+            },
+            {
+              "nct_id": "NCT02598427",
+              "excerpt": "Intrathecal Pertuzumab and Trastuzumab in Patients With New Untreated Asymptomatic or Low Symptomatic Brain Metastasis in HER2 Positive Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2018,
-          "trial_count": 464
+          "trial_count": 464,
+          "citations": [
+            {
+              "nct_id": "NCT02666378",
+              "excerpt": "Imaging Markers of Subclinical Cardiotoxicity in Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02670109",
+              "excerpt": "Autologous Hematopoietic Stem Cell Transplantation as Adjuvant Treatment for Triple Negative Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT02776917",
+              "excerpt": "Study of Cirmtuzumab and Paclitaxel for Metastatic or Locally Advanced, Unresectable Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02784730",
+              "excerpt": "Iterative PICC Placement Versus Long Term Device"
+            },
+            {
+              "nct_id": "NCT02822196",
+              "excerpt": "Serratus Anterior Muscle Plane Block vsThoracic Paravertebral Block For Unilateral Mastectomies"
+            },
+            {
+              "nct_id": "NCT02826512",
+              "excerpt": "A Feasibility Study of Niraparib for Advanced, BRCA1-like, HER2-negative Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT02876302",
+              "excerpt": "Study Of Ruxolitinib (INCB018424) With Preoperative Chemotherapy For Triple Negative Inflammatory Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02876640",
+              "excerpt": "Retinoid 9cUAB30 in Producing a Biologic Effect in Patients With Early Stage Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02881203",
+              "excerpt": "Breast Radiotherapy Audio Visual Enhancement for Sparing the Heart"
+            },
+            {
+              "nct_id": "NCT02898376",
+              "excerpt": "Clinical Benefit of Spa Care on Severe Radiation-induced Fibrosis After Postoperative Radiotherapy for Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2019,
-          "trial_count": 530
+          "trial_count": 530,
+          "citations": [
+            {
+              "nct_id": "NCT00960544",
+              "excerpt": "Correlation of Genomic Variation in Enzymes Responsible for Metabolism of Capecitabine With Drug Metabolism"
+            },
+            {
+              "nct_id": "NCT02514837",
+              "excerpt": "Microwave Radiometry for the Diagnosis and Monitoring of Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02790021",
+              "excerpt": "Microsurgical Treatment of Breast Cancer-related Lymphedema by Lymphaticovenous Anastomosis"
+            },
+            {
+              "nct_id": "NCT02840084",
+              "excerpt": "Aspen™ Ultrasound System and Aspen Rehabilitation Technique in the Treatment of Capsular Contracture"
+            },
+            {
+              "nct_id": "NCT02856503",
+              "excerpt": "Effect of High Dose Vitamin D on Cancer Biomarkers and Breast Cancer Tumors"
+            },
+            {
+              "nct_id": "NCT02917005",
+              "excerpt": "PalbocIclib in PreMenopausal Women With ER Positive/HER-2 Negative MetAstatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT02938442",
+              "excerpt": "Vaccination of Triple Negative Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT03091842",
+              "excerpt": "Exercise Intervention in Targeting Adiposity and Inflammation With Movement to Improve Prognosis in Breast Cancer"
+            },
+            {
+              "nct_id": "NCT03120390",
+              "excerpt": "Physical Activity in Reducing Metabolic Dysregulation (MetD) in Obese Latina Breast Cancer Survivors"
+            },
+            {
+              "nct_id": "NCT03122444",
+              "excerpt": "Imipramine on ER+ve and Triple Negative Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2020,
-          "trial_count": 482
+          "trial_count": 482,
+          "citations": [
+            {
+              "nct_id": "NCT00910884",
+              "excerpt": "Plant Extracted Natural Compounds Impact on Stage IV Breast Cancer Survival Time and Remission."
+            },
+            {
+              "nct_id": "NCT02807597",
+              "excerpt": "Real-time Intraoperative Breast Cancer Visualization for Margin Assessment"
+            },
+            {
+              "nct_id": "NCT02883361",
+              "excerpt": "Motivational Enhancement Therapy to Improve Adherence to Aromatase Inhibitors"
+            },
+            {
+              "nct_id": "NCT03494244",
+              "excerpt": "Evaluation of ADM Soft Tissue Reinforcement"
+            },
+            {
+              "nct_id": "NCT03544983",
+              "excerpt": "Genetic Education in BRCA Families"
+            },
+            {
+              "nct_id": "NCT03560102",
+              "excerpt": "Efficacy of Magnetic Resonance-guided High Intensity Focused Ultrasound for the Ablation of Breast Cancer"
+            },
+            {
+              "nct_id": "NCT03619044",
+              "excerpt": "The Use of FES-PET Imaging as a Tool to Detect a Possible Reversion of Estrogen Receptor (ER)-α Status in Patients With Metastatic Breast Cancer HER2 + and ERα Neg Treated With Trastuzumab + Pertuzumab + Taxane."
+            },
+            {
+              "nct_id": "NCT03685331",
+              "excerpt": "HOPE: Olaparib, Palbociclib and Fulvestrant in Patients With BRCA Mutation-associated, HR+, HER2-metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT03713255",
+              "excerpt": "Mid-point Transverse Process to Pleura Block for Breast Cancer Surgery: A Randomized Controlled Trial"
+            },
+            {
+              "nct_id": "NCT03730922",
+              "excerpt": "Delayed-immediate Versus Delayed Breast Reconstruction in Breast Cancer Patients With Mastectomy and Radiation Therapy"
+            }
+          ]
         },
         {
           "year": 2021,
-          "trial_count": 581
+          "trial_count": 581,
+          "citations": [
+            {
+              "nct_id": "NCT02627313",
+              "excerpt": "Tumor Bed Dose Delivery Using A Breast Specific Radiosurgery Device, The Gammapod: (A Clinical Feasibility Study)"
+            },
+            {
+              "nct_id": "NCT02850939",
+              "excerpt": "Improving Adherence to EHT Among Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT03542695",
+              "excerpt": "64 Cu-DOTA-alendronate PET Imaging in Localizing and Characterizing Breast Calcifications in Participants Before Undergoing Mastectomy"
+            },
+            {
+              "nct_id": "NCT03779685",
+              "excerpt": "GENe EXpression After Regional or General ANesthesia in Patients Undergoing Breast Cancer Surgery"
+            },
+            {
+              "nct_id": "NCT03847311",
+              "excerpt": "Sulfasalazine in Decreasing Opioids Requirements in Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT03870802",
+              "excerpt": "MACSSI (MAstectomie Cellules Souches Surveillance Immunitaire)"
+            },
+            {
+              "nct_id": "NCT03873428",
+              "excerpt": "Evaluation of the Unconformity of the Hormonal Status of Metastatic Lesions During a First Relapse of Breast Cancer Initially Expressing Estrogen Receptors: a Pilot Study on the Interest of PET With FES"
+            },
+            {
+              "nct_id": "NCT03903224",
+              "excerpt": "Combined PECS II and Transversus Plane Blocks Versus Erector Spinae Block in Modified Radical Mastectomy"
+            },
+            {
+              "nct_id": "NCT03955627",
+              "excerpt": "REJOIN Trial for Older Breast Cancer Survivors"
+            },
+            {
+              "nct_id": "NCT03981263",
+              "excerpt": "Quality of Life in Patients With Standard External Compared to Custom-made Breast Prosthesis."
+            }
+          ]
         },
         {
           "year": 2022,
-          "trial_count": 597
+          "trial_count": 597,
+          "citations": [
+            {
+              "nct_id": "NCT02201381",
+              "excerpt": "Study of the Safety, Tolerability and Efficacy of Metabolic Combination Treatments on Cancer"
+            },
+            {
+              "nct_id": "NCT02562612",
+              "excerpt": "Study of SM-88 in Advanced Cancers"
+            },
+            {
+              "nct_id": "NCT03238053",
+              "excerpt": "Laser Treatment of Genito-urinary Syndrome in Women"
+            },
+            {
+              "nct_id": "NCT03426254",
+              "excerpt": "Comparison of Safety and Clinical Benefit of Injections Subcutaneously Talazoparib Versus Oral Talazoparib in Patients With Solid Tumors"
+            },
+            {
+              "nct_id": "NCT03492918",
+              "excerpt": "Pembrolizumab in Combination With Paclitaxel in the Hormone Receptor-positive Metastatic Breast Cancer With High Tumor Mutational Burden Selected by Whole Exome Sequencing: Korean Cancer Study Group Trial (KCSG BR20-16)"
+            },
+            {
+              "nct_id": "NCT03663153",
+              "excerpt": "SEMA4C as a Relapse Biomarker in Breast Cancer"
+            },
+            {
+              "nct_id": "NCT03762733",
+              "excerpt": "Tissue Acquisition and Genomics Analysis of Breast Cancer and Other Gynecologic Malignancies"
+            },
+            {
+              "nct_id": "NCT03811262",
+              "excerpt": "Comparison of Erector Spinae Plane Block With PECS II Block in Patients Undergoing Breast Cancer Surgery"
+            },
+            {
+              "nct_id": "NCT03824145",
+              "excerpt": "Every Day Counts: A Lifestyle Program for Women With Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT03872505",
+              "excerpt": "Pre-operAtive Non-Anthracycline Chemotherapy, Durvalumab +/- RAdiation Therapy in Triple Negative Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2023,
-          "trial_count": 624
+          "trial_count": 624,
+          "citations": [
+            {
+              "nct_id": "NCT03662633",
+              "excerpt": "Diagnosis Value of SEMA4C in Breast Cancer"
+            },
+            {
+              "nct_id": "NCT03969693",
+              "excerpt": "Lymphoma Patients Undergoing Mediastinal Radiotherapy in the Era of Modern Chemoradiation"
+            },
+            {
+              "nct_id": "NCT04054752",
+              "excerpt": "Vaccine Response With NT-I7"
+            },
+            {
+              "nct_id": "NCT04080934",
+              "excerpt": "Breaststroke Swimming After Breast Cancer Treatment/Surgery as a Means of Treatment for Seroma, Lymphedema, and Chronic Arm and Chest Pain"
+            },
+            {
+              "nct_id": "NCT04188119",
+              "excerpt": "A Proof of Concept Window Trial of the IMmunological Effects of AveLumab and Aspirin in Triple-Negative Breast Cancer"
+            },
+            {
+              "nct_id": "NCT04219072",
+              "excerpt": "Clinical Classification of Pain in Breast Cancer Survivors"
+            },
+            {
+              "nct_id": "NCT04252768",
+              "excerpt": "A Study in Hormone Receptor-positive Metastatic Breast Carcinoma Patients to Test a New Schedule of Efti (IMP321, Eftilagimod Alpha) as Adjunctive to a Weekly Treatment Regimen of Paclitaxel"
+            },
+            {
+              "nct_id": "NCT04319510",
+              "excerpt": "Supportive Effects of Craniosacral Therapy for Women With Breast Cancer"
+            },
+            {
+              "nct_id": "NCT04343807",
+              "excerpt": "Effectiveness of Ultrasound Guided PECS Block on Opioid Consumption and Patient Satisfaction Through Adequate Pain Control Following Breast Cancer Surgery."
+            },
+            {
+              "nct_id": "NCT04378751",
+              "excerpt": "Promoting Genetic Counseling Among African American Women With a Family History of Breast Cancer"
+            }
+          ]
         },
         {
           "year": 2024,
-          "trial_count": 640
+          "trial_count": 640,
+          "citations": [
+            {
+              "nct_id": "NCT04102436",
+              "excerpt": "Non-Viral TCR Gene Therapy"
+            },
+            {
+              "nct_id": "NCT04176081",
+              "excerpt": "Study of Radiation Therapy in Combination With Darolutamide + Degarelix in Intermediate Risk Prostate Cancer"
+            },
+            {
+              "nct_id": "NCT04261244",
+              "excerpt": "NeoRad Breast Cancer Study"
+            },
+            {
+              "nct_id": "NCT04744506",
+              "excerpt": "Targeted Resection of Axillary Metastatic Lymph Nodes After Breast Cancer Neoadjuvant Chemotherapy"
+            },
+            {
+              "nct_id": "NCT04816006",
+              "excerpt": "Breast Cancer, Reasoning, and Activity Intervention"
+            },
+            {
+              "nct_id": "NCT04914663",
+              "excerpt": "All-extremity Exercise During Breast Cancer Chemotherapy"
+            },
+            {
+              "nct_id": "NCT04933266",
+              "excerpt": "Subpectoral Plexus Block With Multi-level TPVB for Surgical Anesthesia During Primary Breast Cancer Surgery"
+            },
+            {
+              "nct_id": "NCT04985357",
+              "excerpt": "Defining the Clinical Potential of Mass Response As a Biomarker for Patient Tumor Sensitivity to Drugs"
+            },
+            {
+              "nct_id": "NCT05073172",
+              "excerpt": "StrataXRT for the Prevention and Treatment of Radiation Dermatitis in Breast Cancer or Head and Neck Cancer Patients"
+            },
+            {
+              "nct_id": "NCT05160480",
+              "excerpt": "A Pilot Study of Total-body PET Using FDA-approved Radiotracers Beyond 18F-FDG"
+            }
+          ]
         },
         {
           "year": 2025,
-          "trial_count": 637
+          "trial_count": 637,
+          "citations": [
+            {
+              "nct_id": "NCT02958852",
+              "excerpt": "A Clinical Trial to Compare Efficacy and Tolerability of Atorvastatin in Addition to Endocrine Treatment With Focus on Mechanisms of Resistance to Endocrine Treatment (Fulvestrant/Aromatase Inhibitors) in Patients With Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT03954431",
+              "excerpt": "High-Resolution Lower Dose Dedicated Breast Computed Tomography (CT)"
+            },
+            {
+              "nct_id": "NCT04119024",
+              "excerpt": "Gene Modified Immune Cells After Conditioning Regimen for the Treatment of Stage IIIC or IV Melanoma or Metastatic Solid Tumors"
+            },
+            {
+              "nct_id": "NCT04364672",
+              "excerpt": "Molecular Neuroimaging to Assess the Link Between Neuroinflammation and Cognitive Impairment in Breast Cancer"
+            },
+            {
+              "nct_id": "NCT04419181",
+              "excerpt": "Feasibility of Chemotherapy De-escalation in Early-Stage HER2 Positive Breast Cancer"
+            },
+            {
+              "nct_id": "NCT04480619",
+              "excerpt": "Safety and Efficacy of Ga68-IAC PET/CT for Diagnosis and Clinical Management in Metastatic Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT05370300",
+              "excerpt": "SNAPS Breast Cancer Patient Study Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT05539365",
+              "excerpt": "Dendritic Cell-Based Treatment Plus Immunotherapy for the Treatment of Metastatic or Unresectable Triple Negative Breast Cancer"
+            },
+            {
+              "nct_id": "NCT05655494",
+              "excerpt": "A Multilevel Approach to Connecting Underrepresented Populations to Clinical Trials"
+            },
+            {
+              "nct_id": "NCT05871437",
+              "excerpt": "Randomized Controlled Clinical Study on the Reduction of Tumor Marker Levels in Breast Cancer Patients by Huaier Granules"
+            }
+          ]
         },
         {
           "year": 2026,
-          "trial_count": 410
+          "trial_count": 410,
+          "citations": [
+            {
+              "nct_id": "NCT04016818",
+              "excerpt": "Pilot Breast-Dedicated PET Camera With 1 Millimeter Spatial Resolution"
+            },
+            {
+              "nct_id": "NCT04430595",
+              "excerpt": "Multi-4SCAR-T Therapy Targeting Breast Cancer"
+            },
+            {
+              "nct_id": "NCT04529044",
+              "excerpt": "177Lu-DOTATATE for the Treatment of Stage IV or Recurrent Breast Cancer"
+            },
+            {
+              "nct_id": "NCT05379153",
+              "excerpt": "Testing Laser Therapy for Treatment of Vaginal Dryness in Survivors of Breast Cancer, The Revitalize Trial"
+            },
+            {
+              "nct_id": "NCT05634954",
+              "excerpt": "Study to Evaluate Safety and Dosimetry of [18F]GEH121224 in Patients With Locally Advanced or Metastatic Breast Cancer"
+            },
+            {
+              "nct_id": "NCT05806385",
+              "excerpt": "Grouping Immune-modulation With Cryoablation (LOGIC) for Breast Cancers"
+            },
+            {
+              "nct_id": "NCT05821686",
+              "excerpt": "Efficacy of Interleukin-2 in Triple Negative Breast Cancer"
+            },
+            {
+              "nct_id": "NCT05970107",
+              "excerpt": "Axillary Node Dissection w or w/o LVB in Node Positive Breast Cancer Patients"
+            },
+            {
+              "nct_id": "NCT06045572",
+              "excerpt": "Vascular Supply Identification, Lesion Extension and Search for Tumor Similarity at a Distance by VTM in Breast Cancer"
+            },
+            {
+              "nct_id": "NCT06148038",
+              "excerpt": "CBD for Breast Cancer Primary Tumors"
+            }
+          ]
         },
         {
           "year": 2027,
-          "trial_count": 6
+          "trial_count": 6,
+          "citations": [
+            {
+              "nct_id": "NCT06873191",
+              "excerpt": "A Study to Learn More About Tukysa Once it is Out in the Korean Market"
+            },
+            {
+              "nct_id": "NCT07391774",
+              "excerpt": "Testing Whether Hormone Therapy With Ribociclib is as Effective as Chemotherapy Followed by Hormone Therapy With Ribociclib for the Treatment of High Anatomic Stage Breast Cancer With Low Recurrence Risk, The RxFINE-Low Trial"
+            },
+            {
+              "nct_id": "NCT07434817",
+              "excerpt": "Trial to Evaluate an Educational Video Series for Women in Breast Cancer Treatment"
+            },
+            {
+              "nct_id": "NCT07578116",
+              "excerpt": "Adding Surgery and Radiation to the Usual Treatment for HER2-Positive Breast Cancer That Had Already Spread at Diagnosis"
+            },
+            {
+              "nct_id": "NCT07676591",
+              "excerpt": "EmpowerHer: Hybrid Digital Intervention for Breast Cancer Survivors"
+            },
+            {
+              "nct_id": "NCT07679269",
+              "excerpt": "Roll-Over Study of Alpelisib (BYL719) for Continued Access and Long-Term Safety."
+            }
+          ]
         },
         {
           "year": 2028,
-          "trial_count": 1
+          "trial_count": 1,
+          "citations": [
+            {
+              "nct_id": "NCT07389200",
+              "excerpt": "Application of Multimodal MRI-based Radiomics in Histological Grading and Prognostic Assessment of Breast Cancer"
+            }
+          ]
         }
       ]
     },
     "meta": {
       "filters": {
         "drug_name": null,
+        "comparison_targets": null,
         "condition": "breast cancer",
-        "phase": null
+        "phase": null,
+        "sponsor": null,
+        "country": null,
+        "start_year": null,
+        "end_year": null
       },
       "source": "clinicaltrials.gov",
       "fetched_studies": 9939,
@@ -264,6 +1815,6 @@
       "truncated": true
     }
   },
-  "generated_at": "2026-07-09T01:09:42.170Z",
+  "generated_at": "2026-07-09T03:10:30.533Z",
   "preset": "timeline"
 }

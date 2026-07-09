@@ -2,6 +2,8 @@
 
 Real JSON outputs from the visualization pipeline (OpenAI interpretation + live ClinicalTrials.gov data). Each file includes the request query, full response, and generation timestamp.
 
+Non-empty data points and network edges may include a `citations` array (`nct_id` + `excerpt` from CT.gov `BriefTitle`), capped at 10 per datum. Zero-fill bins omit `citations`.
+
 Examples use **varied drugs and conditions** (not a single Pembrolizumab-only set).
 
 Regenerate with:

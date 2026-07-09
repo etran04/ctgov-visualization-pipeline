@@ -483,7 +483,10 @@ describe("buildVisualization", () => {
     }
 
     const datumsWithCitations = response.visualization.data.filter(
-      (point) => "citations" in point && point.citations !== undefined && point.citations.length > 0,
+      (point) =>
+        "citations" in point &&
+        point.citations != null &&
+        point.citations.length > 0,
     );
     expect(datumsWithCitations.length).toBeGreaterThan(0);
 

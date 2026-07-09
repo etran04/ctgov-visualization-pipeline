@@ -21,45 +21,290 @@
           "bin_label": "1–50",
           "bin_start": 1,
           "bin_end": 50,
-          "trial_count": 965
+          "trial_count": 965,
+          "citations": [
+            {
+              "nct_id": "NCT00441337",
+              "excerpt": "A Study of MDX-1106 in Patients With Selected Refractory or Relapsed Malignancies"
+            },
+            {
+              "nct_id": "NCT00836888",
+              "excerpt": "ONO-4538 Phase I Study in Patients With Advanced Malignant Solid Tumors in Japan"
+            },
+            {
+              "nct_id": "NCT01629758",
+              "excerpt": "Safety Study of IL-21/Anti-PD-1 Combination in the Treatment of Solid Tumors"
+            },
+            {
+              "nct_id": "NCT01703949",
+              "excerpt": "Brentuximab Vedotin With or Without Nivolumab in Treating Patients With Relapsed or Refractory CD30+ Lymphoma"
+            },
+            {
+              "nct_id": "NCT01818323",
+              "excerpt": "Phase I Trial: T4 Immunotherapy of Head and Neck Cancer"
+            },
+            {
+              "nct_id": "NCT01940809",
+              "excerpt": "Ipilimumab With or Without Dabrafenib, Trametinib, and/or Nivolumab in Treating Patients With Melanoma That Is Metastatic or Cannot Be Removed by Surgery"
+            },
+            {
+              "nct_id": "NCT01993719",
+              "excerpt": "Immunotherapy Using Tumor Infiltrating Lymphocytes for Patients With Metastatic Melanoma"
+            },
+            {
+              "nct_id": "NCT01998126",
+              "excerpt": "Combination Checkpoint Inhibitor Plus Erlotinib or Crizotinib for EGFR or ALK Mutated Stage IV Non-small Cell Lung Cancer"
+            },
+            {
+              "nct_id": "NCT02011945",
+              "excerpt": "A Phase 1B Study to Investigate the Safety and Preliminary Efficacy for the Combination of Dasatinib Plus Nivolumab in Patients With Chronic Myeloid Leukemia"
+            },
+            {
+              "nct_id": "NCT02054520",
+              "excerpt": "Immunotherapy Study for Patients With Stage IV Melanoma"
+            }
+          ]
         },
         {
           "bin_label": "51–100",
           "bin_start": 51,
           "bin_end": 100,
-          "trial_count": 339
+          "trial_count": 339,
+          "citations": [
+            {
+              "nct_id": "NCT00703469",
+              "excerpt": "A Study of MDX-1106 to Treat Patients With Hepatitis C Infection"
+            },
+            {
+              "nct_id": "NCT01176474",
+              "excerpt": "Vaccine Combining Multiple Class I Peptides and Montanide ISA 51VG With Escalating Doses of Anti-PD-1 Antibody Nivolumab or Ipilimumab With Nivolumab For Patients With Resected Stages IIIC/ IV Melanoma"
+            },
+            {
+              "nct_id": "NCT01585194",
+              "excerpt": "Nivolumab and Ipilimumab in Treating Patients With Metastatic Uveal Melanoma"
+            },
+            {
+              "nct_id": "NCT01822509",
+              "excerpt": "Ipilimumab or Nivolumab in Treating Patients With Relapsed Hematologic Malignancies After Donor Stem Cell Transplant"
+            },
+            {
+              "nct_id": "NCT02118337",
+              "excerpt": "A Phase 1/2, Open-label Study to Evaluate the Safety and Antitumor Activity of MEDI0680 (AMP-514) in Combination With Durvalumab Versus Nivolumab Monotherapy in Participants With Select Advanced Malignancies"
+            },
+            {
+              "nct_id": "NCT02213289",
+              "excerpt": "PANGEA-IMBBP: Personalized Antibodies for Gastro-Esophageal Adenocarcinoma - A 1st Pilot Metastatic Trial of Biologics Beyond Progression"
+            },
+            {
+              "nct_id": "NCT02243371",
+              "excerpt": "GVAX Pancreas Vaccine (With CY) and CRS-207 With or Without Nivolumab"
+            },
+            {
+              "nct_id": "NCT02275533",
+              "excerpt": "Testing Nivolumab to Prevent Disease From Coming Back After Treatment in Patients With Acute Myeloid Leukemia, REMAIN Trial"
+            },
+            {
+              "nct_id": "NCT02323126",
+              "excerpt": "Study of Efficacy and Safety of Nivolumab in Combination With EGF816 and of Nivolumab in Combination With INC280 in Patients With Previously Treated Non-small Cell Lung Cancer"
+            },
+            {
+              "nct_id": "NCT02374242",
+              "excerpt": "Anti-PD 1 Brain Collaboration for Patients With Melanoma Brain Metastases"
+            }
+          ]
         },
         {
           "bin_label": "101–500",
           "bin_start": 101,
           "bin_end": 500,
-          "trial_count": 446
+          "trial_count": 446,
+          "citations": [
+            {
+              "nct_id": "NCT00730639",
+              "excerpt": "A Phase 1 Study of Nivolumab (BMS-936558) in Subjects With Advanced or Recurrent Malignancies"
+            },
+            {
+              "nct_id": "NCT01024231",
+              "excerpt": "Dose-escalation Study of Combination BMS-936558 (MDX-1106) and Ipilimumab in Subjects With Unresectable Stage III or Stage IV Malignant Melanoma"
+            },
+            {
+              "nct_id": "NCT01176461",
+              "excerpt": "Multiple Class I Peptides & Montanide ISA 51 VG w Escalating Doses of Anti-PD-1 ab BMS936558"
+            },
+            {
+              "nct_id": "NCT01354431",
+              "excerpt": "BMS-936558 (MDX-1106) In Subjects With Advanced/Metastatic Clear-Cell Renal Cell Carcinoma (RCC)"
+            },
+            {
+              "nct_id": "NCT01358721",
+              "excerpt": "Phase I Biomarker Study (BMS-936558)"
+            },
+            {
+              "nct_id": "NCT01454102",
+              "excerpt": "Study of Nivolumab (BMS-936558) in Combination With Gemcitabine/Cisplatin, Pemetrexed/Cisplatin, Carboplatin/Paclitaxel, Bevacizumab Maintenance, Erlotinib, Ipilimumab or as Monotherapy in Subjects With Stage IIIB/IV Non-small Cell Lung Cancer (NSCLC) (CheckMate 012)"
+            },
+            {
+              "nct_id": "NCT01472081",
+              "excerpt": "Nivolumab (BMS-936558; MDX-1106) in Combination With Sunitinib, Pazopanib, or Ipilimumab in Subjects With Metastatic Renal Cell Carcinoma (RCC) (CheckMate 016)"
+            },
+            {
+              "nct_id": "NCT01592370",
+              "excerpt": "An Investigational Immuno-Therapy Study to Determine the Safety and Effectiveness of Nivolumab and Daratumumab in Patients With Multiple Myeloma"
+            },
+            {
+              "nct_id": "NCT01621490",
+              "excerpt": "PH 1 Biomarker Study of Nivolumab and Ipilimumab and Nivolumab in Combination With Ipilimumab in Advanced Melanoma"
+            },
+            {
+              "nct_id": "NCT01642004",
+              "excerpt": "Study of BMS-936558 (Nivolumab) Compared to Docetaxel in Previously Treated Advanced or Metastatic Squamous Cell Non-small Cell Lung Cancer (NSCLC) (CheckMate 017)"
+            }
+          ]
         },
         {
           "bin_label": "501–1,000",
           "bin_start": 501,
           "bin_end": 1000,
-          "trial_count": 109
+          "trial_count": 109,
+          "citations": [
+            {
+              "nct_id": "NCT01658878",
+              "excerpt": "An Immuno-therapy Study to Evaluate the Effectiveness, Safety and Tolerability of Nivolumab or Nivolumab in Combination With Other Agents in Patients With Advanced Liver Cancer"
+            },
+            {
+              "nct_id": "NCT01668784",
+              "excerpt": "Study of Nivolumab (BMS-936558) vs. Everolimus in Pre-Treated Advanced or Metastatic Clear-cell Renal Cell Carcinoma (CheckMate 025)"
+            },
+            {
+              "nct_id": "NCT01673867",
+              "excerpt": "Study of BMS-936558 (Nivolumab) Compared to Docetaxel in Previously Treated Metastatic Non-squamous NSCLC"
+            },
+            {
+              "nct_id": "NCT01844505",
+              "excerpt": "Phase 3 Study of Nivolumab or Nivolumab Plus Ipilimumab Versus Ipilimumab Alone in Previously Untreated Advanced Melanoma (CheckMate 067)"
+            },
+            {
+              "nct_id": "NCT02017717",
+              "excerpt": "A Study of the Effectiveness and Safety of Nivolumab Compared to Bevacizumab and of Nivolumab With or Without Ipilimumab in Glioblastoma Patients"
+            },
+            {
+              "nct_id": "NCT02041533",
+              "excerpt": "An Open-Label, Randomized, Phase 3 Trial of Nivolumab Versus Investigator's Choice Chemotherapy as First-Line Therapy for Stage IV or Recurrent PD-L1+ Non-Small Cell Lung Cancer (CheckMate 026)"
+            },
+            {
+              "nct_id": "NCT02339571",
+              "excerpt": "A Phase II/III Trial of Nivolumab, Ipilimumab, and GM-CSF in Patients With Advanced Melanoma"
+            },
+            {
+              "nct_id": "NCT02388906",
+              "excerpt": "Efficacy Study of Nivolumab Compared to Ipilimumab in Prevention of Recurrence of Melanoma After Complete Resection of Stage IIIb/c or Stage IV Melanoma"
+            },
+            {
+              "nct_id": "NCT02409368",
+              "excerpt": "An Open-Label, Multicenter Clinical Trial With Nivolumab (BMS-936558) Monotherapy in Subjects With Advanced or Metastatic Squamous Cell (Sq) Non-Small Cell Lung Cancer (NSCLC) Who Have Received at Least One Prior Systemic Regimen for the Treatment of Stage IIIb/IV SqNSCLC"
+            },
+            {
+              "nct_id": "NCT02481830",
+              "excerpt": "Effectiveness Study of Nivolumab Compared to Chemotherapy in Patients With Relapsed Small-cell Lung Cancer"
+            }
+          ]
         },
         {
           "bin_label": "1,001–5,000",
           "bin_start": 1001,
           "bin_end": 5000,
-          "trial_count": 46
+          "trial_count": 46,
+          "citations": [
+            {
+              "nct_id": "NCT01928394",
+              "excerpt": "A Study of Nivolumab by Itself or Nivolumab Combined With Ipilimumab in Patients With Advanced or Metastatic Solid Tumors"
+            },
+            {
+              "nct_id": "NCT01968109",
+              "excerpt": "An Investigational Immuno-therapy Study to Assess the Safety, Tolerability and Effectiveness of Anti-LAG-3 With and Without Anti-PD-1 in the Treatment of Solid Tumors"
+            },
+            {
+              "nct_id": "NCT02066636",
+              "excerpt": "A Safety Trial of Nivolumab in Patients With Advanced or Metastatic Non-Small Cell Lung Cancer Who Have Progressed During or After Receiving At Least One Prior Chemotherapy Regimen"
+            },
+            {
+              "nct_id": "NCT02154490",
+              "excerpt": "Lung-MAP: Biomarker-Targeted Second-Line Therapy in Treating Patients With Recurrent Stage IV Squamous Cell Lung Cancer"
+            },
+            {
+              "nct_id": "NCT02156804",
+              "excerpt": "A Single-Arm, Open-Label, Multicenter Clinical Trial With Nivolumab (BMS-936558) for Subjects With Histologically Confirmed Stage III (Unresectable) or Stage IV Melanoma Progressing Post Prior Treatment Containing an Anti-CTLA4 Monoclonal Antibody (CheckMate 172)"
+            },
+            {
+              "nct_id": "NCT02231749",
+              "excerpt": "Nivolumab Combined With Ipilimumab Versus Sunitinib in Previously Untreated Advanced or Metastatic Renal Cell Carcinoma (CheckMate 214)"
+            },
+            {
+              "nct_id": "NCT02477826",
+              "excerpt": "An Investigational Immuno-therapy Trial of Nivolumab, or Nivolumab Plus Ipilimumab, or Nivolumab Plus Platinum-doublet Chemotherapy, Compared to Platinum Doublet Chemotherapy in Patients With Stage IV Non-Small Cell Lung Cancer (NSCLC)"
+            },
+            {
+              "nct_id": "NCT02693535",
+              "excerpt": "TAPUR: Testing the Use of Food and Drug Administration (FDA) Approved Drugs That Target a Specific Abnormality in a Tumor Gene in People With Advanced Stage Cancer"
+            },
+            {
+              "nct_id": "NCT02847728",
+              "excerpt": "Pattern of Use and Safety/Effectiveness of Nivolumab in Routine Oncology Practice"
+            },
+            {
+              "nct_id": "NCT02869789",
+              "excerpt": "An Investigational Immuno-therapy Study for Safety of Nivolumab in Combination With Ipilimumab to Treat Advanced Cancers"
+            }
+          ]
         },
         {
           "bin_label": "5,001+",
           "bin_start": 5001,
           "bin_end": null,
-          "trial_count": 7
+          "trial_count": 7,
+          "citations": [
+            {
+              "nct_id": "NCT02194738",
+              "excerpt": "Genetic Testing in Screening Patients With Stage IB-IIIA Non-small Cell Lung Cancer That Has Been or Will Be Removed by Surgery (The ALCHEMIST Screening Trial)"
+            },
+            {
+              "nct_id": "NCT02465060",
+              "excerpt": "Targeted Therapy Directed by Genetic Testing in Treating Patients With Advanced Refractory Solid Tumors, Lymphomas, or Multiple Myeloma (The MATCH Screening Trial)"
+            },
+            {
+              "nct_id": "NCT04294771",
+              "excerpt": "JOint Use of Database to Identify Risk Factors of CARDio-vascular Toxicity Induced by Immune Checkpoint Inhibitors"
+            },
+            {
+              "nct_id": "NCT05380336",
+              "excerpt": "Medico-economic Evaluation Comparing the Impact of the New Fixed-dose Nivolumab Regimen With the Old mg/kg Regimen in the Management of Patients With Metastatic Cancer"
+            },
+            {
+              "nct_id": "NCT05834348",
+              "excerpt": "A Study to Learn About the Effectiveness of Cancer Medicines in Patients With Metastatic Non-small Cell Lung Cancer in Norway."
+            },
+            {
+              "nct_id": "NCT05934214",
+              "excerpt": "EXploring Immune-related Adverse Events of Immune checkpoinT Inhibitors Using VigiBase, the WHO Pharmacovigilance Database"
+            },
+            {
+              "nct_id": "NCT07036016",
+              "excerpt": "Interstitial Pneumonitis Associated With EGFR-TKI and Combined With PD-1/PD-L1"
+            }
+          ]
         }
       ]
     },
     "meta": {
       "filters": {
         "drug_name": "Nivolumab",
+        "comparison_targets": null,
         "condition": null,
-        "phase": null
+        "phase": null,
+        "sponsor": null,
+        "country": null,
+        "start_year": null,
+        "end_year": null
       },
       "source": "clinicaltrials.gov",
       "fetched_studies": 1912,
@@ -68,6 +313,6 @@
       "truncated": false
     }
   },
-  "generated_at": "2026-07-09T01:09:45.431Z",
+  "generated_at": "2026-07-09T03:10:33.943Z",
   "preset": "distribution"
 }

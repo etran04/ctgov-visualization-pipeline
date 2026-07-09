@@ -24,62 +24,566 @@
         {
           "phase": "Phase 1",
           "series": "Metformin",
-          "trial_count": 557
+          "trial_count": 557,
+          "citations": [
+            {
+              "nct_id": "NCT00155545",
+              "excerpt": "Influence of Leg Length Discrepancy on the Spinal Shape and Biomechanics in Functional and Idiopathic Scoliosis Patients"
+            },
+            {
+              "nct_id": "NCT00269061",
+              "excerpt": "Study In Patients With Type 2 Diabetes Who Are Taking Metformin And Sulfonylurea, Metformin And Insulin, Or Insulin"
+            },
+            {
+              "nct_id": "NCT00279240",
+              "excerpt": "Life Style Modifications Prevents Type 2 Diabetes in Asian Indians"
+            },
+            {
+              "nct_id": "NCT00332085",
+              "excerpt": "Pilot Trial of Chromium-Metformin Combination in Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00376038",
+              "excerpt": "Drug Interactions From Simultaneous Administration Of Metformin And GSK189075 To Subjects With Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00390273",
+              "excerpt": "Effect of Metformin on Lactate Metabolism"
+            },
+            {
+              "nct_id": "NCT00425009",
+              "excerpt": "Therapeutic Effects of Berberine in Patients With Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00519480",
+              "excerpt": "A Study To Assess The Safety And Tolerability Of GSK189075 When Given With A Total Daily Dose Of >/ 2000mg of Metformin"
+            },
+            {
+              "nct_id": "NCT00546741",
+              "excerpt": "Drug Interaction With Metformin"
+            },
+            {
+              "nct_id": "NCT00648492",
+              "excerpt": "Food Study Metformin Hydrochloride ER Tablets 500 mg and Glucophage® XR 500 mg"
+            }
+          ]
         },
         {
           "phase": "Phase 1",
           "series": "Pembrolizumab",
-          "trial_count": 1031
+          "trial_count": 1031,
+          "citations": [
+            {
+              "nct_id": "NCT01295827",
+              "excerpt": "Study of Pembrolizumab (MK-3475) in Participants With Progressive Locally Advanced or Metastatic Carcinoma, Melanoma, or Non-small Cell Lung Carcinoma (P07990/MK-3475-001/KEYNOTE-001)"
+            },
+            {
+              "nct_id": "NCT01676753",
+              "excerpt": "Phase 1b Trial of Dinaciclib With Pembrolizumab for Advanced Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01822652",
+              "excerpt": "3rd Generation GD-2 Chimeric Antigen Receptor and iCaspase Suicide Safety Switch, Neuroblastoma, GRAIN"
+            },
+            {
+              "nct_id": "NCT01840579",
+              "excerpt": "Study of Pembrolizumab (MK-3475) Monotherapy in Advanced Solid Tumors and Pembrolizumab Combination Therapy in Advanced Non-small Cell Lung Cancer/ Extensive-disease Small Cell Lung Cancer (MK-3475-011/KEYNOTE-011)"
+            },
+            {
+              "nct_id": "NCT01848834",
+              "excerpt": "Study of Pembrolizumab (MK-3475) in Participants With Advanced Solid Tumors (MK-3475-012/KEYNOTE-012)"
+            },
+            {
+              "nct_id": "NCT01953692",
+              "excerpt": "A Trial of Pembrolizumab (MK-3475) in Participants With Blood Cancers (MK-3475-013/KEYNOTE-013)"
+            },
+            {
+              "nct_id": "NCT01986426",
+              "excerpt": "LTX-315 in Patients With Transdermally Accessible Tumours as Monotherapy or Combination With Ipilimumab or Pembrolizumab"
+            },
+            {
+              "nct_id": "NCT02007070",
+              "excerpt": "Study of Pembrolizumab (MK-3475) in Participants With Advanced Non-small Cell Lung Cancer (MK-3475-025/KEYNOTE-025)"
+            },
+            {
+              "nct_id": "NCT02009449",
+              "excerpt": "A Phase 1 Study of Pegilodecakin (LY3500518) in Participants With Advanced Solid Tumors"
+            },
+            {
+              "nct_id": "NCT02013154",
+              "excerpt": "A Study of DKN-01 in Combination With Paclitaxel or Pembrolizumab"
+            }
+          ]
         },
         {
           "phase": "Phase 2",
           "series": "Metformin",
-          "trial_count": 643
+          "trial_count": 643,
+          "citations": [
+            {
+              "nct_id": "NCT00005669",
+              "excerpt": "Metformin to Treat Obesity in Children With Insulin Resistance"
+            },
+            {
+              "nct_id": "NCT00015626",
+              "excerpt": "A Clinical Trial to Prevent the Complications of Insulin Resistance (Including Type-2 Diabetes)"
+            },
+            {
+              "nct_id": "NCT00018616",
+              "excerpt": "Improving Compliance With Metformin"
+            },
+            {
+              "nct_id": "NCT00063232",
+              "excerpt": "Treating Nonalcoholic Steatohepatitis (NASH) With Metformin"
+            },
+            {
+              "nct_id": "NCT00105066",
+              "excerpt": "The Effects of Metformin on Blood Vessel Structure and Function"
+            },
+            {
+              "nct_id": "NCT00110851",
+              "excerpt": "Safety and Efficacy Study of PN2034 in Type 2 Diabetes Patients on Concomitant Rosiglitazone and Metformin (or Avandamet)"
+            },
+            {
+              "nct_id": "NCT00111631",
+              "excerpt": "A Study of DPP-IV Inhibitor in Patients With Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00123110",
+              "excerpt": "Insulin Resistance and Testosterone in Women"
+            },
+            {
+              "nct_id": "NCT00151411",
+              "excerpt": "Lifestyle Intervention and Metformin for Women With Polycystic Ovary Syndrome (PCOS)"
+            },
+            {
+              "nct_id": "NCT00156897",
+              "excerpt": "Efficacy and Safety of ATL-962 in Obese Diabetics"
+            }
+          ]
         },
         {
           "phase": "Phase 2",
           "series": "Pembrolizumab",
-          "trial_count": 1731
+          "trial_count": 1731,
+          "citations": [
+            {
+              "nct_id": "NCT01042379",
+              "excerpt": "I-SPY TRIAL: Neoadjuvant and Personalized Adaptive Novel Agents to Treat Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01174121",
+              "excerpt": "Immunotherapy Using Tumor Infiltrating Lymphocytes for Patients With Metastatic Cancer"
+            },
+            {
+              "nct_id": "NCT01704287",
+              "excerpt": "Study of Pembrolizumab (MK-3475) Versus Chemotherapy in Participants With Advanced Melanoma (MK-3475-002/P08719/KEYNOTE-002)"
+            },
+            {
+              "nct_id": "NCT01876511",
+              "excerpt": "Study of MK-3475 in Patients With Microsatellite Unstable (MSI) Tumors (Cohorts A, B and C)"
+            },
+            {
+              "nct_id": "NCT01905657",
+              "excerpt": "Study of Two Doses of Pembrolizumab (MK-3475) Versus Docetaxel in Previously Treated Participants With Non-Small Cell Lung Cancer (MK-3475-010/KEYNOTE-010)"
+            },
+            {
+              "nct_id": "NCT01993719",
+              "excerpt": "Immunotherapy Using Tumor Infiltrating Lymphocytes for Patients With Metastatic Melanoma"
+            },
+            {
+              "nct_id": "NCT02039674",
+              "excerpt": "A Study of Pembrolizumab (MK-3475) in Combination With Chemotherapy or Immunotherapy in Participants With Non-small Cell Lung Cancer (MK-3475-021/KEYNOTE-021)"
+            },
+            {
+              "nct_id": "NCT02054520",
+              "excerpt": "Immunotherapy Study for Patients With Stage IV Melanoma"
+            },
+            {
+              "nct_id": "NCT02073123",
+              "excerpt": "Study of IDO Inhibitor in Combination With Checkpoint Inhibitors for Adult Patients With Metastatic Melanoma"
+            },
+            {
+              "nct_id": "NCT02085070",
+              "excerpt": "MK-3475 in Melanoma and NSCLC Patients With Brain Metastases"
+            }
+          ]
         },
         {
           "phase": "Phase 3",
           "series": "Metformin",
-          "trial_count": 749
+          "trial_count": 749,
+          "citations": [
+            {
+              "nct_id": "NCT00000620",
+              "excerpt": "Action to Control Cardiovascular Risk in Diabetes (ACCORD)"
+            },
+            {
+              "nct_id": "NCT00004992",
+              "excerpt": "Diabetes Prevention Program"
+            },
+            {
+              "nct_id": "NCT00032487",
+              "excerpt": "Glycemic Control and Complications in Diabetes Mellitus Type 2 (VADT)"
+            },
+            {
+              "nct_id": "NCT00035542",
+              "excerpt": "A Research Study to Determine the Safety and Efficacy of Glucovance Compared to Metformin and Glyburide in Children and Adolescents With Type 2 Diabetes."
+            },
+            {
+              "nct_id": "NCT00035984",
+              "excerpt": "Evaluation of the Effect on Glucose Control of AC2993 in Patients With Type 2 Diabetes Mellitus"
+            },
+            {
+              "nct_id": "NCT00038727",
+              "excerpt": "Diabetes Prevention Program Outcomes Study"
+            },
+            {
+              "nct_id": "NCT00039013",
+              "excerpt": "Evaluation of the Effect on Glucose Control of AC2993 in Patients With Type 2 Diabetes Mellitus Treated With Metformin"
+            },
+            {
+              "nct_id": "NCT00044447",
+              "excerpt": "Evaluate the Role of Adding Amaryl to Non-Insulin Dependent Diabetes Mellitus Patients Unresponsive to Maximum Dose Metformin & Thiazolidinedione"
+            },
+            {
+              "nct_id": "NCT00044668",
+              "excerpt": "Evaluation of the Effect on Glucose Control and Safety of AC2993 in Patients With Type 2 Diabetes Treated With Metformin, Sulfonylurea, or Metformin and Sulfonylurea Combination"
+            },
+            {
+              "nct_id": "NCT00046462",
+              "excerpt": "Determine Whether Glycemic Control is Different Between Lantus & a 3rd Oral Agent When Failure With Other Treatment"
+            }
+          ]
         },
         {
           "phase": "Phase 3",
           "series": "Pembrolizumab",
-          "trial_count": 357
+          "trial_count": 357,
+          "citations": [
+            {
+              "nct_id": "NCT01866319",
+              "excerpt": "Study to Evaluate the Safety and Efficacy of Two Different Dosing Schedules of Pembrolizumab (MK-3475) Compared to Ipilimumab in Participants With Advanced Melanoma (MK-3475-006/KEYNOTE-006)"
+            },
+            {
+              "nct_id": "NCT01905657",
+              "excerpt": "Study of Two Doses of Pembrolizumab (MK-3475) Versus Docetaxel in Previously Treated Participants With Non-Small Cell Lung Cancer (MK-3475-010/KEYNOTE-010)"
+            },
+            {
+              "nct_id": "NCT02142738",
+              "excerpt": "Study of Pembrolizumab (MK-3475) Compared to Platinum-Based Chemotherapies in Participants With Metastatic Non-Small Cell Lung Cancer (MK-3475-024/KEYNOTE-024)"
+            },
+            {
+              "nct_id": "NCT02220894",
+              "excerpt": "Study of Pembrolizumab (MK-3475) Versus Platinum-Based Chemotherapy for Participants With Programmed Cell Death-Ligand 1 (PD-L1)-Positive Advanced or Metastatic Non-Small Cell Lung Cancer (MK-3475-042/KEYNOTE-042)"
+            },
+            {
+              "nct_id": "NCT02252042",
+              "excerpt": "Pembrolizumab (MK-3475) Versus Standard Treatment for Recurrent or Metastatic Head and Neck Cancer (MK-3475-040/KEYNOTE-040)"
+            },
+            {
+              "nct_id": "NCT02256436",
+              "excerpt": "A Study of Pembrolizumab (MK-3475) Versus Paclitaxel, Docetaxel, or Vinflunine for Participants With Advanced Urothelial Cancer (MK-3475-045/KEYNOTE-045)"
+            },
+            {
+              "nct_id": "NCT02263508",
+              "excerpt": "Pembrolizumab With Talimogene Laherparepvec or Placebo in Unresected Melanoma"
+            },
+            {
+              "nct_id": "NCT02358031",
+              "excerpt": "A Study of Pembrolizumab (MK-3475) for First Line Treatment of Recurrent or Metastatic Squamous Cell Cancer of the Head and Neck (MK-3475-048/KEYNOTE-048)"
+            },
+            {
+              "nct_id": "NCT02362594",
+              "excerpt": "Study of Pembrolizumab (MK-3475) Versus Placebo After Complete Resection of High-Risk Stage III Melanoma (MK-3475-054/1325-MG/KEYNOTE-054)"
+            },
+            {
+              "nct_id": "NCT02370498",
+              "excerpt": "A Study of Pembrolizumab (MK-3475) Versus Paclitaxel for Participants With Advanced Gastric/Gastroesophageal Junction Adenocarcinoma That Progressed After Therapy With Platinum and Fluoropyrimidine (MK-3475-061/KEYNOTE-061)"
+            }
+          ]
         },
         {
           "phase": "Phase 4",
           "series": "Metformin",
-          "trial_count": 617
+          "trial_count": 617,
+          "citations": [
+            {
+              "nct_id": "NCT00035568",
+              "excerpt": "A Research Study to Assess the Mechanism By Which Glucovance, Metformin, and Glyburide Work To Control Glucose Levels In Patients With Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00108615",
+              "excerpt": "Effects of Insulin Sensitizers in Subjects With Impaired Glucose Tolerance"
+            },
+            {
+              "nct_id": "NCT00118937",
+              "excerpt": "Effect of Metformin in Patients With Type-1 Diabetes With Inadequate Glycaemic Control by Insulin and Diet"
+            },
+            {
+              "nct_id": "NCT00118950",
+              "excerpt": "Effect of Metformin Versus Repaglinide Treatment in Non-Obese Type 2 Diabetic Patients Uncontrolled by Diet"
+            },
+            {
+              "nct_id": "NCT00118963",
+              "excerpt": "Effect of Repaglinide Versus Metformin Treatment in Non-Obese Patients With Type-2-Diabetes"
+            },
+            {
+              "nct_id": "NCT00121966",
+              "excerpt": "South Danish Diabetes Study: Evaluation of the Antidiabetic Treatment of Type 2 Diabetes Mellitus"
+            },
+            {
+              "nct_id": "NCT00133718",
+              "excerpt": "A 2 Year Trial of Patients With Type 2 Diabetes Focusing on Cardiovascular Diagnostics and Metabolic Control"
+            },
+            {
+              "nct_id": "NCT00134290",
+              "excerpt": "The Effects of Calorie Restriction With or Without Metformin on Weight and Insulin Resistance"
+            },
+            {
+              "nct_id": "NCT00134303",
+              "excerpt": "Trial Comparing Metformin Versus Placebo in Non Alcoholic Steatohepatitis (NASH) Patients Receiving Bariatric Surgery for Obesity"
+            },
+            {
+              "nct_id": "NCT00145379",
+              "excerpt": "The Effect of Metformin in Overweight Patients With Dysregulated Type 1 Diabetes Mellitus"
+            }
+          ]
         },
         {
           "phase": "Phase 4",
           "series": "Pembrolizumab",
-          "trial_count": 17
+          "trial_count": 17,
+          "citations": [
+            {
+              "nct_id": "NCT03134456",
+              "excerpt": "Pembrolizumab for Metastatic NSCLC Patients Expressing PD-L1 Who Have Their Own PDX"
+            },
+            {
+              "nct_id": "NCT03715205",
+              "excerpt": "Study to Evaluate the Safety of Pembrolizumab in Participants With Unresectable or Metastatic Melanoma or Non-small Cell Lung Cancer in India (MK-3475-593/KEYNOTE-593)"
+            },
+            {
+              "nct_id": "NCT03891979",
+              "excerpt": "Gut Microbiome Modulation to Enable Efficacy of Checkpoint-based Immunotherapy in Pancreatic Adenocarcinoma"
+            },
+            {
+              "nct_id": "NCT04489888",
+              "excerpt": "A Study of Pembrolizumab (MK-3475) Plus Carboplatin and Paclitaxel as First-line Treatment of Recurrent/Metastatic Head and Neck Squamous Cell Carcinoma (MK-3475-B10/KEYNOTE B10)"
+            },
+            {
+              "nct_id": "NCT04554524",
+              "excerpt": "Chemotherapy Combined With Pembrolizumab in Treating Patients With Thymoma and Thymic Carcinoma"
+            },
+            {
+              "nct_id": "NCT05235737",
+              "excerpt": "The Assessment of Immune Response in Newly Diagnosed Glioblastoma Patients Treated With Pembrolizumab"
+            },
+            {
+              "nct_id": "NCT05689671",
+              "excerpt": "Pemetrexed-free vs. Pemetrexed-based Immunochemotherapy in Metastatic TTF-1 Negative Lung Adenocarcinoma"
+            },
+            {
+              "nct_id": "NCT06031233",
+              "excerpt": "Evaluating the Safety of Shortened Infusion Times for dIfferent Oncological Immunotherapie"
+            },
+            {
+              "nct_id": "NCT06550453",
+              "excerpt": "Safety and Efficacy of Pembrolizumab in Combination with Bevacizumab + CapeOX in the Neoadjuvant Treatment of RAS-mutated, BRAF Wild-type, Microsatellite-stabilized, Locally Advanced Colorectal Cancer"
+            },
+            {
+              "nct_id": "NCT06764095",
+              "excerpt": "Enfortumab Vedotin and Pembrolizumab With Cystectomy and/or Ureterectomy for Locally Advanced or Metastatic Bladder and Upper Urothelial Tract Cancer, CAST-AI Trial"
+            }
+          ]
         },
         {
           "phase": "Early Phase 1",
           "series": "Metformin",
-          "trial_count": 61
+          "trial_count": 61,
+          "citations": [
+            {
+              "nct_id": "NCT01037660",
+              "excerpt": "Effects of Lipemia and Metformin on Endothelial Function"
+            },
+            {
+              "nct_id": "NCT01205672",
+              "excerpt": "Evaluation of the Molecular Effects of Metformin on the Endometrium in Patients With Endometrial Cancer"
+            },
+            {
+              "nct_id": "NCT01302002",
+              "excerpt": "The Use of Metformin in Early Breast Cancer Patients Pre-Surgery"
+            },
+            {
+              "nct_id": "NCT01422746",
+              "excerpt": "Effect of Metformin on Adrenal or Ovarian Androgen Production in Overweight Pubertal Girls With Androgen Excess"
+            },
+            {
+              "nct_id": "NCT01465113",
+              "excerpt": "Vitamin D Supplementation on 15-Prostaglandin Dehydrogenase Expression in Barrett's Esophagus"
+            },
+            {
+              "nct_id": "NCT01685762",
+              "excerpt": "Metformin for the Treatment of Endometrial Hyperplasia"
+            },
+            {
+              "nct_id": "NCT01793948",
+              "excerpt": "Metformin Hydrochloride vs. Placebo in Overweight or Obese Patients at Elevated Risk for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01866462",
+              "excerpt": "Pilot Study of the Effect of MN-504 Cobiotic Formulation on the Efficacy and Tolerability of Metformin"
+            },
+            {
+              "nct_id": "NCT01909141",
+              "excerpt": "Ovulation Induction in Women With Clomiphene Citrate Resistant PCOS"
+            },
+            {
+              "nct_id": "NCT01911247",
+              "excerpt": "Preoperative Window Study of Metformin for the Treatment of Endometrial Cancer"
+            }
+          ]
         },
         {
           "phase": "Early Phase 1",
           "series": "Pembrolizumab",
-          "trial_count": 51
+          "trial_count": 51,
+          "citations": [
+            {
+              "nct_id": "NCT01789827",
+              "excerpt": "Aldesleukin Imaging in Viewing Tumor Growth in Patients With Stage IV Melanoma Receiving Ipilimumab or Pembrolizumab Therapy"
+            },
+            {
+              "nct_id": "NCT02591654",
+              "excerpt": "MRI and PET to Assess Pembrolizumab Response"
+            },
+            {
+              "nct_id": "NCT02603887",
+              "excerpt": "Pembrolizumab in Treating Patients With Intermediate or High-Risk Smoldering Multiple Myeloma"
+            },
+            {
+              "nct_id": "NCT02728830",
+              "excerpt": "A Study of Pembrolizumab on the Tumoral Immunoprofile of Gynecologic Cancers"
+            },
+            {
+              "nct_id": "NCT02872025",
+              "excerpt": "Immunotherapy in High-risk Ductal Carcinoma in Situ (DCIS)"
+            },
+            {
+              "nct_id": "NCT02981914",
+              "excerpt": "Pilot Study of Pembrolizumab Treatment for Disease Relapse After Allogeneic Stem Cell Transplantation"
+            },
+            {
+              "nct_id": "NCT03099564",
+              "excerpt": "Pembrolizumab Plus Y90 Radioembolization in HCC Subjects"
+            },
+            {
+              "nct_id": "NCT03153410",
+              "excerpt": "Pilot Study With CY, Pembrolizumab, GVAX, and IMC-CS4 (LY3022855) in Patients With Borderline Resectable Adenocarcinoma of the Pancreas"
+            },
+            {
+              "nct_id": "NCT03197389",
+              "excerpt": "Effect of Pembrolizumab (Keytruda®) on Biomarkers in Early Breast Cancer."
+            },
+            {
+              "nct_id": "NCT03224871",
+              "excerpt": "UCDCC#269: A Pilot Study of Interlesional IL-2 and RT in Patients With NSCLC."
+            }
+          ]
         },
         {
           "phase": "Not Applicable",
           "series": "Metformin",
-          "trial_count": 397
+          "trial_count": 397,
+          "citations": [
+            {
+              "nct_id": "NCT00005104",
+              "excerpt": "Randomized Study of Decreased Hyperinsulinemia on the Ovulatory Response to Clomiphene Citrate in Women With Polycystic Ovary Syndrome"
+            },
+            {
+              "nct_id": "NCT00005654",
+              "excerpt": "Randomized Study of the Effect of Decreased Hyperinsulinemia on the Ovulatory Response to Clomiphene Citrate in Obese Women With Polycystic Ovary Syndrome"
+            },
+            {
+              "nct_id": "NCT00015691",
+              "excerpt": "Metformin and Rosiglitazone, Alone or in Combination, in HIV-Infected Patients With Insulin and Fat Abnormalities"
+            },
+            {
+              "nct_id": "NCT00139477",
+              "excerpt": "Study of Serum Markers for Cardiovascular Risk in Obese Youth and Impact of Lifestyle and Medication Intervention"
+            },
+            {
+              "nct_id": "NCT00147836",
+              "excerpt": "Evaluation of the Effects of Different Interventions on Glycemic Control in Newly-Diagnosed Type 2 Diabetic Patients"
+            },
+            {
+              "nct_id": "NCT00159211",
+              "excerpt": "Abdominal Adipose Tissue Distribution in Type 2 Diabetic Patients Treated During 6 Months With Pioglitazone or Insulin"
+            },
+            {
+              "nct_id": "NCT00187798",
+              "excerpt": "Impact of Genetics on Metformin Pharmacokinetics"
+            },
+            {
+              "nct_id": "NCT00232583",
+              "excerpt": "Preservation of Beta-cell Function in Type 2 Diabetes Mellitus"
+            },
+            {
+              "nct_id": "NCT00247117",
+              "excerpt": "Metformin in Patients With Non-Alcoholic Fatty Liver Disease (NAFLD)"
+            },
+            {
+              "nct_id": "NCT00282945",
+              "excerpt": "Beta Cell Function Tests Over Time In Patients With T2dm Randomized To Metformin Or Rosiglitazone"
+            }
+          ]
         },
         {
           "phase": "Not Applicable",
           "series": "Pembrolizumab",
-          "trial_count": 53
+          "trial_count": 53,
+          "citations": [
+            {
+              "nct_id": "NCT02194738",
+              "excerpt": "Genetic Testing in Screening Patients With Stage IB-IIIA Non-small Cell Lung Cancer That Has Been or Will Be Removed by Surgery (The ALCHEMIST Screening Trial)"
+            },
+            {
+              "nct_id": "NCT02489357",
+              "excerpt": "Pembrolizumab and Cryosurgery in Treating Patients With Newly Diagnosed, Oligo-metastatic Prostate Cancer"
+            },
+            {
+              "nct_id": "NCT02658279",
+              "excerpt": "Pembrolizumab (MK-3475) in Patients With Recurrent Malignant Glioma With a Hypermutator Phenotype"
+            },
+            {
+              "nct_id": "NCT02716077",
+              "excerpt": "Early FDG PET in Melanoma"
+            },
+            {
+              "nct_id": "NCT02760225",
+              "excerpt": "Pembrolizumab-PET Imaging"
+            },
+            {
+              "nct_id": "NCT02922283",
+              "excerpt": "IL2 Imaging in Metastatic Melanoma"
+            },
+            {
+              "nct_id": "NCT03035890",
+              "excerpt": "Hypofractionated Radiation Therapy to Improve Immunotherapy Response in Non-Small Cell Lung Cancer"
+            },
+            {
+              "nct_id": "NCT03348891",
+              "excerpt": "TNF in Melanoma Patients Treated With Immunotherapy"
+            },
+            {
+              "nct_id": "NCT03769129",
+              "excerpt": "Evaluating the Safety and Efficacy of Pembrolizumab Combined With MWA for Advanced NSCLC"
+            },
+            {
+              "nct_id": "NCT03832348",
+              "excerpt": "Dynamics of 18-FDG Uptake in Stage III/IV Non Small Cell Lung Cancer During First Line Pembrolizumab Treatment"
+            }
+          ]
         }
       ]
     },
@@ -88,7 +592,11 @@
         "drug_name": null,
         "comparison_targets": null,
         "condition": null,
-        "phase": null
+        "phase": null,
+        "sponsor": null,
+        "country": null,
+        "start_year": null,
+        "end_year": null
       },
       "comparison_targets": [
         "Metformin",
@@ -102,6 +610,6 @@
       "truncated": false
     }
   },
-  "generated_at": "2026-07-09T01:50:54.969Z",
+  "generated_at": "2026-07-09T03:10:22.285Z",
   "preset": "grouped"
 }

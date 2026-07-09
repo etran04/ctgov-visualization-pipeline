@@ -19,35 +19,292 @@
       "data": [
         {
           "phase": "Phase 1",
-          "trial_count": 557
+          "trial_count": 557,
+          "citations": [
+            {
+              "nct_id": "NCT00155545",
+              "excerpt": "Influence of Leg Length Discrepancy on the Spinal Shape and Biomechanics in Functional and Idiopathic Scoliosis Patients"
+            },
+            {
+              "nct_id": "NCT00269061",
+              "excerpt": "Study In Patients With Type 2 Diabetes Who Are Taking Metformin And Sulfonylurea, Metformin And Insulin, Or Insulin"
+            },
+            {
+              "nct_id": "NCT00279240",
+              "excerpt": "Life Style Modifications Prevents Type 2 Diabetes in Asian Indians"
+            },
+            {
+              "nct_id": "NCT00332085",
+              "excerpt": "Pilot Trial of Chromium-Metformin Combination in Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00376038",
+              "excerpt": "Drug Interactions From Simultaneous Administration Of Metformin And GSK189075 To Subjects With Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00390273",
+              "excerpt": "Effect of Metformin on Lactate Metabolism"
+            },
+            {
+              "nct_id": "NCT00425009",
+              "excerpt": "Therapeutic Effects of Berberine in Patients With Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00519480",
+              "excerpt": "A Study To Assess The Safety And Tolerability Of GSK189075 When Given With A Total Daily Dose Of >/ 2000mg of Metformin"
+            },
+            {
+              "nct_id": "NCT00546741",
+              "excerpt": "Drug Interaction With Metformin"
+            },
+            {
+              "nct_id": "NCT00648492",
+              "excerpt": "Food Study Metformin Hydrochloride ER Tablets 500 mg and Glucophage® XR 500 mg"
+            }
+          ]
         },
         {
           "phase": "Phase 2",
-          "trial_count": 643
+          "trial_count": 643,
+          "citations": [
+            {
+              "nct_id": "NCT00005669",
+              "excerpt": "Metformin to Treat Obesity in Children With Insulin Resistance"
+            },
+            {
+              "nct_id": "NCT00015626",
+              "excerpt": "A Clinical Trial to Prevent the Complications of Insulin Resistance (Including Type-2 Diabetes)"
+            },
+            {
+              "nct_id": "NCT00018616",
+              "excerpt": "Improving Compliance With Metformin"
+            },
+            {
+              "nct_id": "NCT00063232",
+              "excerpt": "Treating Nonalcoholic Steatohepatitis (NASH) With Metformin"
+            },
+            {
+              "nct_id": "NCT00105066",
+              "excerpt": "The Effects of Metformin on Blood Vessel Structure and Function"
+            },
+            {
+              "nct_id": "NCT00110851",
+              "excerpt": "Safety and Efficacy Study of PN2034 in Type 2 Diabetes Patients on Concomitant Rosiglitazone and Metformin (or Avandamet)"
+            },
+            {
+              "nct_id": "NCT00111631",
+              "excerpt": "A Study of DPP-IV Inhibitor in Patients With Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00123110",
+              "excerpt": "Insulin Resistance and Testosterone in Women"
+            },
+            {
+              "nct_id": "NCT00151411",
+              "excerpt": "Lifestyle Intervention and Metformin for Women With Polycystic Ovary Syndrome (PCOS)"
+            },
+            {
+              "nct_id": "NCT00156897",
+              "excerpt": "Efficacy and Safety of ATL-962 in Obese Diabetics"
+            }
+          ]
         },
         {
           "phase": "Phase 3",
-          "trial_count": 749
+          "trial_count": 749,
+          "citations": [
+            {
+              "nct_id": "NCT00000620",
+              "excerpt": "Action to Control Cardiovascular Risk in Diabetes (ACCORD)"
+            },
+            {
+              "nct_id": "NCT00004992",
+              "excerpt": "Diabetes Prevention Program"
+            },
+            {
+              "nct_id": "NCT00032487",
+              "excerpt": "Glycemic Control and Complications in Diabetes Mellitus Type 2 (VADT)"
+            },
+            {
+              "nct_id": "NCT00035542",
+              "excerpt": "A Research Study to Determine the Safety and Efficacy of Glucovance Compared to Metformin and Glyburide in Children and Adolescents With Type 2 Diabetes."
+            },
+            {
+              "nct_id": "NCT00035984",
+              "excerpt": "Evaluation of the Effect on Glucose Control of AC2993 in Patients With Type 2 Diabetes Mellitus"
+            },
+            {
+              "nct_id": "NCT00038727",
+              "excerpt": "Diabetes Prevention Program Outcomes Study"
+            },
+            {
+              "nct_id": "NCT00039013",
+              "excerpt": "Evaluation of the Effect on Glucose Control of AC2993 in Patients With Type 2 Diabetes Mellitus Treated With Metformin"
+            },
+            {
+              "nct_id": "NCT00044447",
+              "excerpt": "Evaluate the Role of Adding Amaryl to Non-Insulin Dependent Diabetes Mellitus Patients Unresponsive to Maximum Dose Metformin & Thiazolidinedione"
+            },
+            {
+              "nct_id": "NCT00044668",
+              "excerpt": "Evaluation of the Effect on Glucose Control and Safety of AC2993 in Patients With Type 2 Diabetes Treated With Metformin, Sulfonylurea, or Metformin and Sulfonylurea Combination"
+            },
+            {
+              "nct_id": "NCT00046462",
+              "excerpt": "Determine Whether Glycemic Control is Different Between Lantus & a 3rd Oral Agent When Failure With Other Treatment"
+            }
+          ]
         },
         {
           "phase": "Phase 4",
-          "trial_count": 617
+          "trial_count": 617,
+          "citations": [
+            {
+              "nct_id": "NCT00035568",
+              "excerpt": "A Research Study to Assess the Mechanism By Which Glucovance, Metformin, and Glyburide Work To Control Glucose Levels In Patients With Type 2 Diabetes"
+            },
+            {
+              "nct_id": "NCT00108615",
+              "excerpt": "Effects of Insulin Sensitizers in Subjects With Impaired Glucose Tolerance"
+            },
+            {
+              "nct_id": "NCT00118937",
+              "excerpt": "Effect of Metformin in Patients With Type-1 Diabetes With Inadequate Glycaemic Control by Insulin and Diet"
+            },
+            {
+              "nct_id": "NCT00118950",
+              "excerpt": "Effect of Metformin Versus Repaglinide Treatment in Non-Obese Type 2 Diabetic Patients Uncontrolled by Diet"
+            },
+            {
+              "nct_id": "NCT00118963",
+              "excerpt": "Effect of Repaglinide Versus Metformin Treatment in Non-Obese Patients With Type-2-Diabetes"
+            },
+            {
+              "nct_id": "NCT00121966",
+              "excerpt": "South Danish Diabetes Study: Evaluation of the Antidiabetic Treatment of Type 2 Diabetes Mellitus"
+            },
+            {
+              "nct_id": "NCT00133718",
+              "excerpt": "A 2 Year Trial of Patients With Type 2 Diabetes Focusing on Cardiovascular Diagnostics and Metabolic Control"
+            },
+            {
+              "nct_id": "NCT00134290",
+              "excerpt": "The Effects of Calorie Restriction With or Without Metformin on Weight and Insulin Resistance"
+            },
+            {
+              "nct_id": "NCT00134303",
+              "excerpt": "Trial Comparing Metformin Versus Placebo in Non Alcoholic Steatohepatitis (NASH) Patients Receiving Bariatric Surgery for Obesity"
+            },
+            {
+              "nct_id": "NCT00145379",
+              "excerpt": "The Effect of Metformin in Overweight Patients With Dysregulated Type 1 Diabetes Mellitus"
+            }
+          ]
         },
         {
           "phase": "Early Phase 1",
-          "trial_count": 61
+          "trial_count": 61,
+          "citations": [
+            {
+              "nct_id": "NCT01037660",
+              "excerpt": "Effects of Lipemia and Metformin on Endothelial Function"
+            },
+            {
+              "nct_id": "NCT01205672",
+              "excerpt": "Evaluation of the Molecular Effects of Metformin on the Endometrium in Patients With Endometrial Cancer"
+            },
+            {
+              "nct_id": "NCT01302002",
+              "excerpt": "The Use of Metformin in Early Breast Cancer Patients Pre-Surgery"
+            },
+            {
+              "nct_id": "NCT01422746",
+              "excerpt": "Effect of Metformin on Adrenal or Ovarian Androgen Production in Overweight Pubertal Girls With Androgen Excess"
+            },
+            {
+              "nct_id": "NCT01465113",
+              "excerpt": "Vitamin D Supplementation on 15-Prostaglandin Dehydrogenase Expression in Barrett's Esophagus"
+            },
+            {
+              "nct_id": "NCT01685762",
+              "excerpt": "Metformin for the Treatment of Endometrial Hyperplasia"
+            },
+            {
+              "nct_id": "NCT01793948",
+              "excerpt": "Metformin Hydrochloride vs. Placebo in Overweight or Obese Patients at Elevated Risk for Breast Cancer"
+            },
+            {
+              "nct_id": "NCT01866462",
+              "excerpt": "Pilot Study of the Effect of MN-504 Cobiotic Formulation on the Efficacy and Tolerability of Metformin"
+            },
+            {
+              "nct_id": "NCT01909141",
+              "excerpt": "Ovulation Induction in Women With Clomiphene Citrate Resistant PCOS"
+            },
+            {
+              "nct_id": "NCT01911247",
+              "excerpt": "Preoperative Window Study of Metformin for the Treatment of Endometrial Cancer"
+            }
+          ]
         },
         {
           "phase": "Not Applicable",
-          "trial_count": 397
+          "trial_count": 397,
+          "citations": [
+            {
+              "nct_id": "NCT00005104",
+              "excerpt": "Randomized Study of Decreased Hyperinsulinemia on the Ovulatory Response to Clomiphene Citrate in Women With Polycystic Ovary Syndrome"
+            },
+            {
+              "nct_id": "NCT00005654",
+              "excerpt": "Randomized Study of the Effect of Decreased Hyperinsulinemia on the Ovulatory Response to Clomiphene Citrate in Obese Women With Polycystic Ovary Syndrome"
+            },
+            {
+              "nct_id": "NCT00015691",
+              "excerpt": "Metformin and Rosiglitazone, Alone or in Combination, in HIV-Infected Patients With Insulin and Fat Abnormalities"
+            },
+            {
+              "nct_id": "NCT00139477",
+              "excerpt": "Study of Serum Markers for Cardiovascular Risk in Obese Youth and Impact of Lifestyle and Medication Intervention"
+            },
+            {
+              "nct_id": "NCT00147836",
+              "excerpt": "Evaluation of the Effects of Different Interventions on Glycemic Control in Newly-Diagnosed Type 2 Diabetic Patients"
+            },
+            {
+              "nct_id": "NCT00159211",
+              "excerpt": "Abdominal Adipose Tissue Distribution in Type 2 Diabetic Patients Treated During 6 Months With Pioglitazone or Insulin"
+            },
+            {
+              "nct_id": "NCT00187798",
+              "excerpt": "Impact of Genetics on Metformin Pharmacokinetics"
+            },
+            {
+              "nct_id": "NCT00232583",
+              "excerpt": "Preservation of Beta-cell Function in Type 2 Diabetes Mellitus"
+            },
+            {
+              "nct_id": "NCT00247117",
+              "excerpt": "Metformin in Patients With Non-Alcoholic Fatty Liver Disease (NAFLD)"
+            },
+            {
+              "nct_id": "NCT00282945",
+              "excerpt": "Beta Cell Function Tests Over Time In Patients With T2dm Randomized To Metformin Or Rosiglitazone"
+            }
+          ]
         }
       ]
     },
     "meta": {
       "filters": {
         "drug_name": "Metformin",
+        "comparison_targets": null,
         "condition": null,
-        "phase": null
+        "phase": null,
+        "sponsor": null,
+        "country": null,
+        "start_year": null,
+        "end_year": null
       },
       "source": "clinicaltrials.gov",
       "fetched_studies": 2886,
@@ -56,6 +313,6 @@
       "truncated": false
     }
   },
-  "generated_at": "2026-07-09T01:09:33.753Z",
+  "generated_at": "2026-07-09T03:10:18.225Z",
   "preset": "comparison"
 }

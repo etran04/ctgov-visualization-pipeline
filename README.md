@@ -107,7 +107,7 @@ The LLM extracts structured **entities** from `query` (and optional hints):
 | `start_year` / `end_year` | `filter.advanced` (`AREA[StartDate]RANGE[...]`) | Optional study start-year window |
 | `comparison_targets` | (per-drug `query.intr` in grouped mode) | 2–4 drugs for grouped bar charts |
 
-At least one of `drug_name`, `comparison_targets`, `condition`, `phase`, `sponsor`, or `country` is required. Year filters are optional modifiers. Every fetch also requests `BriefTitle` for future citation excerpts.
+At least one of `drug_name`, `comparison_targets`, `condition`, `phase`, `sponsor`, or `country` is required. Year filters are optional modifiers. Every fetch also requests `BriefTitle` for citation excerpts.
 
 **Success response — bar chart (`200`)**
 
@@ -335,6 +335,24 @@ Each valid study becomes one scatterplot point (`x = enrollment_count`, `y = yea
 
 Network queries return a bipartite graph: nodes are drugs and sponsors; edges link intervention names to lead sponsors. Edge `weight` is the number of trials connecting that pair. Node IDs use type prefixes (`drug:`, `sponsor:`) to prevent collisions. Studies missing NCT ID, interventions, or lead sponsor are skipped (`meta.skipped_malformed`). `meta.network_dimension` identifies the topology rendered (`drug_sponsor` in V1).
 
+### Citations
+
+Non-empty bar, grouped bar, line, histogram, and scatterplot data points — and network graph **edges** — may include an optional `citations` array for traceability:
+
+```json
+{
+  "nct_id": "NCT03615326",
+  "excerpt": "A Phase 2 Study of Pembrolizumab in Advanced Melanoma"
+}
+```
+
+- **Excerpt source:** trimmed `protocolSection.identificationModule.briefTitle` from each fetched study (`BriefTitle` field profile).
+- **When present:** only on datums/edges with at least one resolvable excerpt. Zero-fill bins (`trial_count: 0`) omit `citations`.
+- **Cap:** at most **10 citations per datum**, sorted lexicographically by `nct_id`. When a bin or edge represents more than 10 trials, `trial_count` (or edge `weight`) may exceed `citations.length`.
+- **Truncated fetches:** citations reflect the fetched study subset only (same as counts).
+
+Internal `source_nct_ids` collected during aggregation are never exposed in HTTP responses.
+
 **Error response**
 
 ```json
@@ -529,11 +547,6 @@ Optional (and very useful) live modes:
 ## Future improvements
 
 Known limitations and next steps if given more time:
-
-### Citations & traceability
-
-- Populate `citations` (`nct_id` + excerpt) on every bar, line, histogram, and network datum
-- `source_nct_ids` are already collected internally during aggregation; assembly layer needs to wire excerpts from normalized study fields
 
 ### Query & visualization coverage
 
