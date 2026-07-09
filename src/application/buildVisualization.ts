@@ -7,6 +7,7 @@
  */
 import {
   aggregateByEnrollment,
+  aggregateByNetwork,
   aggregateByPhase,
   aggregateByRelationship,
   aggregateByStartYear,
@@ -19,6 +20,7 @@ import { assembleVisualizationResponse } from "../domain/assembleVisualizationRe
 import { getFieldsForIntent } from "../domain/intents/fieldProfiles.js";
 import { resolveVisualizationType } from "../domain/intents/visualizationType.js";
 import type { QueryInterpretation, VisualizationResponse } from "../domain/schemas/index.js";
+import type { NetworkStudyRecord } from "../domain/types/ctgovStudyTypes.js";
 import { validateEntities } from "../domain/validateEntities.js";
 import { fetchStudies } from "../externals/ctgov/fetchStudies.js";
 import { interpretQuery } from "../externals/openai/interpretQuery.js";
@@ -152,7 +154,32 @@ export async function buildVisualization(
       break;
     }
     case "network": {
-      throw new Error("Network visualization pipeline is not yet implemented");
+      const dimension = interpretation.network_dimension;
+      const aggregation = aggregateByNetwork(
+        fetchResult.studies as NetworkStudyRecord[],
+        dimension,
+        validatedEntities,
+      );
+      logger.info(
+        {
+          nodes: aggregation.nodes.length,
+          edges: aggregation.edges.length,
+          skipped_malformed: aggregation.skipped_malformed,
+        },
+        "Aggregated studies into network graph",
+      );
+
+      response = assembleVisualizationResponse({
+        filters: validatedEntities,
+        visualizationType: "network_graph",
+        networkDimension: dimension,
+        aggregation,
+        fetchedStudies: fetchResult.studies.length,
+        skippedMalformed: fetchResult.skipped_malformed + aggregation.skipped_malformed,
+        studiesWithMultiplePhases: 0,
+        truncated: fetchResult.truncated,
+      });
+      break;
     }
     default: {
       const _exhaustive: never = intent;

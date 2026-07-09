@@ -5,6 +5,8 @@ import {
   validEnrollmentMidStudy,
   validEnrollmentSmallStudy,
   validMultiPhaseStudy,
+  validNetworkSamePairSecondStudy,
+  validNetworkSingleInterventionStudy,
   validRelationshipStudy,
   validRelationshipStudySecondYear,
   validSinglePhaseStudy,
@@ -212,6 +214,79 @@ describe("buildVisualization", () => {
       { nct_id: "NCT00000301", enrollment_count: 120, year: 2020 },
       { nct_id: "NCT00000302", enrollment_count: 75, year: 2021 },
     ]);
+    expect(response.meta.fetched_studies).toBe(2);
+    expect(response.meta.skipped_malformed).toBe(0);
+    expect(response.meta.studies_with_multiple_phases).toBe(0);
+    expect(response.meta.truncated).toBe(false);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+
+  it("wires network interpretation into a valid network_graph response", async () => {
+    mockInterpretQuery.mockResolvedValue({
+      intent: "network",
+      entities: {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      network_dimension: "drug_sponsor",
+      suggested_viz_type: "network_graph",
+    });
+
+    mockFetchStudies.mockResolvedValue({
+      studies: [validNetworkSingleInterventionStudy, validNetworkSamePairSecondStudy],
+      pages_fetched: 1,
+      skipped_malformed: 0,
+      truncated: false,
+    });
+
+    const response = await buildVisualization({
+      query: "Which sponsors are running Pembrolizumab trials?",
+    });
+
+    expect(mockFetchStudies).toHaveBeenCalledWith(
+      {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      {
+        intent: "network",
+        fields: ["NCTId", "InterventionName", "LeadSponsorName"],
+      },
+    );
+
+    expect(response.visualization.type).toBe("network_graph");
+    expect(response.visualization.title).toBe("Drug–sponsor network for Pembrolizumab");
+    if (response.visualization.type !== "network_graph") {
+      throw new Error("expected network_graph");
+    }
+
+    expect(response.visualization.data.nodes).toEqual(
+      expect.arrayContaining([
+        {
+          id: "drug:pembrolizumab",
+          label: "Pembrolizumab",
+          entity_type: "drug",
+        },
+        {
+          id: "sponsor:merck-sharp-dohme-llc",
+          label: "Merck Sharp & Dohme LLC",
+          entity_type: "sponsor",
+        },
+      ]),
+    );
+    expect(response.visualization.data.edges).toEqual([
+      {
+        source: "drug:pembrolizumab",
+        target: "sponsor:merck-sharp-dohme-llc",
+        weight: 2,
+      },
+    ]);
+    for (const edge of response.visualization.data.edges) {
+      expect(edge).not.toHaveProperty("source_nct_ids");
+    }
+    expect(response.meta.network_dimension).toBe("drug_sponsor");
     expect(response.meta.fetched_studies).toBe(2);
     expect(response.meta.skipped_malformed).toBe(0);
     expect(response.meta.studies_with_multiple_phases).toBe(0);

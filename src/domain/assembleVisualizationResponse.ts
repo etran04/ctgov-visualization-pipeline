@@ -4,8 +4,10 @@ import type {
   RelationshipPoint,
   YearAggregationBin,
 } from "./aggregations/index.js";
+import type { BipartiteGraphResult } from "./network/types.js";
 import type { QueryEntities, VisualizationResponse } from "./schemas/index.js";
 import { VisualizationResponseSchema } from "./schemas/index.js";
+import type { NetworkDimension } from "./schemas/networkDimension.js";
 import type { VisualizationType } from "./intents/visualizationType.js";
 
 type BaseAssembleInput = {
@@ -36,11 +38,18 @@ type ScatterplotAssembleInput = BaseAssembleInput & {
   aggregation: RelationshipPoint[];
 };
 
+type NetworkGraphAssembleInput = BaseAssembleInput & {
+  visualizationType: "network_graph";
+  networkDimension: NetworkDimension;
+  aggregation: BipartiteGraphResult;
+};
+
 export type AssembleVisualizationResponseInput =
   | BarChartAssembleInput
   | LineChartAssembleInput
   | HistogramAssembleInput
-  | ScatterplotAssembleInput;
+  | ScatterplotAssembleInput
+  | NetworkGraphAssembleInput;
 
 const TITLE_PREFIX_BY_VIZ_TYPE = {
   bar_chart: "Trial phases for",
@@ -49,6 +58,10 @@ const TITLE_PREFIX_BY_VIZ_TYPE = {
   scatterplot: "Enrollment vs start year for",
   network_graph: "Drug–sponsor network for",
 } as const satisfies Record<VisualizationType, string>;
+
+const NETWORK_TITLE_PREFIX_BY_DIMENSION = {
+  drug_sponsor: "Drug–sponsor network for",
+} as const satisfies Record<NetworkDimension, string>;
 
 function buildFilterSubject(filters: QueryEntities): string {
   if (filters.drug_name && filters.condition) {
@@ -75,6 +88,13 @@ function buildTitle(
   visualizationType: VisualizationType,
 ): string {
   return `${TITLE_PREFIX_BY_VIZ_TYPE[visualizationType]} ${buildFilterSubject(filters)}`;
+}
+
+function buildNetworkTitle(
+  filters: QueryEntities,
+  networkDimension: NetworkDimension,
+): string {
+  return `${NETWORK_TITLE_PREFIX_BY_DIMENSION[networkDimension]} ${buildFilterSubject(filters)}`;
 }
 
 function buildMeta(input: BaseAssembleInput) {
@@ -196,6 +216,47 @@ export function assembleScatterplotResponse(
 }
 
 /**
+ * Build a network graph visualization response from bipartite graph aggregation output.
+ *
+ * Strips internal `source_nct_ids` from edges and validates against
+ * `VisualizationResponseSchema`.
+ */
+export function assembleNetworkGraphResponse(
+  input: NetworkGraphAssembleInput,
+): VisualizationResponse {
+  return VisualizationResponseSchema.parse({
+    visualization: {
+      type: "network_graph",
+      title: buildNetworkTitle(input.filters, input.networkDimension),
+      encoding: {
+        nodes: {
+          id: { field: "id", type: "nominal" },
+          label: { field: "label", type: "nominal" },
+          entity_type: { field: "entity_type", type: "nominal" },
+        },
+        edges: {
+          source: { field: "source", type: "nominal" },
+          target: { field: "target", type: "nominal" },
+          weight: { field: "weight", type: "quantitative" },
+        },
+      },
+      data: {
+        nodes: input.aggregation.nodes,
+        edges: input.aggregation.edges.map(({ source, target, weight }) => ({
+          source,
+          target,
+          weight,
+        })),
+      },
+    },
+    meta: {
+      ...buildMeta(input),
+      network_dimension: input.networkDimension,
+    },
+  });
+}
+
+/**
  * Build the final HTTP visualization response from aggregation output.
  *
  * Dispatches to the intent-specific assembler based on `visualizationType`.
@@ -212,6 +273,8 @@ export function assembleVisualizationResponse(
       return assembleHistogramResponse(input);
     case "scatterplot":
       return assembleScatterplotResponse(input);
+    case "network_graph":
+      return assembleNetworkGraphResponse(input);
     default: {
       const _exhaustive: never = input;
       throw new Error(

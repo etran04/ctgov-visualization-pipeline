@@ -1,8 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { VisualizationResponseSchema } from "../../src/domain/schemas/index.js";
+import { aggregateByNetwork } from "../../src/domain/aggregations/aggregateByNetwork.js";
 import { assembleVisualizationResponse } from "../../src/domain/assembleVisualizationResponse.js";
 import { ENROLLMENT_BIN_ORDER } from "../../src/domain/mappings/enrollmentBins.js";
 import { PHASE_BIN_ORDER } from "../../src/domain/mappings/phases.js";
+import {
+  validNetworkSamePairSecondStudy,
+  validNetworkSingleInterventionStudy,
+} from "../fixtures/ctgovStudies.js";
 
 const baseAggregation = PHASE_BIN_ORDER.map((phase) => ({
   phase,
@@ -291,6 +296,84 @@ describe("assembleScatterplotResponse", () => {
     });
 
     expect(response.visualization.data).toEqual(baseRelationshipAggregation);
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+});
+
+describe("assembleNetworkGraphResponse", () => {
+  const baseNetworkAggregation = aggregateByNetwork(
+    [validNetworkSingleInterventionStudy, validNetworkSamePairSecondStudy],
+    "drug_sponsor",
+    { drug_name: "Pembrolizumab" },
+  );
+
+  it("builds a drug-first title when both drug and condition are present", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: "Pembrolizumab",
+        condition: "lung cancer",
+        phase: null,
+      },
+      visualizationType: "network_graph",
+      networkDimension: "drug_sponsor",
+      aggregation: baseNetworkAggregation,
+      fetchedStudies: 12,
+      skippedMalformed: 2,
+      studiesWithMultiplePhases: 0,
+      truncated: false,
+    });
+
+    expect(response.visualization.title).toBe(
+      "Drug–sponsor network for Pembrolizumab in lung cancer",
+    );
+  });
+
+  it("strips source_nct_ids from edges and sets meta.network_dimension", () => {
+    const response = assembleVisualizationResponse({
+      filters: {
+        drug_name: "Pembrolizumab",
+        condition: null,
+        phase: null,
+      },
+      visualizationType: "network_graph",
+      networkDimension: "drug_sponsor",
+      aggregation: baseNetworkAggregation,
+      fetchedStudies: 2,
+      skippedMalformed: 0,
+      studiesWithMultiplePhases: 0,
+      truncated: false,
+    });
+
+    expect(response.visualization.type).toBe("network_graph");
+    if (response.visualization.type !== "network_graph") {
+      throw new Error("expected network_graph");
+    }
+
+    expect(response.visualization.encoding).toEqual({
+      nodes: {
+        id: { field: "id", type: "nominal" },
+        label: { field: "label", type: "nominal" },
+        entity_type: { field: "entity_type", type: "nominal" },
+      },
+      edges: {
+        source: { field: "source", type: "nominal" },
+        target: { field: "target", type: "nominal" },
+        weight: { field: "weight", type: "quantitative" },
+      },
+    });
+
+    for (const edge of response.visualization.data.edges) {
+      expect(edge).not.toHaveProperty("source_nct_ids");
+    }
+
+    expect(response.visualization.data.edges).toEqual([
+      {
+        source: "drug:pembrolizumab",
+        target: "sponsor:merck-sharp-dohme-llc",
+        weight: 2,
+      },
+    ]);
+    expect(response.meta.network_dimension).toBe("drug_sponsor");
     expect(VisualizationResponseSchema.parse(response)).toEqual(response);
   });
 });
