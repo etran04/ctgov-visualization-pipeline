@@ -103,6 +103,20 @@ function printLiveValidationSummary(response: VisualizationResponse): void {
     for (const point of viz.data) {
       console.log(`      ${point.bin_label.padEnd(16)} ${point.trial_count}`);
     }
+  } else if (viz.type === "scatterplot") {
+    const years = viz.data.map((point) => point.year);
+    const minYear = years.length > 0 ? Math.min(...years) : "—";
+    const maxYear = years.length > 0 ? Math.max(...years) : "—";
+    console.log(`      points: ${viz.data.length} (years ${minYear}–${maxYear})`);
+    const preview = viz.data.slice(0, 8);
+    for (const point of preview) {
+      console.log(
+        `      ${point.nct_id.padEnd(14)} enroll=${String(point.enrollment_count).padStart(5)} year=${point.year}`,
+      );
+    }
+    if (viz.data.length > preview.length) {
+      console.log(`      … ${viz.data.length - preview.length} more point(s) omitted`);
+    }
   }
 
   console.log(
@@ -171,21 +185,27 @@ function createFetchClient(baseUrl: string): HttpClient {
 
 function createSmokeCases(deps: {
   aggregateByEnrollment: typeof import("../src/domain/aggregations/index.js").aggregateByEnrollment;
+  aggregateByRelationship: typeof import("../src/domain/aggregations/index.js").aggregateByRelationship;
   aggregateByStartYear: typeof import("../src/domain/aggregations/index.js").aggregateByStartYear;
   assembleVisualizationResponse: typeof import("../src/domain/assembleVisualizationResponse.js").assembleVisualizationResponse;
   VisualizationResponseSchema: typeof import("../src/domain/schemas/index.js").VisualizationResponseSchema;
   validEnrollmentMidStudy: typeof import("../tests/fixtures/ctgovStudies.js").validEnrollmentMidStudy;
   validEnrollmentSmallStudy: typeof import("../tests/fixtures/ctgovStudies.js").validEnrollmentSmallStudy;
+  validRelationshipStudy: typeof import("../tests/fixtures/ctgovStudies.js").validRelationshipStudy;
+  validRelationshipStudySecondYear: typeof import("../tests/fixtures/ctgovStudies.js").validRelationshipStudySecondYear;
   validStudyGapYearStartDate: typeof import("../tests/fixtures/ctgovStudies.js").validStudyGapYearStartDate;
   validStudyIsoStartDate: typeof import("../tests/fixtures/ctgovStudies.js").validStudyIsoStartDate;
 }): SmokeCase[] {
   const {
     aggregateByEnrollment,
+    aggregateByRelationship,
     aggregateByStartYear,
     assembleVisualizationResponse,
     VisualizationResponseSchema,
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validRelationshipStudy,
+    validRelationshipStudySecondYear,
     validStudyGapYearStartDate,
     validStudyIsoStartDate,
   } = deps;
@@ -225,7 +245,7 @@ function createSmokeCases(deps: {
       },
     },
     {
-      name: "POST /visualize returns bar chart for Pembrolizumab query",
+      name: "POST /visualize returns bar chart for Pembrolizumab query [LIVE]",
       liveOnly: true,
       async run(client) {
         const response = await client.post("/visualize", {
@@ -253,7 +273,7 @@ function createSmokeCases(deps: {
       },
     },
     {
-      name: "POST /visualize returns line chart for Pembrolizumab timeline query",
+      name: "POST /visualize returns line chart for Pembrolizumab timeline query [LIVE]",
       liveOnly: true,
       async run(client) {
         const response = await client.post("/visualize", {
@@ -287,7 +307,7 @@ function createSmokeCases(deps: {
       },
     },
     {
-      name: "POST /visualize returns histogram for Pembrolizumab distribution query",
+      name: "POST /visualize returns histogram for Pembrolizumab distribution query [LIVE]",
       liveOnly: true,
       async run(client) {
         const response = await client.post("/visualize", {
@@ -317,6 +337,45 @@ function createSmokeCases(deps: {
               point.trial_count >= 0,
           ),
           "expected enrollment bins with non-negative trial counts",
+        );
+        assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
+        assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
+
+        return parsed.data;
+      },
+    },
+    {
+      name: "POST /visualize returns scatterplot for Pembrolizumab relationship query [LIVE]",
+      liveOnly: true,
+      async run(client) {
+        const response = await client.post("/visualize", {
+          query:
+            "What is the relationship between enrollment and start year for Pembrolizumab trials?",
+        });
+
+        assert(
+          response.statusCode === 200,
+          `expected 200, got ${response.statusCode}: ${JSON.stringify(response.body)}`,
+        );
+
+        const parsed = VisualizationResponseSchema.safeParse(response.body);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(parsed.data.visualization.type === "scatterplot", "expected scatterplot visualization");
+        assert(
+          parsed.data.visualization.title.includes("Pembrolizumab"),
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(parsed.data.visualization.data.length > 0, "expected at least one scatterplot point");
+        assert(
+          parsed.data.visualization.data.every(
+            (point) =>
+              typeof point.nct_id === "string" &&
+              Number.isInteger(point.enrollment_count) &&
+              point.enrollment_count > 0 &&
+              Number.isInteger(point.year),
+          ),
+          "expected per-study points with nct_id, positive enrollment, and year",
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
@@ -424,12 +483,67 @@ function createSmokeCases(deps: {
         }
       },
     },
+    {
+      name: "[MOCK] Relationship pipeline returns scatterplot with per-study points",
+      mocked: true,
+      async run() {
+        const aggregation = aggregateByRelationship([
+          validRelationshipStudy,
+          validRelationshipStudySecondYear,
+        ]);
+
+        const response = assembleVisualizationResponse({
+          filters: {
+            drug_name: "Pembrolizumab",
+            condition: null,
+            phase: null,
+          },
+          visualizationType: "scatterplot",
+          aggregation: aggregation.points,
+          fetchedStudies: 2,
+          skippedMalformed: 0,
+          studiesWithMultiplePhases: 0,
+          truncated: false,
+        });
+
+        const parsed = VisualizationResponseSchema.safeParse(response);
+        assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+        assert(parsed.data.visualization.type === "scatterplot", "expected scatterplot visualization");
+        assert(
+          parsed.data.visualization.title === "Enrollment vs start year for Pembrolizumab",
+          `unexpected title: ${parsed.data.visualization.title}`,
+        );
+        assert(parsed.data.visualization.data.length === 2, "expected two scatterplot points");
+        assert(
+          parsed.data.visualization.data.every(
+            (point) =>
+              typeof point.nct_id === "string" &&
+              Number.isInteger(point.enrollment_count) &&
+              Number.isInteger(point.year),
+          ),
+          "expected per-study points with nct_id, enrollment, and year",
+        );
+        assert(
+          parsed.data.visualization.data.some(
+            (point) => point.nct_id === "NCT00000301" && point.enrollment_count === 120 && point.year === 2020,
+          ),
+          "expected first relationship study as scatterplot point",
+        );
+        assert(
+          parsed.data.visualization.data.some(
+            (point) => point.nct_id === "NCT00000302" && point.enrollment_count === 75 && point.year === 2021,
+          ),
+          "expected second relationship study as scatterplot point",
+        );
+      },
+    },
   ];
 }
 
 async function main(): Promise<void> {
   const { config } = await import("../src/config.js");
-  const { aggregateByEnrollment, aggregateByStartYear } = await import(
+  const { aggregateByEnrollment, aggregateByRelationship, aggregateByStartYear } = await import(
     "../src/domain/aggregations/index.js"
   );
   const { assembleVisualizationResponse } = await import(
@@ -440,6 +554,8 @@ async function main(): Promise<void> {
   const {
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validRelationshipStudy,
+    validRelationshipStudySecondYear,
     validStudyGapYearStartDate,
     validStudyIsoStartDate,
   } = await import("../tests/fixtures/ctgovStudies.js");
@@ -450,11 +566,14 @@ async function main(): Promise<void> {
     : await createInjectClient(buildServer);
   const smokeCases = createSmokeCases({
     aggregateByEnrollment,
+    aggregateByRelationship,
     aggregateByStartYear,
     assembleVisualizationResponse,
     VisualizationResponseSchema,
     validEnrollmentMidStudy,
     validEnrollmentSmallStudy,
+    validRelationshipStudy,
+    validRelationshipStudySecondYear,
     validStudyGapYearStartDate,
     validStudyIsoStartDate,
   });

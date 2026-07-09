@@ -8,6 +8,7 @@
  *   npm run demo:comparison
  *   npm run demo:timeline
  *   npm run demo:distribution
+ *   npm run demo:relationship
  *   npm run demo -- timeline
  *   npm run demo -- --query "Compare trial phases for Pembrolizumab"
  *   npm run demo -- --list
@@ -30,6 +31,11 @@ const PRESETS = {
   distribution: {
     label: "distribution → histogram",
     query: "What is the enrollment distribution for Pembrolizumab trials?",
+  },
+  relationship: {
+    label: "relationship → scatterplot",
+    query:
+      "What is the relationship between enrollment and start year for Pembrolizumab trials?",
   },
 } as const;
 
@@ -113,6 +119,20 @@ function printSummary(response: VisualizationResponse): void {
     console.log(`bins: ${viz.data.length} (${zeroFilled} zero-filled)`);
     for (const point of viz.data) {
       console.log(`${point.bin_label.padEnd(16)} ${point.trial_count}`);
+    }
+  } else if (viz.type === "scatterplot") {
+    const years = viz.data.map((point) => point.year);
+    const minYear = years.length > 0 ? Math.min(...years) : "—";
+    const maxYear = years.length > 0 ? Math.max(...years) : "—";
+    console.log(`points: ${viz.data.length} (years ${minYear}–${maxYear})`);
+    const preview = viz.data.slice(0, 8);
+    for (const point of preview) {
+      console.log(
+        `${point.nct_id.padEnd(14)} enroll=${String(point.enrollment_count).padStart(5)} year=${point.year}`,
+      );
+    }
+    if (viz.data.length > preview.length) {
+      console.log(`… ${viz.data.length - preview.length} more point(s) omitted`);
     }
   }
 

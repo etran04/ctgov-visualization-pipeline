@@ -1,6 +1,6 @@
 # ClinicalTrials.gov Visualization Pipeline
 
-Turn natural-language clinical trial queries into visualization-ready JSON. The pipeline supports **comparison** queries (trial counts by phase → bar chart), **timeline** queries (trial counts by start year → line chart), and **distribution** queries (trial counts by enrollment bin → histogram), backed by live ClinicalTrials.gov data.
+Turn natural-language clinical trial queries into visualization-ready JSON. The pipeline supports **comparison** queries (trial counts by phase → bar chart), **timeline** queries (trial counts by start year → line chart), **distribution** queries (trial counts by enrollment bin → histogram), and **relationship** queries (enrollment vs start year per study → scatterplot), backed by live ClinicalTrials.gov data.
 
 ## Supported flows
 
@@ -9,8 +9,7 @@ Turn natural-language clinical trial queries into visualization-ready JSON. The 
 | `comparison` | `bar_chart` | trial count per **phase** | "Compare trial phases for Pembrolizumab" |
 | `trend_over_time` | `line_chart` | trial count per **start year** | "How have Pembrolizumab trials changed over time?" |
 | `distribution` | `histogram` | trial count per **enrollment bin** | "What is the enrollment distribution for Pembrolizumab trials?" |
-
-**Deferred (V2c):** `relationship` → `scatterplot` (enrollment vs start year).
+| `relationship` | `scatterplot` | **one point per study** (enrollment vs start year) | "What is the relationship between enrollment and start year for Pembrolizumab trials?" |
 
 ## Setup
 
@@ -49,6 +48,7 @@ npm run demo                # default: comparison preset
 npm run demo:comparison     # phase comparison → bar chart
 npm run demo:timeline       # start-year trend → line chart
 npm run demo:distribution   # enrollment distribution → histogram
+npm run demo:relationship   # enrollment vs start year → scatterplot
 npm run demo -- --query "Compare trial phases for Pembrolizumab"
 npm run demo -- --list      # show available presets
 ```
@@ -62,8 +62,8 @@ npm test
 Other useful scripts:
 
 - `npm run typecheck` — TypeScript compile check
-- `npm run smoke` — in-process HTTP smoke tests plus mocked timeline and histogram cases (no live APIs)
-- `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, timeline, and distribution queries
+- `npm run smoke` — in-process HTTP smoke tests plus mocked timeline, histogram, and scatterplot cases (no live APIs)
+- `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, timeline, distribution, and relationship queries
 
 With the server running, interactive API docs are available at `http://localhost:3000/docs` (or your configured `PORT`).
 
@@ -71,7 +71,7 @@ With the server running, interactive API docs are available at `http://localhost
 
 ### `POST /visualize`
 
-Interpret a natural-language query and return a visualization specification (`bar_chart`, `line_chart`, or `histogram`).
+Interpret a natural-language query and return a visualization specification (`bar_chart`, `line_chart`, `histogram`, or `scatterplot`).
 
 **Request**
 
@@ -194,6 +194,39 @@ Year bins span from the minimum to maximum start year in the fetched studies (in
 
 Enrollment bins always include all six fixed categories (`1–50`, `51–100`, `101–500`, `501–1,000`, `1,001–5,000`, `5,001+`), zero-filled when no trials match. Each study maps to exactly one bin based on `protocolSection.designModule.enrollmentInfo.count`. Studies with missing, non-numeric, or non-positive enrollment are skipped and counted in `meta.skipped_malformed`.
 
+**Success response — scatterplot (`200`)**
+
+```json
+{
+  "visualization": {
+    "type": "scatterplot",
+    "title": "Enrollment vs start year for Pembrolizumab",
+    "encoding": {
+      "x": { "field": "enrollment_count", "type": "quantitative" },
+      "y": { "field": "year", "type": "temporal" }
+    },
+    "data": [
+      { "nct_id": "NCT00000301", "enrollment_count": 120, "year": 2020 },
+      { "nct_id": "NCT00000302", "enrollment_count": 75, "year": 2021 }
+    ]
+  },
+  "meta": {
+    "filters": {
+      "drug_name": "Pembrolizumab",
+      "condition": null,
+      "phase": null
+    },
+    "source": "clinicaltrials.gov",
+    "fetched_studies": 60,
+    "skipped_malformed": 3,
+    "studies_with_multiple_phases": 0,
+    "truncated": false
+  }
+}
+```
+
+Each valid study becomes one scatterplot point (`x = enrollment_count`, `y = year`). Every point includes `nct_id` for tooltips and CT.gov links. Studies missing either dimension (non-positive enrollment or unparseable start date) are skipped and counted in `meta.skipped_malformed`. There is no binning or zero-fill — only studies with both valid enrollment and start year appear as points. Large result sets return all valid points; pagination limits are reflected in `meta.truncated`.
+
 **Error response**
 
 ```json
@@ -208,7 +241,7 @@ Enrollment bins always include all six fixed categories (`1–50`, `51–100`, `
 | HTTP | Code | When |
 |------|------|------|
 | 400 | `INVALID_REQUEST` | Malformed or empty request body |
-| 400 | `UNSUPPORTED_INTENT` | Intent outside supported set (`comparison`, `trend_over_time`, `distribution`) |
+| 400 | `UNSUPPORTED_INTENT` | Intent outside supported set (`comparison`, `trend_over_time`, `distribution`, `relationship`) |
 | 404 | `NO_STUDIES_FOUND` | CT.gov returned zero studies |
 | 422 | `INVALID_PARAMETERS` | No usable entity filters after validation |
 | 422 | `NO_AGGREGATABLE_DATA` | Studies fetched but none had mappable phase, start-date, or enrollment data |
@@ -241,6 +274,14 @@ curl -X POST http://localhost:3000/visualize \
   -d '{"query": "What is the enrollment distribution for Pembrolizumab trials?"}'
 ```
 
+Relationship (scatterplot):
+
+```bash
+curl -X POST http://localhost:3000/visualize \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What is the relationship between enrollment and start year for Pembrolizumab trials?"}'
+```
+
 ## Architecture
 
 Layered pipeline with a thin orchestrator (`buildVisualization`):
@@ -248,8 +289,8 @@ Layered pipeline with a thin orchestrator (`buildVisualization`):
 1. **Interpret** — OpenAI structured output extracts entities and intent
 2. **Validate** — trim and require at least one filter (`drug_name`, `condition`, or `phase`)
 3. **Fetch** — paginated ClinicalTrials.gov `/studies` with intent-specific fields
-4. **Aggregate** — deterministic bin counts (phase bins, start-year bins, or enrollment bins with zero-fill)
-5. **Resolve** — map intent → visualization type (`comparison` → `bar_chart`, `trend_over_time` → `line_chart`, `distribution` → `histogram`)
+4. **Aggregate** — deterministic bin counts (phase bins, start-year bins, enrollment bins with zero-fill) or per-study relationship points
+5. **Resolve** — map intent → visualization type (`comparison` → `bar_chart`, `trend_over_time` → `line_chart`, `distribution` → `histogram`, `relationship` → `scatterplot`)
 6. **Assemble** — build title, encoding, data, and meta; validate against Zod schema
 
 LLM calls live in `src/externals/`; aggregation and response shaping are deterministic in `src/domain/`.
@@ -259,8 +300,8 @@ LLM calls live in `src/externals/`; aggregation and response shaping are determi
 - **Phase zero-fill (V1):** All six phase categories appear in every bar chart response, even when empty. Stable axes and honest gaps.
 - **Year zero-fill (V2):** All years from min to max start year appear in line chart responses. Gap years use `trial_count: 0` so clients do not interpolate across missing data.
 - **Enrollment zero-fill (V2b):** All six fixed enrollment bins appear in every histogram response, even when empty. Each study contributes to exactly one bin; the top bin (`5,001+`) is open-ended.
-- **Deferred V2c:** Enrollment-vs-year relationship (`scatterplot`) will reuse the same intent-dispatch pattern and enrollment parsing added for distribution.
+- **Per-study scatter (V2c):** Relationship queries return one point per valid study with `nct_id`, `enrollment_count`, and `year`. No binning or zero-fill — unlike histogram and line chart paths. Studies missing either dimension are skipped; all valid points are returned (subject to CT.gov pagination via `meta.truncated`).
 
 ## Testing
 
-Unit tests cover deterministic domain logic (`npm test`). `npm run demo` runs the full pipeline for a preset or custom query. `npm run smoke` includes HTTP validation plus mocked timeline and histogram cases that do not call live APIs.
+Unit tests cover deterministic domain logic (`npm test`). `npm run demo` runs the full pipeline for a preset or custom query. `npm run smoke` includes HTTP validation plus mocked timeline, histogram, and scatterplot cases that do not call live APIs.
