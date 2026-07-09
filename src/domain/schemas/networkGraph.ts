@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ChartTitleSchema } from "./shared.js";
+import { ChartTitleSchema, OptionalCitationsSchema } from "./shared.js";
 
 const NominalFieldSchema = z.object({
   field: z.string(),
@@ -21,6 +21,7 @@ const NetworkEdgeSchema = z.object({
   source: z.string(),
   target: z.string(),
   weight: z.number().int().min(1),
+  citations: OptionalCitationsSchema,
 });
 
 export const NetworkGraphVisualizationSchema = z.object({

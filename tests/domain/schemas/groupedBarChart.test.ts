@@ -14,7 +14,12 @@ describe("GroupedBarChartVisualizationSchema", () => {
         color: { field: "series", type: "nominal" },
       },
       data: [
-        { phase: "Phase 1", series: "Metformin", trial_count: 120 },
+        {
+          phase: "Phase 1",
+          series: "Metformin",
+          trial_count: 120,
+          citations: [{ nct_id: "NCT00000001", excerpt: "Metformin Phase 1 Study" }],
+        },
         { phase: "Phase 1", series: "Pembrolizumab", trial_count: 1031 },
         { phase: "Phase 2", series: "Metformin", trial_count: 85 },
         { phase: "Phase 2", series: "Pembrolizumab", trial_count: 400 },

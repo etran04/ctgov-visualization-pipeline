@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   ChartTitleSchema,
+  OptionalCitationsSchema,
   QuantitativeTrialCountAxisSchema,
   TrialCountSchema,
 } from "./shared.js";
@@ -9,6 +10,7 @@ const GroupedBarChartDataPointSchema = z.object({
   phase: z.string(),
   series: z.string(),
   trial_count: TrialCountSchema,
+  citations: OptionalCitationsSchema,
 });
 
 export const GroupedBarChartVisualizationSchema = z.object({

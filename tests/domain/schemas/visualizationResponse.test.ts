@@ -37,6 +37,12 @@ describe("VisualizationResponseSchema", () => {
               source: "drug:pembrolizumab",
               target: "sponsor:merck-sharp-dohme-llc",
               weight: 12,
+              citations: [
+                {
+                  nct_id: "NCT03615326",
+                  excerpt: "Study of Pembrolizumab in Advanced Melanoma",
+                },
+              ],
             },
           ],
         },
