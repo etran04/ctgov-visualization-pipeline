@@ -1,0 +1,61 @@
+{
+  "request": {
+    "query": "Compare trial phases for Metformin"
+  },
+  "response": {
+    "visualization": {
+      "type": "bar_chart",
+      "title": "Trial phases for Metformin",
+      "encoding": {
+        "x": {
+          "field": "phase",
+          "type": "nominal"
+        },
+        "y": {
+          "field": "trial_count",
+          "type": "quantitative"
+        }
+      },
+      "data": [
+        {
+          "phase": "Phase 1",
+          "trial_count": 557
+        },
+        {
+          "phase": "Phase 2",
+          "trial_count": 643
+        },
+        {
+          "phase": "Phase 3",
+          "trial_count": 749
+        },
+        {
+          "phase": "Phase 4",
+          "trial_count": 617
+        },
+        {
+          "phase": "Early Phase 1",
+          "trial_count": 61
+        },
+        {
+          "phase": "Not Applicable",
+          "trial_count": 397
+        }
+      ]
+    },
+    "meta": {
+      "filters": {
+        "drug_name": "Metformin",
+        "condition": null,
+        "phase": null
+      },
+      "source": "clinicaltrials.gov",
+      "fetched_studies": 2886,
+      "skipped_malformed": 192,
+      "studies_with_multiple_phases": 138,
+      "truncated": false
+    }
+  },
+  "generated_at": "2026-07-09T01:09:33.753Z",
+  "preset": "comparison"
+}

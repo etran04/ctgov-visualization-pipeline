@@ -66,6 +66,7 @@ Other useful scripts:
 - `npm run typecheck` — TypeScript compile check
 - `npm run smoke` — in-process HTTP smoke tests plus mocked timeline, histogram, scatterplot, and network cases (no live APIs)
 - `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, timeline, distribution, relationship, and network queries
+- `npm run examples:generate` — regenerate committed JSON outputs in `examples/`
 - `npm run smoke:live:llm` — live OpenAI routing checks only (network vs relationship disambiguation)
 
 With the server running, interactive API docs are available at `http://localhost:3000/docs` (or your configured `PORT`).
@@ -339,6 +340,20 @@ curl -X POST http://localhost:3000/visualize \
   -H "Content-Type: application/json" \
   -d '{"query": "Which sponsors are running Pembrolizumab trials?"}'
 ```
+
+## Example runs
+
+Committed outputs from live pipeline runs (OpenAI + ClinicalTrials.gov) are in [`examples/`](examples/). Each file includes the request query, full response JSON, and generation timestamp. Examples use varied drugs and conditions (Metformin, Nivolumab, breast cancer, type 2 diabetes, melanoma).
+
+| File | Query focus | Visualization |
+|------|-------------|---------------|
+| [`examples/01-comparison-bar-chart.json`](examples/01-comparison-bar-chart.json) | Metformin phases | `bar_chart` |
+| [`examples/02-timeline-line-chart.json`](examples/02-timeline-line-chart.json) | Breast cancer over time | `line_chart` |
+| [`examples/03-distribution-histogram.json`](examples/03-distribution-histogram.json) | Nivolumab enrollment | `histogram` |
+| [`examples/04-relationship-scatterplot.json`](examples/04-relationship-scatterplot.json) | Type 2 diabetes enrollment vs year | `scatterplot` |
+| [`examples/05-network-drug-sponsor.json`](examples/05-network-drug-sponsor.json) | Melanoma sponsor network | `network_graph` |
+
+Regenerate with `npm run examples:generate` (requires `OPENAI_API_KEY`). Scatterplot and network outputs are larger because they return per-study points or full graphs.
 
 ## Architecture
 

@@ -15,6 +15,7 @@
     "demo:distribution": "tsx scripts/runDemo.ts distribution",
     "demo:relationship": "tsx scripts/runDemo.ts relationship",
     "demo:network": "tsx scripts/runDemo.ts network",
+    "examples:generate": "tsx scripts/generateExamples.ts",
     "smoke": "tsx scripts/smokeTest.ts",
     "smoke:live": "tsx scripts/smokeTest.ts --live",
     "smoke:live:llm": "tsx scripts/smokeTest.ts --llm-routing",
