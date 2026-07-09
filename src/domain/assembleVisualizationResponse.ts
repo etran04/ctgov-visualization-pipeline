@@ -6,6 +6,7 @@ import type {
   YearAggregationBin,
 } from "./aggregations/index.js";
 import { buildCitations } from "./citations/index.js";
+import { buildAssumptions } from "./meta/buildAssumptions.js";
 import type { BipartiteGraphResult } from "./network/types.js";
 import type { QueryEntities, VisualizationResponse } from "./schemas/index.js";
 import { VisualizationResponseSchema } from "./schemas/index.js";
@@ -130,7 +131,14 @@ function buildNetworkTitle(
   return `${NETWORK_TITLE_PREFIX_BY_DIMENSION[networkDimension]} ${buildFilterSubject(filters)}`;
 }
 
-function buildMeta(input: BaseAssembleInput) {
+function buildMeta(
+  input: BaseAssembleInput,
+  context: {
+    visualizationType: VisualizationType;
+    comparisonTargets?: string[];
+    networkDimension?: NetworkDimension;
+  },
+) {
   return {
     filters: input.filters,
     source: "clinicaltrials.gov" as const,
@@ -138,6 +146,14 @@ function buildMeta(input: BaseAssembleInput) {
     skipped_malformed: input.skippedMalformed,
     studies_with_multiple_phases: input.studiesWithMultiplePhases,
     truncated: input.truncated,
+    assumptions: buildAssumptions({
+      visualizationType: context.visualizationType,
+      truncated: input.truncated,
+      skippedMalformed: input.skippedMalformed,
+      studiesWithMultiplePhases: input.studiesWithMultiplePhases,
+      comparisonTargets: context.comparisonTargets,
+      networkDimension: context.networkDimension,
+    }),
   };
 }
 
@@ -187,7 +203,13 @@ export function assembleGroupedBarChartResponse(
       ),
     },
     meta: {
-      ...buildMeta({ ...input, filters }),
+      ...buildMeta(
+        { ...input, filters },
+        {
+          visualizationType: "grouped_bar_chart",
+          comparisonTargets: input.comparisonTargets,
+        },
+      ),
       comparison_targets: input.comparisonTargets,
       comparison_dimension: "phase",
     },
@@ -222,7 +244,7 @@ export function assembleBarChartResponse(
         ),
       ),
     },
-    meta: buildMeta(input),
+    meta: buildMeta(input, { visualizationType: "bar_chart" }),
   });
 }
 
@@ -254,7 +276,7 @@ export function assembleLineChartResponse(
         ),
       ),
     },
-    meta: buildMeta(input),
+    meta: buildMeta(input, { visualizationType: "line_chart" }),
   });
 }
 
@@ -288,7 +310,7 @@ export function assembleHistogramResponse(
         ),
       ),
     },
-    meta: buildMeta(input),
+    meta: buildMeta(input, { visualizationType: "histogram" }),
   });
 }
 
@@ -321,7 +343,7 @@ export function assembleScatterplotResponse(
         ),
       ),
     },
-    meta: buildMeta(input),
+    meta: buildMeta(input, { visualizationType: "scatterplot" }),
   });
 }
 
@@ -358,7 +380,10 @@ export function assembleNetworkGraphResponse(
       },
     },
     meta: {
-      ...buildMeta(input),
+      ...buildMeta(input, {
+        visualizationType: "network_graph",
+        networkDimension: input.networkDimension,
+      }),
       network_dimension: input.networkDimension,
     },
   });

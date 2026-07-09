@@ -64,6 +64,9 @@ describe("VisualizationResponseSchema", () => {
         skipped_malformed: 3,
         studies_with_multiple_phases: 0,
         truncated: false,
+        assumptions: [
+          "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+        ],
       },
     };
 
@@ -107,6 +110,9 @@ describe("VisualizationResponseSchema", () => {
         skipped_malformed: 0,
         studies_with_multiple_phases: 0,
         truncated: false,
+        assumptions: [
+          "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+        ],
       },
     };
 

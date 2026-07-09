@@ -12,4 +12,5 @@ export const VisualizationMetaSchema = z.object({
   skipped_malformed: z.number().int().nonnegative(),
   studies_with_multiple_phases: z.number().int().nonnegative(),
   truncated: z.boolean(),
+  assumptions: z.array(z.string()),
 });

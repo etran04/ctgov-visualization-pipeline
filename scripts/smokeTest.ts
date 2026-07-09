@@ -16,6 +16,7 @@
  *   npm run smoke:live:llm
  *
  * Live cases print a compact validation summary (no internal source_nct_ids).
+ * Success cases assert meta.assumptions, citations on populated datums, and stripped source_nct_ids.
  * Pipeline logs are suppressed; pass --verbose to see full pipeline output.
  */
 import "dotenv/config";
@@ -168,6 +169,87 @@ function assertCitationsOnNonemptyDatums(visualization: VisualizationResponse["v
   }
 }
 
+function assertMetaAssumptions(
+  meta: VisualizationResponse["meta"],
+  visualizationType: VisualizationType,
+): void {
+  assert(Array.isArray(meta.assumptions), "expected meta.assumptions array");
+  assert(meta.assumptions.length >= 3, "expected at least three assumption notes");
+  assert(
+    meta.assumptions.every((note) => typeof note === "string" && note.trim().length > 0),
+    "expected non-empty assumption strings",
+  );
+  assert(
+    meta.assumptions.some((note) => note.includes("LLM")),
+    "expected interpretation assumption note",
+  );
+  assert(
+    meta.assumptions.some((note) => note.includes("10")),
+    "expected citation cap assumption note",
+  );
+
+  const vizPolicySubstring: Record<VisualizationType, string> = {
+    bar_chart: "Phase bins",
+    grouped_bar_chart: "Compared",
+    line_chart: "Year bins",
+    histogram: "Enrollment uses six fixed bins",
+    scatterplot: "One scatterplot point per valid study",
+    network_graph: "Network topology is",
+  };
+
+  assert(
+    meta.assumptions.some((note) => note.includes(vizPolicySubstring[visualizationType])),
+    `expected ${visualizationType} policy assumption note`,
+  );
+
+  if (visualizationType === "grouped_bar_chart") {
+    assert(
+      meta.comparison_targets !== undefined &&
+        meta.comparison_targets !== null &&
+        meta.assumptions.some((note) =>
+          note.includes(String(meta.comparison_targets!.length)),
+        ),
+      "expected grouped comparison target count in assumptions",
+    );
+  }
+
+  if (visualizationType === "network_graph") {
+    assert(
+      meta.assumptions.some((note) =>
+        note.includes(meta.network_dimension ?? "drug_sponsor"),
+      ),
+      "expected network dimension in assumptions",
+    );
+  }
+
+  if (meta.truncated) {
+    assert(
+      meta.assumptions.some((note) => note.includes("pagination")),
+      "expected truncation assumption when meta.truncated is true",
+    );
+  }
+
+  if (meta.skipped_malformed > 0) {
+    assert(
+      meta.assumptions.some((note) => note.includes("skipped")),
+      "expected skipped-studies assumption when skipped_malformed > 0",
+    );
+  }
+
+  if (meta.studies_with_multiple_phases > 0) {
+    assert(
+      meta.assumptions.some((note) => note.includes("multiple phases")),
+      "expected multi-phase assumption when studies_with_multiple_phases > 0",
+    );
+  }
+}
+
+function assertSuccessfulVisualization(response: VisualizationResponse): void {
+  assertNoSourceNctIds(response.visualization);
+  assertCitationsOnNonemptyDatums(response.visualization);
+  assertMetaAssumptions(response.meta, response.visualization.type);
+}
+
 /** Human-readable snapshot of a live visualization response for manual validation. */
 function printLiveValidationSummary(response: VisualizationResponse): void {
   const { visualization: viz, meta } = response;
@@ -254,8 +336,12 @@ function printLiveValidationSummary(response: VisualizationResponse): void {
 
   console.log(
     `      meta:  fetched=${meta.fetched_studies}, skipped=${meta.skipped_malformed}, ` +
-      `multi_phase=${meta.studies_with_multiple_phases}, truncated=${meta.truncated}`,
+      `multi_phase=${meta.studies_with_multiple_phases}, truncated=${meta.truncated}, ` +
+      `assumptions=${meta.assumptions.length}`,
   );
+  if (meta.assumptions.length > 0) {
+    console.log(`      assumptions[0]: ${meta.assumptions[0]}`);
+  }
 }
 
 async function createInjectClient(
@@ -378,8 +464,7 @@ function createSmokeCases(deps: {
       `expected ${expectedType} for query "${query}", got ${parsed.data.visualization.type}`,
     );
     assertMeta?.(parsed.data.meta);
-    assertNoSourceNctIds(parsed.data.visualization);
-    assertCitationsOnNonemptyDatums(parsed.data.visualization);
+    assertSuccessfulVisualization(parsed.data);
 
     return parsed.data;
   }
@@ -442,8 +527,7 @@ function createSmokeCases(deps: {
         assert(parsed.data.visualization.data.length === 6, "expected six phase bins");
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
-        assertNoSourceNctIds(parsed.data.visualization);
-        assertCitationsOnNonemptyDatums(parsed.data.visualization);
+        assertSuccessfulVisualization(parsed.data);
 
         return parsed.data;
       },
@@ -483,8 +567,7 @@ function createSmokeCases(deps: {
         assert(parsed.data.visualization.data.length >= 12, "expected phase bins × series rows");
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
-        assertNoSourceNctIds(parsed.data.visualization);
-        assertCitationsOnNonemptyDatums(parsed.data.visualization);
+        assertSuccessfulVisualization(parsed.data);
 
         return parsed.data;
       },
@@ -519,8 +602,7 @@ function createSmokeCases(deps: {
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
-        assertNoSourceNctIds(parsed.data.visualization);
-        assertCitationsOnNonemptyDatums(parsed.data.visualization);
+        assertSuccessfulVisualization(parsed.data);
 
         return parsed.data;
       },
@@ -559,8 +641,7 @@ function createSmokeCases(deps: {
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
-        assertNoSourceNctIds(parsed.data.visualization);
-        assertCitationsOnNonemptyDatums(parsed.data.visualization);
+        assertSuccessfulVisualization(parsed.data);
 
         return parsed.data;
       },
@@ -601,8 +682,7 @@ function createSmokeCases(deps: {
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
-        assertNoSourceNctIds(parsed.data.visualization);
-        assertCitationsOnNonemptyDatums(parsed.data.visualization);
+        assertSuccessfulVisualization(parsed.data);
 
         return parsed.data;
       },
@@ -662,8 +742,7 @@ function createSmokeCases(deps: {
         );
         assert(parsed.data.meta.fetched_studies > 0, "expected fetched_studies > 0");
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
-        assertNoSourceNctIds(parsed.data.visualization);
-        assertCitationsOnNonemptyDatums(parsed.data.visualization);
+        assertSuccessfulVisualization(parsed.data);
 
         return parsed.data;
       },
@@ -764,6 +843,7 @@ function createSmokeCases(deps: {
           ),
           "expected zero-filled gap year 2022",
         );
+        assertMetaAssumptions(parsed.data.meta, "line_chart");
       },
     },
     {
@@ -858,7 +938,7 @@ function createSmokeCases(deps: {
             bin100.citations[0]?.excerpt === "Mid-enrollment Pembrolizumab study",
           "expected citations on 51–100 enrollment bin",
         );
-        assertCitationsOnNonemptyDatums(parsed.data.visualization);
+        assertSuccessfulVisualization(parsed.data);
       },
     },
     {
@@ -919,6 +999,7 @@ function createSmokeCases(deps: {
           ),
           "expected second relationship study as scatterplot point",
         );
+        assertMetaAssumptions(parsed.data.meta, "scatterplot");
       },
     },
     {
@@ -974,6 +1055,7 @@ function createSmokeCases(deps: {
         for (const edge of parsed.data.visualization.data.edges) {
           assert(!("source_nct_ids" in edge), "expected source_nct_ids stripped from edges");
         }
+        assertMetaAssumptions(parsed.data.meta, "network_graph");
       },
     },
     {
@@ -1032,6 +1114,7 @@ function createSmokeCases(deps: {
         for (const point of parsed.data.visualization.data) {
           assert(!("source_nct_ids" in point), "expected source_nct_ids stripped from data");
         }
+        assertMetaAssumptions(parsed.data.meta, "grouped_bar_chart");
       },
     },
   ];

@@ -45,6 +45,10 @@ describe("assembleBarChartResponse", () => {
     expect(response.visualization.title).toBe(
       "Trial phases for Pembrolizumab in lung cancer",
     );
+    expect(response.meta.assumptions.length).toBeGreaterThan(0);
+    expect(response.meta.assumptions.some((note) => note.includes("Phase bins"))).toBe(
+      true,
+    );
   });
 
   it("builds a condition-only title when only condition is present", () => {

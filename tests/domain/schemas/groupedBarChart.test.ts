@@ -50,6 +50,9 @@ describe("VisualizationMetaSchema grouped comparison fields", () => {
       skipped_malformed: 12,
       studies_with_multiple_phases: 508,
       truncated: false,
+      assumptions: [
+        "Query intent and entity filters were interpreted by the LLM and validated before fetching from ClinicalTrials.gov.",
+      ],
     };
 
     expect(VisualizationMetaSchema.parse(meta)).toEqual(meta);

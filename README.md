@@ -353,6 +353,8 @@ Non-empty bar, grouped bar, line, histogram, and scatterplot data points — and
 
 Internal `source_nct_ids` collected during aggregation are never exposed in HTTP responses.
 
+`meta.assumptions` lists interpretation notes, aggregation policies (zero-fill, binning), and data caveats (truncation, skipped studies).
+
 **Error response**
 
 ```json
@@ -553,7 +555,6 @@ Known limitations and next steps if given more time:
 - Additional network topologies via dimension registry: `drug_condition`, `sponsor_condition`, drug–drug co-occurrence
 - Extend grouped comparison beyond phase (e.g. enrollment bins on the x-axis) and beyond drug series (e.g. condition-vs-condition)
 - Geographic breakdowns (country/site nodes) using `contactsLocationsModule`
-- `meta.assumptions` — log interpretation choices, zero-fill policy, truncation warnings
 
 ### Agent & resilience
 
