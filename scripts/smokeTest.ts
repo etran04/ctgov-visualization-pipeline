@@ -12,6 +12,9 @@
  *   npm run smoke:live
  *   npm run smoke:live:running
  *
+ * LLM intent routing only (OpenAI + CT.gov, network vs relationship disambiguation):
+ *   npm run smoke:live:llm
+ *
  * Live cases print a compact validation summary (no internal source_nct_ids).
  * Pipeline logs are suppressed; pass --verbose to see full pipeline output.
  */
@@ -34,12 +37,17 @@ type SmokeCase = {
   name: string;
   run: (client: HttpClient) => Promise<VisualizationResponse | void>;
   liveOnly?: boolean;
+  /** Live OpenAI routing check (network vs relationship, etc.). */
+  llmRouting?: boolean;
   /** Runs without HTTP; uses fixture data instead of live OpenAI / CT.gov. */
   mocked?: boolean;
 };
 
+type VisualizationType = VisualizationResponse["visualization"]["type"];
+
 function parseArgs(argv: string[], defaultPort: number) {
-  const live = argv.includes("--live");
+  const llmRouting = argv.includes("--llm-routing");
+  const live = argv.includes("--live") || llmRouting;
   const running = argv.includes("--running");
   const verbose = argv.includes("--verbose");
   const urlIndex = argv.indexOf("--url");
@@ -50,7 +58,7 @@ function parseArgs(argv: string[], defaultPort: number) {
     throw new Error("--url requires a value, e.g. --url http://127.0.0.1:3001");
   }
 
-  return { live, running, verbose, baseUrl };
+  return { live, llmRouting, running, verbose, baseUrl };
 }
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -237,6 +245,31 @@ function createSmokeCases(deps: {
     validStudyIsoStartDate,
   } = deps;
 
+  async function assertLiveLlmRouting(
+    client: HttpClient,
+    query: string,
+    expectedType: VisualizationType,
+    assertMeta?: (meta: VisualizationResponse["meta"]) => void,
+  ): Promise<VisualizationResponse> {
+    const response = await client.post("/visualize", { query });
+
+    assert(
+      response.statusCode === 200,
+      `expected 200, got ${response.statusCode}: ${JSON.stringify(response.body)}`,
+    );
+
+    const parsed = VisualizationResponseSchema.safeParse(response.body);
+    assert(parsed.success, `response failed schema validation: ${parsed.error?.message}`);
+
+    assert(
+      parsed.data.visualization.type === expectedType,
+      `expected ${expectedType} for query "${query}", got ${parsed.data.visualization.type}`,
+    );
+    assertMeta?.(parsed.data.meta);
+
+    return parsed.data;
+  }
+
   return [
     {
       name: "GET /health returns 200",
@@ -272,7 +305,7 @@ function createSmokeCases(deps: {
       },
     },
     {
-      name: "POST /visualize returns bar chart for Pembrolizumab query [LIVE]",
+      name: "[LIVE] POST /visualize returns bar chart for Pembrolizumab query",
       liveOnly: true,
       async run(client) {
         const response = await client.post("/visualize", {
@@ -300,7 +333,7 @@ function createSmokeCases(deps: {
       },
     },
     {
-      name: "POST /visualize returns line chart for Pembrolizumab timeline query [LIVE]",
+      name: "[LIVE] POST /visualize returns line chart for Pembrolizumab timeline query",
       liveOnly: true,
       async run(client) {
         const response = await client.post("/visualize", {
@@ -334,7 +367,7 @@ function createSmokeCases(deps: {
       },
     },
     {
-      name: "POST /visualize returns histogram for Pembrolizumab distribution query [LIVE]",
+      name: "[LIVE] POST /visualize returns histogram for Pembrolizumab distribution query",
       liveOnly: true,
       async run(client) {
         const response = await client.post("/visualize", {
@@ -372,8 +405,9 @@ function createSmokeCases(deps: {
       },
     },
     {
-      name: "POST /visualize returns scatterplot for Pembrolizumab relationship query [LIVE]",
+      name: "[LIVE] POST /visualize returns scatterplot for Pembrolizumab relationship query",
       liveOnly: true,
+      llmRouting: true,
       async run(client) {
         const response = await client.post("/visualize", {
           query:
@@ -411,8 +445,9 @@ function createSmokeCases(deps: {
       },
     },
     {
-      name: "POST /visualize returns network graph for Pembrolizumab sponsor query [LIVE]",
+      name: "[LIVE] POST /visualize returns network graph for Pembrolizumab sponsor query",
       liveOnly: true,
+      llmRouting: true,
       async run(client) {
         const response = await client.post("/visualize", {
           query: "Which sponsors are running Pembrolizumab trials?",
@@ -466,6 +501,54 @@ function createSmokeCases(deps: {
         assert(parsed.data.meta.source === "clinicaltrials.gov", "unexpected meta.source");
 
         return parsed.data;
+      },
+    },
+    {
+      name: "[LIVE LLM] routes who-is-sponsoring phrasing to network_graph",
+      liveOnly: true,
+      llmRouting: true,
+      async run(client) {
+        return assertLiveLlmRouting(
+          client,
+          "Who is sponsoring Pembrolizumab trials?",
+          "network_graph",
+          (meta) => {
+            assert(meta.network_dimension === "drug_sponsor", "expected drug_sponsor dimension");
+          },
+        );
+      },
+    },
+    {
+      name: "[LIVE LLM] routes network-of-sponsors phrasing to network_graph",
+      liveOnly: true,
+      llmRouting: true,
+      async run(client) {
+        return assertLiveLlmRouting(
+          client,
+          "Network of sponsors studying Pembrolizumab",
+          "network_graph",
+          (meta) => {
+            assert(meta.network_dimension === "drug_sponsor", "expected drug_sponsor dimension");
+          },
+        );
+      },
+    },
+    {
+      name: "[LIVE LLM] routes enrollment-vs-year phrasing to scatterplot",
+      liveOnly: true,
+      llmRouting: true,
+      async run(client) {
+        return assertLiveLlmRouting(
+          client,
+          "Enrollment vs start year for Pembrolizumab trials",
+          "scatterplot",
+          (meta) => {
+            assert(
+              meta.network_dimension === undefined || meta.network_dimension === null,
+              "expected no network_dimension on scatterplot response",
+            );
+          },
+        );
       },
     },
     {
@@ -697,7 +780,7 @@ async function main(): Promise<void> {
     validStudyIsoStartDate,
   } = await import("../tests/fixtures/ctgovStudies.js");
 
-  const { live, running, verbose, baseUrl } = parseArgs(process.argv.slice(2), config.PORT);
+  const { live, llmRouting, running, verbose, baseUrl } = parseArgs(process.argv.slice(2), config.PORT);
   const client = running
     ? createFetchClient(baseUrl)
     : await createInjectClient(buildServer);
@@ -718,9 +801,23 @@ async function main(): Promise<void> {
     validStudyIsoStartDate,
   });
   const mode = running ? `running server (${baseUrl})` : "in-process";
-  const cases = smokeCases.filter((testCase) => !testCase.liveOnly || live);
+  const cases = smokeCases.filter((testCase) => {
+    if (llmRouting && !testCase.llmRouting) {
+      return false;
+    }
 
-  console.log(`Smoke test mode: ${mode}${live ? " + live pipeline" : ""}${verbose ? " + verbose logs" : ""}`);
+    if (testCase.liveOnly && !live) {
+      return false;
+    }
+
+    return true;
+  });
+
+  console.log(
+    `Smoke test mode: ${mode}${live ? " + live pipeline" : ""}` +
+      `${llmRouting ? " + LLM routing only" : ""}` +
+      `${verbose ? " + verbose logs" : ""}`,
+  );
   console.log("");
 
   const failures: string[] = [];
@@ -732,7 +829,11 @@ async function main(): Promise<void> {
       const summary = await testCase.run(client);
       console.log("ok");
       if (testCase.liveOnly && summary !== undefined) {
-        printLiveValidationSummary(summary);
+        if (testCase.llmRouting) {
+          console.log(`      → ${summary.visualization.type}: ${summary.visualization.title}`);
+        } else {
+          printLiveValidationSummary(summary);
+        }
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

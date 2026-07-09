@@ -66,6 +66,7 @@ Other useful scripts:
 - `npm run typecheck` — TypeScript compile check
 - `npm run smoke` — in-process HTTP smoke tests plus mocked timeline, histogram, scatterplot, and network cases (no live APIs)
 - `npm run smoke:live` — smoke tests including live Pembrolizumab comparison, timeline, distribution, relationship, and network queries
+- `npm run smoke:live:llm` — live OpenAI routing checks only (network vs relationship disambiguation)
 
 With the server running, interactive API docs are available at `http://localhost:3000/docs` (or your configured `PORT`).
 

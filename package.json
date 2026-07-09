@@ -17,6 +17,7 @@
     "demo:network": "tsx scripts/runDemo.ts network",
     "smoke": "tsx scripts/smokeTest.ts",
     "smoke:live": "tsx scripts/smokeTest.ts --live",
+    "smoke:live:llm": "tsx scripts/smokeTest.ts --llm-routing",
     "smoke:running": "tsx scripts/smokeTest.ts --running",
     "smoke:live:running": "tsx scripts/smokeTest.ts --live --running",
     "test:watch": "vitest",
