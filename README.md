@@ -4,7 +4,7 @@ Turn natural-language clinical trial queries into visualization-ready JSON. The 
 
 A **static demo UI** at `/` lets you try queries in the browser (chart preview, meta, click-to-reveal citations, raw JSON) — no frontend build step.
 
-## What it looks like 👀
+## What it looks like 👀 (only 30 seconds gif)
 
 <img width="800" height="568" alt="ui" src="https://github.com/user-attachments/assets/c6aa683d-a7ff-407b-b9a9-913f965165e7" />
 
