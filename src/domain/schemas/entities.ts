@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PHASE_BIN_ORDER } from "../mappings/phases.js";
+import { EntityYearSchema } from "./entityYears.js";
 
 export const EntityPhaseSchema = z
   .enum([...PHASE_BIN_ORDER.slice(0, 4), "Early Phase 1", "Not Applicable"] as const)
@@ -22,6 +23,20 @@ export const QueryEntitiesSchema = z.object({
     .nullable()
     .describe("The disease, condition, or indication referenced by the user query."),
   phase: EntityPhaseSchema,
+  sponsor: z
+    .string()
+    .nullable()
+    .describe("Trial sponsor or lead sponsor organization name (null if not mentioned)."),
+  country: z
+    .string()
+    .nullable()
+    .describe("Country or location term for trial sites (null if not mentioned)."),
+  start_year: EntityYearSchema.describe(
+    "Earliest study start year filter (null if not mentioned).",
+  ),
+  end_year: EntityYearSchema.describe(
+    "Latest study start year filter (null if not mentioned).",
+  ),
 });
 
 export type QueryEntities = z.infer<typeof QueryEntitiesSchema>;

@@ -45,7 +45,7 @@ function mockCtgovPage(studies: unknown[], nextPageToken?: string): void {
 }
 
 describe("fetchStudies", () => {
-  const entities = { drug_name: "Pembrolizumab", comparison_targets: null, condition: null, phase: null };
+  const entities = { drug_name: "Pembrolizumab", comparison_targets: null, condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null };
 
   it("normalizes phase fields for comparison fetches", async () => {
     mockCtgovPage([validSinglePhaseStudy, malformedStudyEmptyPhases]);
@@ -102,7 +102,7 @@ describe("fetchStudies", () => {
     });
 
     const calledUrl = new URL(mockFetch.mock.calls[0][0] as string);
-    expect(calledUrl.searchParams.get("fields")).toBe("NCTId,EnrollmentCount");
+    expect(calledUrl.searchParams.get("fields")).toBe("NCTId,BriefTitle,EnrollmentCount");
   });
 
   it("throws NoStudiesFoundError when every distribution study is malformed", async () => {
@@ -125,7 +125,7 @@ describe("fetchStudies", () => {
     });
 
     const calledUrl = new URL(mockFetch.mock.calls[0][0] as string);
-    expect(calledUrl.searchParams.get("fields")).toBe("NCTId,StartDate");
+    expect(calledUrl.searchParams.get("fields")).toBe("NCTId,BriefTitle,StartDate");
   });
 
   it("throws NoStudiesFoundError when every study is malformed", async () => {
@@ -166,7 +166,7 @@ describe("fetchStudies", () => {
     });
 
     const calledUrl = new URL(mockFetch.mock.calls[0][0] as string);
-    expect(calledUrl.searchParams.get("fields")).toBe("NCTId,EnrollmentCount,StartDate");
+    expect(calledUrl.searchParams.get("fields")).toBe("NCTId,BriefTitle,EnrollmentCount,StartDate");
   });
 
   it("uses relationship normalization even when all three field types are requested", async () => {
@@ -231,7 +231,7 @@ describe("fetchStudies", () => {
 
     const calledUrl = new URL(mockFetch.mock.calls[0][0] as string);
     expect(calledUrl.searchParams.get("fields")).toBe(
-      "NCTId,InterventionName,LeadSponsorName",
+      "NCTId,BriefTitle,InterventionName,LeadSponsorName",
     );
   });
 

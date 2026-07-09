@@ -14,7 +14,12 @@ describe("NETWORK_DIMENSIONS", () => {
     expect(config.rightEntityType).toBe("sponsor");
     expect(typeof config.extractLeft).toBe("function");
     expect(typeof config.extractRight).toBe("function");
-    expect(config.requiredFields).toEqual(["NCTId", "InterventionName", "LeadSponsorName"]);
+    expect(config.requiredFields).toEqual([
+      "NCTId",
+      "BriefTitle",
+      "InterventionName",
+      "LeadSponsorName",
+    ]);
   });
 
   it("only exposes drug_sponsor in V1", () => {

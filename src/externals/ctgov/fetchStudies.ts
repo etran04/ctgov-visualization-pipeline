@@ -11,12 +11,13 @@ import type {
 import { HTTP_STATUS, NoStudiesFoundError, UpstreamApiError } from "../../domain/errors.js";
 import type { Intent } from "../../domain/schemas/intents.js";
 import type { ValidatedEntities } from "../../domain/validateEntities.js";
+import { BRIEF_TITLE_FIELD } from "../../domain/intents/fieldProfiles.js";
 import { logger } from "../../lib/logger.js";
 import { mapQueryParams } from "./mapQueryParams.js";
 import { normalizeStudy } from "./normalizeStudy.js";
 
 /** Minimal CT.gov field set for phase aggregation (V1 default). */
-export const DEFAULT_CTGOV_FIELDS = ["NCTId", "Phase"] as const;
+export const DEFAULT_CTGOV_FIELDS = ["NCTId", BRIEF_TITLE_FIELD, "Phase"] as const;
 
 export type {
   CtgovStudyRecord,

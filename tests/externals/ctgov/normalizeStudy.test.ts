@@ -142,3 +142,52 @@ describe("normalizeStudy — network", () => {
     expect(result).toEqual(validNetworkSingleInterventionStudy);
   });
 });
+
+describe("normalizeStudy — BriefTitle", () => {
+  const comparisonFields = getFieldsForIntent("comparison");
+
+  it("includes briefTitle when BriefTitle is requested", () => {
+    const raw = {
+      protocolSection: {
+        identificationModule: {
+          nctId: "NCT00000001",
+          briefTitle: "  A Study of Pembrolizumab  ",
+        },
+        designModule: { phases: ["PHASE3"] },
+      },
+    };
+
+    const result = normalizeStudy(raw, comparisonFields, "comparison");
+
+    expect(result).toEqual({
+      protocolSection: {
+        identificationModule: {
+          nctId: "NCT00000001",
+          briefTitle: "A Study of Pembrolizumab",
+        },
+        designModule: { phases: ["PHASE3"] },
+      },
+    });
+  });
+
+  it("omits briefTitle when BriefTitle is not requested", () => {
+    const raw = {
+      protocolSection: {
+        identificationModule: {
+          nctId: "NCT00000002",
+          briefTitle: "Should not appear",
+        },
+        designModule: { phases: ["PHASE2"] },
+      },
+    };
+
+    const result = normalizeStudy(raw, ["NCTId", "Phase"], "comparison");
+
+    expect(result).toEqual({
+      protocolSection: {
+        identificationModule: { nctId: "NCT00000002" },
+        designModule: { phases: ["PHASE2"] },
+      },
+    });
+  });
+});

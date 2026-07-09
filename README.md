@@ -95,6 +95,20 @@ Interpret a natural-language query and return a visualization specification (`ba
 - `query` (required): non-empty natural-language query.
 - `hints` (optional): partial structured context passed to the LLM as advisory input. Hints never bypass interpretation.
 
+The LLM extracts structured **entities** from `query` (and optional hints):
+
+| Entity | CT.gov filter | Role |
+|--------|---------------|------|
+| `drug_name` | `query.intr` | Primary intervention filter |
+| `condition` | `query.cond` | Disease / indication filter |
+| `sponsor` | `query.spons` | Lead sponsor organization |
+| `country` | `query.locn` | Trial location / country |
+| `phase` | `filter.phase` | Single phase filter |
+| `start_year` / `end_year` | `filter.advanced` (`AREA[StartDate]RANGE[...]`) | Optional study start-year window |
+| `comparison_targets` | (per-drug `query.intr` in grouped mode) | 2–4 drugs for grouped bar charts |
+
+At least one of `drug_name`, `comparison_targets`, `condition`, `phase`, `sponsor`, or `country` is required. Year filters are optional modifiers. Every fetch also requests `BriefTitle` for future citation excerpts.
+
 **Success response — bar chart (`200`)**
 
 ```json
@@ -412,7 +426,7 @@ Regenerate with `npm run examples:generate` (requires `OPENAI_API_KEY`). Scatter
 Layered pipeline with a thin orchestrator (`buildVisualization`):
 
 1. **Interpret** — OpenAI structured output extracts entities and intent
-2. **Validate** — trim and require at least one filter (`drug_name`, `comparison_targets`, `condition`, or `phase`)
+2. **Validate** — trim and require at least one filter (`drug_name`, `comparison_targets`, `condition`, `phase`, `sponsor`, or `country`); optional `start_year` / `end_year` narrow study start dates
 3. **Fetch** — paginated ClinicalTrials.gov `/studies` with intent-specific fields (parallel per-drug fetches for grouped comparisons)
 4. **Aggregate** — deterministic bin counts (phase bins, grouped phase bins, start-year bins, enrollment bins with zero-fill), per-study relationship points, or bipartite network graphs
 5. **Resolve** — map intent → visualization type (`comparison` → `bar_chart` or `grouped_bar_chart` by target count, `trend_over_time` → `line_chart`, `distribution` → `histogram`, `relationship` → `scatterplot`, `network` → `network_graph`)
@@ -526,7 +540,6 @@ Known limitations and next steps if given more time:
 - Additional network topologies via dimension registry: `drug_condition`, `sponsor_condition`, drug–drug co-occurrence
 - Extend grouped comparison beyond phase (e.g. enrollment bins on the x-axis) and beyond drug series (e.g. condition-vs-condition)
 - Geographic breakdowns (country/site nodes) using `contactsLocationsModule`
-- Broader structured input fields: `sponsor`, `country`, `start_year`, `end_year` in request schema and CT.gov filters
 - `meta.assumptions` — log interpretation choices, zero-fill policy, truncation warnings
 
 ### Agent & resilience

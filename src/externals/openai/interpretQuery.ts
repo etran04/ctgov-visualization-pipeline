@@ -92,6 +92,10 @@ Extract entities from the user query:
 - comparison_targets: array of 2–4 drug names when the user compares drugs to each other (e.g. "A vs B", "compare X and Y"); null for single-drug queries
 - condition: disease, condition, or indication (null if not mentioned)
 - phase: a single trial phase only when the query explicitly filters to one phase (null when comparing across phases, showing trends over time, showing enrollment distribution, showing enrollment vs start year, or showing a sponsor/drug network)
+- sponsor: trial sponsor or lead sponsor organization name (null if not mentioned)
+- country: country or location for trial sites, e.g. "United States", "Germany" (null if not mentioned)
+- start_year: earliest study start year as a four-digit integer when the user limits trials from a year onward, e.g. "since 2015" (null if not mentioned)
+- end_year: latest study start year as a four-digit integer when the user limits trials through a year, e.g. "before 2020" (null if not mentioned)
 
 Comparison entity rules:
 - Use comparison_targets (and drug_name null) for 2+ named drugs being compared

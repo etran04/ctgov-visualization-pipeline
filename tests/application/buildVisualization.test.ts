@@ -47,6 +47,10 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       comparison_dimension: "phase",
       suggested_viz_type: "bar_chart",
@@ -72,8 +76,12 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
-      { intent: "comparison", fields: ["NCTId", "Phase"] },
+      { intent: "comparison", fields: ["NCTId", "BriefTitle", "Phase"] },
     );
 
     expect(response.visualization.type).toBe("bar_chart");
@@ -93,6 +101,10 @@ describe("buildVisualization", () => {
         comparison_targets: ["Metformin", "Pembrolizumab"],
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       comparison_dimension: "phase",
       suggested_viz_type: "grouped_bar_chart",
@@ -129,9 +141,9 @@ describe("buildVisualization", () => {
     expect(mockFetchStudiesForGroupedComparison).toHaveBeenCalledWith(
       {
         targets: ["Metformin", "Pembrolizumab"],
-        sharedFilters: { condition: null, phase: null },
+        sharedFilters: { condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
       },
-      { fields: ["NCTId", "Phase"] },
+      { fields: ["NCTId", "BriefTitle", "Phase"] },
     );
 
     expect(response.visualization.type).toBe("grouped_bar_chart");
@@ -157,6 +169,10 @@ describe("buildVisualization", () => {
       comparison_targets: null,
       condition: null,
       phase: null,
+    sponsor: null,
+    country: null,
+    start_year: null,
+    end_year: null,
     });
     expect(response.meta.fetched_studies).toBe(2);
     expect(response.meta.skipped_malformed).toBe(1);
@@ -172,6 +188,10 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       time_dimension: "start_year",
       suggested_viz_type: "line_chart",
@@ -193,8 +213,12 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
-      { intent: "trend_over_time", fields: ["NCTId", "StartDate"] },
+      { intent: "trend_over_time", fields: ["NCTId", "BriefTitle", "StartDate"] },
     );
 
     expect(response.visualization.type).toBe("line_chart");
@@ -219,6 +243,10 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       distribution_dimension: "enrollment_count",
       suggested_viz_type: "histogram",
@@ -240,8 +268,12 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
-      { intent: "distribution", fields: ["NCTId", "EnrollmentCount"] },
+      { intent: "distribution", fields: ["NCTId", "BriefTitle", "EnrollmentCount"] },
     );
 
     expect(response.visualization.type).toBe("histogram");
@@ -268,6 +300,10 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       relationship_dimension: "enrollment_vs_start_year",
       suggested_viz_type: "scatterplot",
@@ -290,8 +326,12 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
-      { intent: "relationship", fields: ["NCTId", "EnrollmentCount", "StartDate"] },
+      { intent: "relationship", fields: ["NCTId", "BriefTitle", "EnrollmentCount", "StartDate"] },
     );
 
     expect(response.visualization.type).toBe("scatterplot");
@@ -314,6 +354,10 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       network_dimension: "drug_sponsor",
       suggested_viz_type: "network_graph",
@@ -335,10 +379,14 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       {
         intent: "network",
-        fields: ["NCTId", "InterventionName", "LeadSponsorName"],
+        fields: ["NCTId", "BriefTitle", "InterventionName", "LeadSponsorName"],
       },
     );
 
@@ -382,7 +430,7 @@ describe("buildVisualization", () => {
 
   it("passes advisory hints to query interpretation", async () => {
     const hints = {
-      entities: { drug_name: "Pembrolizumab", comparison_targets: null, condition: null, phase: null },
+      entities: { drug_name: "Pembrolizumab", comparison_targets: null, condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
     };
 
     mockInterpretQuery.mockResolvedValue({
@@ -391,6 +439,10 @@ describe("buildVisualization", () => {
         drug_name: "Pembrolizumab", comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       comparison_dimension: "phase",
       suggested_viz_type: "bar_chart",
@@ -418,6 +470,10 @@ describe("buildVisualization", () => {
         drug_name: null, comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
       comparison_dimension: "phase",
       suggested_viz_type: "bar_chart",

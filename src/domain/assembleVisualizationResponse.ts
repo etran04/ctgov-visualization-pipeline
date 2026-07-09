@@ -105,6 +105,10 @@ function buildGroupedComparisonFilters(filters: QueryEntities): QueryEntities {
     comparison_targets: null,
     condition: filters.condition,
     phase: filters.phase,
+    sponsor: filters.sponsor,
+    country: filters.country,
+    start_year: filters.start_year,
+    end_year: filters.end_year,
   };
 }
 

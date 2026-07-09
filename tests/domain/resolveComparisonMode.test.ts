@@ -10,6 +10,10 @@ describe("resolveComparisonMode", () => {
       comparison_targets: ["Metformin", "Pembrolizumab"],
       condition: "diabetes",
       phase: null,
+    sponsor: null,
+    country: null,
+    start_year: null,
+    end_year: null,
     });
 
     expect(resolveComparisonMode(entities)).toEqual({
@@ -18,6 +22,10 @@ describe("resolveComparisonMode", () => {
       sharedFilters: {
         condition: "diabetes",
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
     });
   });
@@ -28,6 +36,10 @@ describe("resolveComparisonMode", () => {
       comparison_targets: null,
       condition: null,
       phase: null,
+    sponsor: null,
+    country: null,
+    start_year: null,
+    end_year: null,
     });
 
     expect(resolveComparisonMode(entities)).toEqual({
@@ -37,6 +49,10 @@ describe("resolveComparisonMode", () => {
         comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
     });
   });
@@ -47,6 +63,10 @@ describe("resolveComparisonMode", () => {
       comparison_targets: ["Metformin"],
       condition: null,
       phase: null,
+    sponsor: null,
+    country: null,
+    start_year: null,
+    end_year: null,
     });
 
     expect(resolveComparisonMode(entities)).toEqual({
@@ -56,6 +76,10 @@ describe("resolveComparisonMode", () => {
         comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
     });
   });
@@ -66,6 +90,10 @@ describe("resolveComparisonMode", () => {
       comparison_targets: ["Pembrolizumab"],
       condition: null,
       phase: null,
+    sponsor: null,
+    country: null,
+    start_year: null,
+    end_year: null,
     });
 
     expect(resolveComparisonMode(entities)).toEqual({
@@ -75,6 +103,10 @@ describe("resolveComparisonMode", () => {
         comparison_targets: null,
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
     });
   });
@@ -86,6 +118,10 @@ describe("resolveComparisonMode", () => {
         comparison_targets: ["Metformin", "Pembrolizumab"],
         condition: null,
         phase: null,
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       }),
     ).toThrow(InvalidParametersError);
   });

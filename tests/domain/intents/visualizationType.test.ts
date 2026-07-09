@@ -12,7 +12,7 @@ describe("resolveVisualizationType", () => {
         comparisonMode: {
           kind: "grouped",
           targets: ["Metformin", "Pembrolizumab"],
-          sharedFilters: { condition: null, phase: null },
+          sharedFilters: { condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
         },
       }),
     ).toBe("grouped_bar_chart");
@@ -28,6 +28,10 @@ describe("resolveVisualizationType", () => {
             comparison_targets: null,
             condition: null,
             phase: null,
+          sponsor: null,
+          country: null,
+          start_year: null,
+          end_year: null,
           },
         },
       }),

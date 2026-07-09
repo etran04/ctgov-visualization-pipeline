@@ -25,6 +25,48 @@ function extractNctId(study: Record<string, unknown>): string | null {
   return typeof nctId === "string" ? nctId : null;
 }
 
+function extractBriefTitle(study: Record<string, unknown>): string | null {
+  const protocolSection = study.protocolSection;
+  if (typeof protocolSection !== "object" || protocolSection === null) {
+    return null;
+  }
+
+  const identificationModule = (protocolSection as Record<string, unknown>).identificationModule;
+  if (typeof identificationModule !== "object" || identificationModule === null) {
+    return null;
+  }
+
+  const briefTitle = (identificationModule as Record<string, unknown>).briefTitle;
+  if (typeof briefTitle !== "string") {
+    return null;
+  }
+
+  const trimmed = briefTitle.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function buildIdentificationModule(
+  rawStudy: Record<string, unknown>,
+  requestedFields: readonly string[],
+): { nctId: string; briefTitle?: string } | null {
+  const nctId = extractNctId(rawStudy);
+  if (nctId === null) {
+    return null;
+  }
+
+  const fieldSet = new Set(requestedFields);
+  if (!fieldSet.has("BriefTitle")) {
+    return { nctId };
+  }
+
+  const briefTitle = extractBriefTitle(rawStudy);
+  if (briefTitle === null) {
+    return { nctId };
+  }
+
+  return { nctId, briefTitle };
+}
+
 function normalizePhases(designModule: unknown): string[] | null {
   if (typeof designModule !== "object" || designModule === null) {
     return null;
@@ -74,14 +116,17 @@ function normalizeEnrollmentCount(designModule: unknown): number | null {
   return parseEnrollmentCount((enrollmentInfo as Record<string, unknown>).count);
 }
 
-function normalizePhaseStudy(study: unknown): PhaseStudyRecord | null {
+function normalizePhaseStudy(
+  study: unknown,
+  requestedFields: readonly string[],
+): PhaseStudyRecord | null {
   if (typeof study !== "object" || study === null) {
     return null;
   }
 
   const rawStudy = study as Record<string, unknown>;
-  const nctId = extractNctId(rawStudy);
-  if (nctId === null) {
+  const identificationModule = buildIdentificationModule(rawStudy, requestedFields);
+  if (identificationModule === null) {
     return null;
   }
 
@@ -93,20 +138,23 @@ function normalizePhaseStudy(study: unknown): PhaseStudyRecord | null {
 
   return {
     protocolSection: {
-      identificationModule: { nctId },
+      identificationModule,
       designModule: { phases },
     },
   };
 }
 
-function normalizeTimelineStudy(study: unknown): TimelineStudyRecord | null {
+function normalizeTimelineStudy(
+  study: unknown,
+  requestedFields: readonly string[],
+): TimelineStudyRecord | null {
   if (typeof study !== "object" || study === null) {
     return null;
   }
 
   const rawStudy = study as Record<string, unknown>;
-  const nctId = extractNctId(rawStudy);
-  if (nctId === null) {
+  const identificationModule = buildIdentificationModule(rawStudy, requestedFields);
+  if (identificationModule === null) {
     return null;
   }
 
@@ -118,7 +166,7 @@ function normalizeTimelineStudy(study: unknown): TimelineStudyRecord | null {
 
   return {
     protocolSection: {
-      identificationModule: { nctId },
+      identificationModule,
       statusModule: {
         startDateStruct: { date },
       },
@@ -126,14 +174,17 @@ function normalizeTimelineStudy(study: unknown): TimelineStudyRecord | null {
   };
 }
 
-function normalizeDistributionStudy(study: unknown): DistributionStudyRecord | null {
+function normalizeDistributionStudy(
+  study: unknown,
+  requestedFields: readonly string[],
+): DistributionStudyRecord | null {
   if (typeof study !== "object" || study === null) {
     return null;
   }
 
   const rawStudy = study as Record<string, unknown>;
-  const nctId = extractNctId(rawStudy);
-  if (nctId === null) {
+  const identificationModule = buildIdentificationModule(rawStudy, requestedFields);
+  if (identificationModule === null) {
     return null;
   }
 
@@ -145,7 +196,7 @@ function normalizeDistributionStudy(study: unknown): DistributionStudyRecord | n
 
   return {
     protocolSection: {
-      identificationModule: { nctId },
+      identificationModule,
       designModule: {
         enrollmentInfo: { count },
       },
@@ -153,14 +204,17 @@ function normalizeDistributionStudy(study: unknown): DistributionStudyRecord | n
   };
 }
 
-function normalizeRelationshipStudy(study: unknown): RelationshipStudyRecord | null {
+function normalizeRelationshipStudy(
+  study: unknown,
+  requestedFields: readonly string[],
+): RelationshipStudyRecord | null {
   if (typeof study !== "object" || study === null) {
     return null;
   }
 
   const rawStudy = study as Record<string, unknown>;
-  const nctId = extractNctId(rawStudy);
-  if (nctId === null) {
+  const identificationModule = buildIdentificationModule(rawStudy, requestedFields);
+  if (identificationModule === null) {
     return null;
   }
 
@@ -177,7 +231,7 @@ function normalizeRelationshipStudy(study: unknown): RelationshipStudyRecord | n
 
   return {
     protocolSection: {
-      identificationModule: { nctId },
+      identificationModule,
       designModule: {
         enrollmentInfo: { count },
       },
@@ -236,14 +290,17 @@ function normalizeLeadSponsor(sponsorCollaboratorsModule: unknown): { name: stri
   return trimmed.length > 0 ? { name: trimmed } : null;
 }
 
-function normalizeNetworkStudy(study: unknown): NetworkStudyRecord | null {
+function normalizeNetworkStudy(
+  study: unknown,
+  requestedFields: readonly string[],
+): NetworkStudyRecord | null {
   if (typeof study !== "object" || study === null) {
     return null;
   }
 
   const rawStudy = study as Record<string, unknown>;
-  const nctId = extractNctId(rawStudy);
-  if (nctId === null || nctId.length === 0) {
+  const identificationModule = buildIdentificationModule(rawStudy, requestedFields);
+  if (identificationModule === null || identificationModule.nctId.length === 0) {
     return null;
   }
 
@@ -260,7 +317,7 @@ function normalizeNetworkStudy(study: unknown): NetworkStudyRecord | null {
 
   return {
     protocolSection: {
-      identificationModule: { nctId },
+      identificationModule,
       armsInterventionsModule: { interventions },
       sponsorCollaboratorsModule: { leadSponsor },
     },
@@ -282,34 +339,34 @@ export function normalizeStudy(
   if (intent !== undefined) {
     switch (intent) {
       case "comparison":
-        return normalizePhaseStudy(study);
+        return normalizePhaseStudy(study, requestedFields);
       case "trend_over_time":
-        return normalizeTimelineStudy(study);
+        return normalizeTimelineStudy(study, requestedFields);
       case "distribution":
-        return normalizeDistributionStudy(study);
+        return normalizeDistributionStudy(study, requestedFields);
       case "relationship":
-        return normalizeRelationshipStudy(study);
+        return normalizeRelationshipStudy(study, requestedFields);
       case "network":
-        return normalizeNetworkStudy(study);
+        return normalizeNetworkStudy(study, requestedFields);
     }
   }
 
   const fieldSet = new Set(requestedFields);
 
   if (fieldSet.has("InterventionName") || fieldSet.has("LeadSponsorName")) {
-    return normalizeNetworkStudy(study);
+    return normalizeNetworkStudy(study, requestedFields);
   }
 
   if (fieldSet.has("Phase")) {
-    return normalizePhaseStudy(study);
+    return normalizePhaseStudy(study, requestedFields);
   }
 
   if (fieldSet.has("StartDate")) {
-    return normalizeTimelineStudy(study);
+    return normalizeTimelineStudy(study, requestedFields);
   }
 
   if (fieldSet.has("EnrollmentCount")) {
-    return normalizeDistributionStudy(study);
+    return normalizeDistributionStudy(study, requestedFields);
   }
 
   return null;

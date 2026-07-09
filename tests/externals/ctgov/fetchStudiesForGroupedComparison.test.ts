@@ -5,7 +5,7 @@ import { validMultiPhaseStudy, validSinglePhaseStudy } from "../../fixtures/ctgo
 
 vi.mock("../../../src/externals/ctgov/fetchStudies.js", () => ({
   fetchStudies: vi.fn(),
-  DEFAULT_CTGOV_FIELDS: ["NCTId", "Phase"],
+  DEFAULT_CTGOV_FIELDS: ["NCTId", "BriefTitle", "Phase"],
 }));
 
 import { fetchStudies } from "../../../src/externals/ctgov/fetchStudies.js";
@@ -30,7 +30,7 @@ function makeFetchResult(
 }
 
 describe("fetchStudiesForGroupedComparison", () => {
-  const sharedFilters = { condition: "Diabetes", phase: "Phase 2" as const };
+  const sharedFilters = { condition: "Diabetes", phase: "Phase 2" as const, sponsor: null, country: null, start_year: null, end_year: null };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,8 +56,12 @@ describe("fetchStudiesForGroupedComparison", () => {
         comparison_targets: null,
         condition: "Diabetes",
         phase: "Phase 2",
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
-      { intent: "comparison", fields: ["NCTId", "Phase"] },
+      { intent: "comparison", fields: ["NCTId", "BriefTitle", "Phase"] },
     );
     expect(mockFetchStudies).toHaveBeenCalledWith(
       {
@@ -65,8 +69,12 @@ describe("fetchStudiesForGroupedComparison", () => {
         comparison_targets: null,
         condition: "Diabetes",
         phase: "Phase 2",
+      sponsor: null,
+      country: null,
+      start_year: null,
+      end_year: null,
       },
-      { intent: "comparison", fields: ["NCTId", "Phase"] },
+      { intent: "comparison", fields: ["NCTId", "BriefTitle", "Phase"] },
     );
 
     expect(result.seriesResults).toEqual([
@@ -106,7 +114,7 @@ describe("fetchStudiesForGroupedComparison", () => {
 
     const pending = fetchStudiesForGroupedComparison({
       targets: ["Metformin", "Pembrolizumab"],
-      sharedFilters: { condition: null, phase: null },
+      sharedFilters: { condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
     });
 
     await vi.waitFor(() => {
@@ -125,14 +133,14 @@ describe("fetchStudiesForGroupedComparison", () => {
     await fetchStudiesForGroupedComparison(
       {
         targets: ["Metformin"],
-        sharedFilters: { condition: null, phase: null },
+        sharedFilters: { condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
       },
       { fields: getFieldsForIntent("comparison") },
     );
 
     expect(mockFetchStudies).toHaveBeenCalledWith(
       expect.objectContaining({ drug_name: "Metformin" }),
-      { intent: "comparison", fields: ["NCTId", "Phase"] },
+      { intent: "comparison", fields: ["NCTId", "BriefTitle", "Phase"] },
     );
   });
 
@@ -146,7 +154,7 @@ describe("fetchStudiesForGroupedComparison", () => {
 
     const result = await fetchStudiesForGroupedComparison({
       targets: ["Metformin", "Pembrolizumab"],
-      sharedFilters: { condition: null, phase: null },
+      sharedFilters: { condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
     });
 
     expect(result.seriesResults[0]).toEqual({
@@ -168,7 +176,7 @@ describe("fetchStudiesForGroupedComparison", () => {
 
     const result = await fetchStudiesForGroupedComparison({
       targets: ["Metformin", "Pembrolizumab"],
-      sharedFilters: { condition: null, phase: null },
+      sharedFilters: { condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
     });
 
     expect(result.truncated).toBe(true);
@@ -180,7 +188,7 @@ describe("fetchStudiesForGroupedComparison", () => {
     await expect(
       fetchStudiesForGroupedComparison({
         targets: ["Metformin", "Pembrolizumab"],
-        sharedFilters: { condition: null, phase: null },
+        sharedFilters: { condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
       }),
     ).rejects.toThrow(NoStudiesFoundError);
   });
@@ -193,7 +201,7 @@ describe("fetchStudiesForGroupedComparison", () => {
     await expect(
       fetchStudiesForGroupedComparison({
         targets: ["Metformin", "Pembrolizumab"],
-        sharedFilters: { condition: null, phase: null },
+        sharedFilters: { condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
       }),
     ).rejects.toThrow(UpstreamApiError);
   });

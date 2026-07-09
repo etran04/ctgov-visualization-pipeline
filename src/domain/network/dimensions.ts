@@ -24,7 +24,7 @@ export const NETWORK_DIMENSIONS = {
     rightEntityType: "sponsor",
     extractLeft: extractInterventions,
     extractRight: extractLeadSponsor,
-    requiredFields: ["NCTId", "InterventionName", "LeadSponsorName"],
+    requiredFields: ["NCTId", "BriefTitle", "InterventionName", "LeadSponsorName"],
   },
 } as const satisfies Record<NetworkDimension, BipartiteDimensionConfig>;
 

@@ -4,12 +4,15 @@ import {
 } from "../network/dimensions.js";
 import type { Intent } from "../schemas/intents.js";
 
+/** Included on every fetch for citation excerpts and traceability. */
+export const BRIEF_TITLE_FIELD = "BriefTitle" as const;
+
 /** CT.gov `fields` parameter values per visualization intent. */
 export const INTENT_FIELD_PROFILES = {
-  comparison: ["NCTId", "Phase"],
-  trend_over_time: ["NCTId", "StartDate"],
-  distribution: ["NCTId", "EnrollmentCount"],
-  relationship: ["NCTId", "EnrollmentCount", "StartDate"],
+  comparison: ["NCTId", BRIEF_TITLE_FIELD, "Phase"],
+  trend_over_time: ["NCTId", BRIEF_TITLE_FIELD, "StartDate"],
+  distribution: ["NCTId", BRIEF_TITLE_FIELD, "EnrollmentCount"],
+  relationship: ["NCTId", BRIEF_TITLE_FIELD, "EnrollmentCount", "StartDate"],
   network: getRequiredFieldsForNetworkDimension("drug_sponsor"),
 } as const satisfies Record<Intent, readonly string[]>;
 

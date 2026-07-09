@@ -1,11 +1,11 @@
 import { NoStudiesFoundError } from "../../domain/errors.js";
+import type { GroupedComparisonSharedFilters } from "../../domain/resolveComparisonMode.js";
 import type { PhaseStudyRecord } from "../../domain/types/ctgovStudyTypes.js";
 import type { ValidatedEntities } from "../../domain/validateEntities.js";
 import { logger } from "../../lib/logger.js";
 import { DEFAULT_CTGOV_FIELDS, fetchStudies } from "./fetchStudies.js";
 
-/** Shared filters applied to every series fetch in a grouped comparison. */
-export type GroupedComparisonSharedFilters = Pick<ValidatedEntities, "condition" | "phase">;
+export type { GroupedComparisonSharedFilters };
 
 export type FetchStudiesForGroupedComparisonInput = {
   targets: string[];
@@ -44,6 +44,10 @@ async function fetchSeriesStudies(
     comparison_targets: null,
     condition: sharedFilters.condition,
     phase: sharedFilters.phase,
+    sponsor: sharedFilters.sponsor,
+    country: sharedFilters.country,
+    start_year: sharedFilters.start_year,
+    end_year: sharedFilters.end_year,
   };
 
   try {

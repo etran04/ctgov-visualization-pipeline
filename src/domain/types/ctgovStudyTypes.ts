@@ -7,7 +7,7 @@ import type { Intent } from "../schemas/intents.js";
  */
 export type CtgovRawStudy = {
   protocolSection?: {
-    identificationModule?: { nctId?: unknown };
+    identificationModule?: { nctId?: unknown; briefTitle?: unknown };
     designModule?: {
       phases?: unknown;
       enrollmentInfo?: { count?: unknown };
@@ -18,11 +18,14 @@ export type CtgovRawStudy = {
   };
 };
 
+type StudyIdentificationModule = {
+  nctId: string;
+  briefTitle?: string;
+};
+
 type StudyIdentification = {
   protocolSection: {
-    identificationModule: {
-      nctId: string;
-    };
+    identificationModule: StudyIdentificationModule;
   };
 };
 

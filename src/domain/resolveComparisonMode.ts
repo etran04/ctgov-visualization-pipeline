@@ -4,12 +4,18 @@ import type { ValidatedEntities } from "./validateEntities.js";
 export const MIN_GROUPED_TARGETS = 2;
 export const MAX_GROUPED_TARGETS = 4;
 
+/** Filters shared across every series in a grouped drug comparison fetch. */
+export type GroupedComparisonSharedFilters = Pick<
+  ValidatedEntities,
+  "condition" | "phase" | "sponsor" | "country" | "start_year" | "end_year"
+>;
+
 export type ComparisonMode =
   | { kind: "single"; entities: ValidatedEntities }
   | {
       kind: "grouped";
       targets: string[];
-      sharedFilters: Pick<ValidatedEntities, "condition" | "phase">;
+      sharedFilters: GroupedComparisonSharedFilters;
     };
 
 /**
@@ -40,6 +46,10 @@ export function resolveComparisonMode(entities: ValidatedEntities): ComparisonMo
       sharedFilters: {
         condition: entities.condition,
         phase: entities.phase,
+        sponsor: entities.sponsor,
+        country: entities.country,
+        start_year: entities.start_year,
+        end_year: entities.end_year,
       },
     };
   }
@@ -54,6 +64,10 @@ export function resolveComparisonMode(entities: ValidatedEntities): ComparisonMo
       comparison_targets: null,
       condition: entities.condition,
       phase: entities.phase,
+      sponsor: entities.sponsor,
+      country: entities.country,
+      start_year: entities.start_year,
+      end_year: entities.end_year,
     },
   };
 }
