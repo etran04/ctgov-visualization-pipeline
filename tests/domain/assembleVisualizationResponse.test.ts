@@ -64,6 +64,11 @@ describe("assembleBarChartResponse", () => {
       truncated: false,
     });
 
+    expect(response.visualization.type).toBe("bar_chart");
+    if (response.visualization.type !== "bar_chart") {
+      throw new Error("expected bar_chart");
+    }
+
     for (const point of response.visualization.data) {
       expect(point).not.toHaveProperty("source_nct_ids");
     }
@@ -148,6 +153,10 @@ describe("assembleLineChartResponse", () => {
       y: { field: "trial_count", type: "quantitative" },
     });
 
+    if (response.visualization.type !== "line_chart") {
+      throw new Error("expected line_chart");
+    }
+
     for (const point of response.visualization.data) {
       expect(point).not.toHaveProperty("source_nct_ids");
     }
@@ -212,6 +221,10 @@ describe("assembleHistogramResponse", () => {
       x: { field: "bin_label", type: "ordinal" },
       y: { field: "trial_count", type: "quantitative" },
     });
+
+    if (response.visualization.type !== "histogram") {
+      throw new Error("expected histogram");
+    }
 
     for (const point of response.visualization.data) {
       expect(point).not.toHaveProperty("source_nct_ids");

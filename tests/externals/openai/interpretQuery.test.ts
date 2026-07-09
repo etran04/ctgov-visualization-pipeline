@@ -10,6 +10,7 @@ describe("interpretQuery interpretation shape", () => {
       time_dimension: null,
       distribution_dimension: null,
       relationship_dimension: null,
+      network_dimension: null,
       suggested_viz_type: "bar_chart",
     });
 
@@ -29,6 +30,7 @@ describe("interpretQuery interpretation shape", () => {
       time_dimension: "start_year",
       distribution_dimension: null,
       relationship_dimension: null,
+      network_dimension: null,
       suggested_viz_type: "line_chart",
     });
 
@@ -48,6 +50,7 @@ describe("interpretQuery interpretation shape", () => {
       time_dimension: null,
       distribution_dimension: "enrollment_count",
       relationship_dimension: null,
+      network_dimension: null,
       suggested_viz_type: "histogram",
     });
 
@@ -67,6 +70,7 @@ describe("interpretQuery interpretation shape", () => {
       time_dimension: null,
       distribution_dimension: null,
       relationship_dimension: "enrollment_vs_start_year",
+      network_dimension: null,
       suggested_viz_type: "scatterplot",
     });
 
@@ -75,6 +79,26 @@ describe("interpretQuery interpretation shape", () => {
       entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
       relationship_dimension: "enrollment_vs_start_year",
       suggested_viz_type: "scatterplot",
+    });
+  });
+
+  it("accepts network intent from OpenAI flat output", () => {
+    const interpretation = parseQueryInterpretation({
+      intent: "network",
+      entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
+      comparison_dimension: null,
+      time_dimension: null,
+      distribution_dimension: null,
+      relationship_dimension: null,
+      network_dimension: "drug_sponsor",
+      suggested_viz_type: "network_graph",
+    });
+
+    expect(interpretation).toEqual({
+      intent: "network",
+      entities: { drug_name: "Pembrolizumab", condition: null, phase: null },
+      network_dimension: "drug_sponsor",
+      suggested_viz_type: "network_graph",
     });
   });
 });

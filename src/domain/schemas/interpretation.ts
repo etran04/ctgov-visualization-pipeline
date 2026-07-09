@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { QueryEntitiesSchema } from "./entities.js";
 import { IntentSchema } from "./intents.js";
+import { NetworkDimensionSchema } from "./networkDimension.js";
 
 const ComparisonInterpretationSchema = z.object({
   intent: z.literal("comparison"),
@@ -46,12 +47,24 @@ const RelationshipInterpretationSchema = z.object({
     .describe("Suggested visualization type for the interpreted relationship request."),
 });
 
+const NetworkInterpretationSchema = z.object({
+  intent: z.literal("network"),
+  entities: QueryEntitiesSchema,
+  network_dimension: z
+    .literal("drug_sponsor")
+    .describe("Which bipartite network topology should be used in downstream aggregation."),
+  suggested_viz_type: z
+    .literal("network_graph")
+    .describe("Suggested visualization type for the interpreted network request."),
+});
+
 /** Structured output from query interpretation (Stage 1). */
 export const QueryInterpretationSchema = z.discriminatedUnion("intent", [
   ComparisonInterpretationSchema,
   TrendOverTimeInterpretationSchema,
   DistributionInterpretationSchema,
   RelationshipInterpretationSchema,
+  NetworkInterpretationSchema,
 ]);
 
 /**
@@ -79,10 +92,13 @@ export const QueryInterpretationOpenAiSchema = z.object({
     .literal("enrollment_vs_start_year")
     .nullable()
     .describe("Set to enrollment_vs_start_year for relationship intent; null otherwise."),
+  network_dimension: NetworkDimensionSchema.nullable().describe(
+    "Set to drug_sponsor for network intent; null otherwise.",
+  ),
   suggested_viz_type: z
-    .enum(["bar_chart", "line_chart", "histogram", "scatterplot"])
+    .enum(["bar_chart", "line_chart", "histogram", "scatterplot", "network_graph"])
     .describe(
-      "bar_chart for comparison; line_chart for trend_over_time; histogram for distribution; scatterplot for relationship.",
+      "bar_chart for comparison; line_chart for trend_over_time; histogram for distribution; scatterplot for relationship; network_graph for network.",
     ),
 });
 
@@ -93,6 +109,7 @@ export const QueryInterpretationHintsSchema = z.union([
   TrendOverTimeInterpretationSchema.partial(),
   DistributionInterpretationSchema.partial(),
   RelationshipInterpretationSchema.partial(),
+  NetworkInterpretationSchema.partial(),
 ]);
 
 export type QueryInterpretation = z.infer<typeof QueryInterpretationSchema>;
@@ -130,6 +147,11 @@ export function parseQueryInterpretation(raw: QueryInterpretationOpenAi): QueryI
         suggested_viz_type: raw.suggested_viz_type,
       });
     case "network":
-      throw new Error("Network intent interpretation is not yet implemented");
+      return NetworkInterpretationSchema.parse({
+        intent: raw.intent,
+        entities: raw.entities,
+        network_dimension: raw.network_dimension,
+        suggested_viz_type: raw.suggested_viz_type,
+      });
   }
 }

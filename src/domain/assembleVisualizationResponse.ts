@@ -47,6 +47,7 @@ const TITLE_PREFIX_BY_VIZ_TYPE = {
   line_chart: "Trials started per year for",
   histogram: "Enrollment distribution for",
   scatterplot: "Enrollment vs start year for",
+  network_graph: "Drug–sponsor network for",
 } as const satisfies Record<VisualizationType, string>;
 
 function buildFilterSubject(filters: QueryEntities): string {

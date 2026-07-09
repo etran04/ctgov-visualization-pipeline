@@ -5,7 +5,8 @@ export type VisualizationType =
   | "bar_chart"
   | "line_chart"
   | "histogram"
-  | "scatterplot";
+  | "scatterplot"
+  | "network_graph";
 
 /**
  * Map an interpreted intent to a concrete visualization type.
@@ -22,6 +23,8 @@ export function resolveVisualizationType(intent: Intent): VisualizationType {
       return "histogram";
     case "relationship":
       return "scatterplot";
+    case "network":
+      return "network_graph";
     default:
       throw new UnsupportedIntentError(`Unsupported intent: ${String(intent)}`);
   }

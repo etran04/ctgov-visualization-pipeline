@@ -151,6 +151,9 @@ export async function buildVisualization(
       });
       break;
     }
+    case "network": {
+      throw new Error("Network visualization pipeline is not yet implemented");
+    }
     default: {
       const _exhaustive: never = intent;
       throw new Error(`Unsupported intent: ${String(_exhaustive)}`);

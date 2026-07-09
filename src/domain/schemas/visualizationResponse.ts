@@ -2,6 +2,7 @@ import { z } from "zod";
 import { BarChartVisualizationSchema } from "./barChart.js";
 import { HistogramVisualizationSchema } from "./histogram.js";
 import { LineChartVisualizationSchema } from "./lineChart.js";
+import { NetworkGraphVisualizationSchema } from "./networkGraph.js";
 import { ScatterplotVisualizationSchema } from "./scatterplot.js";
 import { VisualizationMetaSchema } from "./visualizationMeta.js";
 
@@ -12,6 +13,7 @@ export const VisualizationResponseSchema = z.object({
     LineChartVisualizationSchema,
     HistogramVisualizationSchema,
     ScatterplotVisualizationSchema,
+    NetworkGraphVisualizationSchema,
   ]),
   meta: VisualizationMetaSchema,
 });

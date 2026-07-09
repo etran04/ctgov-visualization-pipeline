@@ -35,7 +35,8 @@ export const visualizeRouteSchema = {
     "and returns chart-ready JSON. V1 comparison queries yield a `bar_chart` (trial counts by " +
     "phase); V2 timeline queries yield a `line_chart` (trial counts by start year); V2b " +
     "distribution queries yield a `histogram` (trial counts by enrollment bin); V2c " +
-    "relationship queries yield a `scatterplot` (enrollment vs start year per study). Optional " +
+    "relationship queries yield a `scatterplot` (enrollment vs start year per study); network " +
+    "queries yield a `network_graph` (bipartite drug–sponsor topology). Optional " +
     "`hints` are advisory context for the LLM and never bypass interpretation.",
   body: toOpenApiSchema(VisualizeRequestSchema),
   response: {

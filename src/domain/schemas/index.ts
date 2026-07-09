@@ -13,6 +13,12 @@ export {
 } from "./entities.js";
 export { IntentSchema, SUPPORTED_INTENTS, type Intent } from "./intents.js";
 export {
+  NetworkDimensionSchema,
+  NETWORK_DIMENSIONS,
+  type NetworkDimension,
+} from "./networkDimension.js";
+export { NetworkGraphVisualizationSchema } from "./networkGraph.js";
+export {
   parseQueryInterpretation,
   QueryInterpretationHintsSchema,
   QueryInterpretationOpenAiSchema,

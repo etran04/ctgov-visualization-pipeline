@@ -17,4 +17,8 @@ describe("resolveVisualizationType", () => {
   it("maps relationship intent to a scatterplot", () => {
     expect(resolveVisualizationType("relationship")).toBe("scatterplot");
   });
+
+  it("maps network intent to a network graph", () => {
+    expect(resolveVisualizationType("network")).toBe("network_graph");
+  });
 });
