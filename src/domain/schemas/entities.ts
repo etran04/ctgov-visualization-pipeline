@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PHASE_BIN_ORDER } from "../utils/mapPhaseValues.js";
+import { PHASE_BIN_ORDER } from "../mappings/phases.js";
 
 export const EntityPhaseSchema = z
   .enum([...PHASE_BIN_ORDER.slice(0, 4), "Early Phase 1", "Not Applicable"] as const)

@@ -1,6 +1,6 @@
 import type { DistributionStudyRecord, EnrollmentAggregationBin } from "../types/aggregations.js";
 import { NoAggregatableDataError } from "../errors.js";
-import { ENROLLMENT_BIN_ORDER, mapEnrollmentToBin } from "../utils/enrollmentBins.js";
+import { ENROLLMENT_BIN_ORDER, mapEnrollmentToBin } from "../mappings/enrollmentBins.js";
 import { parseEnrollmentCount } from "../utils/parseEnrollmentCount.js";
 
 /** Output of deterministic enrollment-bin aggregation. */

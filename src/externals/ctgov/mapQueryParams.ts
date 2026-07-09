@@ -1,4 +1,4 @@
-import { mapDomainPhaseToCtgov } from "../../domain/utils/mapPhaseValues.js";
+import { mapDomainPhaseToCtgov } from "../../domain/mappings/phases.js";
 import type { ValidatedEntities } from "../../domain/validateEntities.js";
 
 export type CtgovQueryParams = Partial<

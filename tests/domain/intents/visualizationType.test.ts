@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveVisualizationType } from "../../src/domain/resolveVisualizationType.js";
+import { resolveVisualizationType } from "../../../src/domain/intents/visualizationType.js";
 
 describe("resolveVisualizationType", () => {
   it("maps comparison intent to a bar chart", () => {

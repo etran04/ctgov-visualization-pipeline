@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NoStudiesFoundError } from "../../../src/domain/errors.js";
-import { getFieldsForIntent } from "../../../src/domain/intentFieldProfiles.js";
+import { getFieldsForIntent } from "../../../src/domain/intents/fieldProfiles.js";
 import { fetchStudies } from "../../../src/externals/ctgov/fetchStudies.js";
 import {
   malformedRelationshipStudyMissingEnrollment,

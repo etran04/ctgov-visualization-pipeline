@@ -1,6 +1,6 @@
 import type { PhaseStudyRecord, PhaseAggregationBin } from "../types/aggregations.js";
 import { NoAggregatableDataError } from "../errors.js";
-import { mapCtgovPhaseToDomain, PHASE_BIN_ORDER, type PhaseLabel } from "../utils/mapPhaseValues.js";
+import { mapCtgovPhaseToDomain, PHASE_BIN_ORDER, type PhaseLabel } from "../mappings/phases.js";
 
 /** Output of deterministic phase-bin aggregation. */
 export type PhaseAggregationResult = {

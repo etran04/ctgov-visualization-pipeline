@@ -1,5 +1,5 @@
-import { UnsupportedIntentError } from "./errors.js";
-import type { Intent } from "./schemas/index.js";
+import { UnsupportedIntentError } from "../errors.js";
+import type { Intent } from "../schemas/index.js";
 
 export type VisualizationType =
   | "bar_chart"

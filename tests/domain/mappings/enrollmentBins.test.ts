@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ENROLLMENT_BIN_ORDER,
   mapEnrollmentToBin,
-} from "../../src/domain/utils/enrollmentBins.js";
+} from "../../../src/domain/mappings/enrollmentBins.js";
 
 describe("mapEnrollmentToBin", () => {
   it("assigns counts to the correct closed bins", () => {

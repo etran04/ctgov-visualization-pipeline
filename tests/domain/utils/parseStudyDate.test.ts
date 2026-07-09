@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseStudyStartYear } from "../../src/domain/utils/parseStudyDate.js";
+import { parseStudyStartYear } from "../../../src/domain/utils/parseStudyDate.js";
 
 describe("parseStudyStartYear", () => {
   it("parses ISO full dates", () => {

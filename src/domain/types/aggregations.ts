@@ -4,8 +4,8 @@ import type {
   RelationshipStudyRecord,
   TimelineStudyRecord,
 } from "./ctgovStudyTypes.js";
-import type { EnrollmentBinLabel } from "../utils/enrollmentBins.js";
-import type { PhaseLabel } from "../utils/mapPhaseValues.js";
+import type { EnrollmentBinLabel } from "../mappings/enrollmentBins.js";
+import type { PhaseLabel } from "../mappings/phases.js";
 
 /**
  * Permissive study shape for tests and defensive aggregator fallbacks.

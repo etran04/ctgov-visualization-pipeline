@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseEnrollmentCount } from "../../src/domain/utils/parseEnrollmentCount.js";
+import { parseEnrollmentCount } from "../../../src/domain/utils/parseEnrollmentCount.js";
 
 describe("parseEnrollmentCount", () => {
   it("returns positive integers unchanged", () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { VisualizationResponseSchema } from "../../src/domain/schemas/index.js";
 import { assembleVisualizationResponse } from "../../src/domain/assembleVisualizationResponse.js";
-import { ENROLLMENT_BIN_ORDER } from "../../src/domain/utils/enrollmentBins.js";
-import { PHASE_BIN_ORDER } from "../../src/domain/utils/mapPhaseValues.js";
+import { ENROLLMENT_BIN_ORDER } from "../../src/domain/mappings/enrollmentBins.js";
+import { PHASE_BIN_ORDER } from "../../src/domain/mappings/phases.js";
 
 const baseAggregation = PHASE_BIN_ORDER.map((phase) => ({
   phase,

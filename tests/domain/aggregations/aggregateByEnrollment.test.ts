@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { aggregateByEnrollment } from "../../../src/domain/aggregations/index.js";
 import { NoAggregatableDataError } from "../../../src/domain/errors.js";
-import { ENROLLMENT_BIN_ORDER } from "../../../src/domain/utils/enrollmentBins.js";
+import { ENROLLMENT_BIN_ORDER } from "../../../src/domain/mappings/enrollmentBins.js";
 import {
   asDistributionStudy,
   malformedStudyInvalidEnrollmentType,

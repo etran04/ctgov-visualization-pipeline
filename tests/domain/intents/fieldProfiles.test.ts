@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getFieldsForIntent, INTENT_FIELD_PROFILES } from "../../src/domain/intentFieldProfiles.js";
+import {
+  getFieldsForIntent,
+  INTENT_FIELD_PROFILES,
+} from "../../../src/domain/intents/fieldProfiles.js";
 
-describe("intentFieldProfiles", () => {
+describe("fieldProfiles", () => {
   it("maps comparison intent to phase fields", () => {
     expect(getFieldsForIntent("comparison")).toEqual(["NCTId", "Phase"]);
   });

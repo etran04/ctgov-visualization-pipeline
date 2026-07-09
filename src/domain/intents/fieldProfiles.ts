@@ -1,4 +1,4 @@
-import type { Intent } from "./schemas/intents.js";
+import type { Intent } from "../schemas/intents.js";
 
 /** CT.gov `fields` parameter values per visualization intent. */
 export const INTENT_FIELD_PROFILES = {

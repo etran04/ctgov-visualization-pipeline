@@ -6,7 +6,7 @@ import type {
 } from "./aggregations/index.js";
 import type { QueryEntities, VisualizationResponse } from "./schemas/index.js";
 import { VisualizationResponseSchema } from "./schemas/index.js";
-import type { VisualizationType } from "./resolveVisualizationType.js";
+import type { VisualizationType } from "./intents/visualizationType.js";
 
 type BaseAssembleInput = {
   filters: QueryEntities;
