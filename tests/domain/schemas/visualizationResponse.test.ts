@@ -69,4 +69,47 @@ describe("VisualizationResponseSchema", () => {
 
     expect(VisualizationResponseSchema.parse(response)).toEqual(response);
   });
+
+  it("accepts a sample bar_chart response with citations", () => {
+    const response = {
+      visualization: {
+        type: "bar_chart",
+        title: "Trial phases for Pembrolizumab",
+        encoding: {
+          x: { field: "phase", type: "nominal" },
+          y: { field: "trial_count", type: "quantitative" },
+        },
+        data: [
+          { phase: "Phase 1", trial_count: 0 },
+          {
+            phase: "Phase 2",
+            trial_count: 2,
+            citations: [
+              { nct_id: "NCT00000001", excerpt: "A Phase 2 Study of Pembrolizumab" },
+              { nct_id: "NCT00000002", excerpt: "Pembrolizumab Combination Trial" },
+            ],
+          },
+        ],
+      },
+      meta: {
+        filters: {
+          drug_name: "Pembrolizumab",
+          comparison_targets: null,
+          condition: null,
+          phase: null,
+          sponsor: null,
+          country: null,
+          start_year: null,
+          end_year: null,
+        },
+        source: "clinicaltrials.gov",
+        fetched_studies: 2,
+        skipped_malformed: 0,
+        studies_with_multiple_phases: 0,
+        truncated: false,
+      },
+    };
+
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
 });

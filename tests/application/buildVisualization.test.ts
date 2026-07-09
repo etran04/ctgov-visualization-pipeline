@@ -428,6 +428,76 @@ describe("buildVisualization", () => {
     expect(VisualizationResponseSchema.parse(response)).toEqual(response);
   });
 
+  it("includes citations on datums when fetched studies have briefTitle", async () => {
+    mockInterpretQuery.mockResolvedValue({
+      intent: "comparison",
+      entities: {
+        drug_name: "Pembrolizumab",
+        comparison_targets: null,
+        condition: null,
+        phase: null,
+        sponsor: null,
+        country: null,
+        start_year: null,
+        end_year: null,
+      },
+      comparison_dimension: "phase",
+      suggested_viz_type: "bar_chart",
+    });
+
+    mockFetchStudies.mockResolvedValue({
+      studies: [
+        {
+          ...validSinglePhaseStudy,
+          protocolSection: {
+            ...validSinglePhaseStudy.protocolSection,
+            identificationModule: {
+              ...validSinglePhaseStudy.protocolSection.identificationModule,
+              briefTitle: "A Phase 2 Study of Pembrolizumab",
+            },
+          },
+        },
+        {
+          ...validMultiPhaseStudy,
+          protocolSection: {
+            ...validMultiPhaseStudy.protocolSection,
+            identificationModule: {
+              ...validMultiPhaseStudy.protocolSection.identificationModule,
+              briefTitle: "Pembrolizumab Combination Trial",
+            },
+          },
+        },
+      ],
+      pages_fetched: 1,
+      skipped_malformed: 0,
+      truncated: false,
+    });
+
+    const response = await buildVisualization({
+      query: "Compare trial phases for Pembrolizumab",
+    });
+
+    expect(response.visualization.type).toBe("bar_chart");
+    if (response.visualization.type !== "bar_chart") {
+      throw new Error("expected bar_chart");
+    }
+
+    const datumsWithCitations = response.visualization.data.filter(
+      (point) => "citations" in point && point.citations !== undefined && point.citations.length > 0,
+    );
+    expect(datumsWithCitations.length).toBeGreaterThan(0);
+
+    const phase2 = response.visualization.data.find((point) => point.phase === "Phase 2");
+    expect(phase2?.citations).toEqual([
+      { nct_id: "NCT00000001", excerpt: "A Phase 2 Study of Pembrolizumab" },
+    ]);
+
+    for (const point of response.visualization.data) {
+      expect(point).not.toHaveProperty("source_nct_ids");
+    }
+    expect(VisualizationResponseSchema.parse(response)).toEqual(response);
+  });
+
   it("passes advisory hints to query interpretation", async () => {
     const hints = {
       entities: { drug_name: "Pembrolizumab", comparison_targets: null, condition: null, phase: null, sponsor: null, country: null, start_year: null, end_year: null },
